@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\joris\\Informatica HR\\GitHub\\ScalpCentral\\api\\api.csproj": {}
+    "D:\\Programming\\School\\HR\\Leerjaar 2\\Sem 2\\ScalpCentral\\api\\api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\joris\\Informatica HR\\GitHub\\ScalpCentral\\api\\api.csproj": {
+    "D:\\Programming\\School\\HR\\Leerjaar 2\\Sem 2\\ScalpCentral\\api\\api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\joris\\Informatica HR\\GitHub\\ScalpCentral\\api\\api.csproj",
+        "projectUniqueName": "D:\\Programming\\School\\HR\\Leerjaar 2\\Sem 2\\ScalpCentral\\api\\api.csproj",
         "projectName": "api",
-        "projectPath": "C:\\Users\\joris\\Informatica HR\\GitHub\\ScalpCentral\\api\\api.csproj",
-        "packagesPath": "C:\\Users\\joris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\joris\\Informatica HR\\GitHub\\ScalpCentral\\api\\obj\\",
+        "projectPath": "D:\\Programming\\School\\HR\\Leerjaar 2\\Sem 2\\ScalpCentral\\api\\api.csproj",
+        "packagesPath": "C:\\Users\\quint\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\School\\HR\\Leerjaar 2\\Sem 2\\ScalpCentral\\api\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\joris\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\quint\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -68,7 +75,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.307/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -3,14 +3,15 @@ import psycopg2
 
 
 def make_connection():
-    connection = psycopg2.connect(
-        database="scalpcentral",
-        user="postgres",
-        password="",
-        host="127.0.0.1",  # Verander dit naar de host van de externe server.
-        port=5432,
-    )
-    if connection.closed != 0:
+    try:
+        connection = psycopg2.connect(
+            database="scalpcentral",
+            user="postgre",
+            password="",
+            host="127.0.0.1",  # Verander dit naar de host van de externe server.
+            port=5432,
+        )
+    except:
         print("Connectie werkt niet.")
         return
     json_load()

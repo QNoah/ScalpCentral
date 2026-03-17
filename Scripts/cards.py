@@ -67,11 +67,11 @@ CREATE TABLE IF NOT EXISTS cards (
     set_id VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     supertype VARCHAR(255) NOT NULL,
-    hp INT NOT NULL,
+    hp INT,
     evolves_from_name VARCHAR(255),
     artist VARCHAR(255) NOT NULL,
-    rarity VARCHAR(255) NOT NULL,
-    flavor_text VARCHAR(255) NOT NULL,
+    rarity VARCHAR(255),
+    flavor_text VARCHAR(255),
     images_id INT NOT NULL,
     soft_delete BOOLEAN NOT NULL,
     PRIMARY KEY (id),
@@ -158,8 +158,17 @@ def load_cards_database(cards):
         c_set_id = (c["id"].split("-")[0])
         c_name = c["name"]
         c_supertype = c["supertype"]
-        c_type = c["type"]
-
+        c_subtype = c.get("subtypes")
+        c_hp = c.get("hp")
+        c_evolves_from_name = c.get("evolvesFrom")
+        c_attacks = c.get("attacks")
+        c_abilities = c.get("abilities")
+        c_rules = c.get("rules")
+        c_artist = c["artist"]
+        c_rarity = c.get("rarity")
+        c_flavor_text = c.get("flavorText")
+        c_imagesmall = c["images"]["small"]
+        c_imagelarge = c["images"]["large"]
         
 
 def json_load():
@@ -183,9 +192,9 @@ if __name__ == "__main__":
     connection = get_connection()
     if connection == False:
         exit()
-    create_tables(connection)
-    connection.commit()
-    # json_load()
+    # create_tables(connection)
+    # connection.commit()
+    json_load()
     connection.close()
     print()
     print("Import klaar.")

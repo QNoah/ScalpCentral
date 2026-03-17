@@ -24,11 +24,11 @@ def create_table(connection):
         CREATE TABLE IF NOT EXISTS sets (
             id VARCHAR(255) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
-            series VARCHAR(255),
+            series VARCHAR(255) NOT NULL,
             total_cards INT NOT NULL,
             release_date DATE NOT NULL,
             image_logo VARCHAR(255) NOT NULL,
-            soft_delete BOOL
+            soft_delete BOOL NOT NULL
         )
         """
     )

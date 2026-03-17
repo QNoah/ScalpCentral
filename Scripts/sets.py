@@ -9,7 +9,7 @@ def get_connection():
             user="postgres",
             password="",
             host="127.0.0.1",
-            port=5433,
+            port=5432,
         )
         return connection
     except Exception as e:
@@ -24,11 +24,11 @@ def create_table(connection):
         CREATE TABLE IF NOT EXISTS sets (
             id VARCHAR(255) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
-            series VARCHAR(255) NOT NULL,
-            total_cards INT NOT NULL,
-            release_date DATE NOT NULL,
-            image_logo VARCHAR(255) NOT NULL,
-            soft_delete BOOL NOT NULL
+            series VARCHAR(255),
+            total INT NOT NULL,
+            price DECIMAL(10,2) NOT NULL,
+            release_date VARCHAR(255) NOT NULL,
+            image VARCHAR(255) NOT NULL
         )
         """
     )
@@ -71,10 +71,10 @@ for set in data:
 
     cursor.execute(
         """
-        INSERT INTO sets (id, name, series, total_cards, release_date, image_logo, soft_delete)
+        INSERT INTO sets (id, name, series, total, price, release_date, image)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """,
-        (id, name, series, total, release, image, False),  ## 67 MUST BE UPDATED LATER.
+        (id, name, series, total, 67.00, release, image),  ## 67 MUST BE UPDATED LATER.
     )
 
 connection.commit()

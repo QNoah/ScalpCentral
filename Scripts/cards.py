@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS cards (
     supertype VARCHAR(255) NOT NULL,
     hp INT,
     evolves_from_name VARCHAR(255),
-    artist VARCHAR(255) NOT NULL,
+    artist VARCHAR(255),
     rarity VARCHAR(255),
     flavor_text VARCHAR(255),
     images_id INT NOT NULL,
@@ -88,7 +88,6 @@ CREATE TABLE IF NOT EXISTS cards_to_evolutions(
     PRIMARY KEY (id),
     CONSTRAINT fk_cards_to_evolutions_card_id
         FOREIGN KEY (card_id) REFERENCES cards(id)
-    -- strongly consider NOT using evolves_to_name as FK unless cards.name is UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_abilities(
@@ -155,6 +154,7 @@ CREATE TABLE IF NOT EXISTS cards_to_subtypes(
 def load_cards_database(cards):
     for c in cards:
         c_id = c["id"]
+        print(c_id)
         c_set_id = (c["id"].split("-")[0])
         c_name = c["name"]
         c_supertype = c["supertype"]
@@ -164,17 +164,19 @@ def load_cards_database(cards):
         c_attacks = c.get("attacks")
         c_abilities = c.get("abilities")
         c_rules = c.get("rules")
-        c_artist = c["artist"]
+        c_artist = c.get("artist")
         c_rarity = c.get("rarity")
         c_flavor_text = c.get("flavorText")
         c_imagesmall = c["images"]["small"]
         c_imagelarge = c["images"]["large"]
+
+        
         
 
 def json_load():
     cards_folder = "./json/cards"
     for file in os.listdir(cards_folder):
-        if not file.endswith("base1.json"):
+        if not file.endswith(".json"): ## DIT MOET OOIT VERANDERD WORDEN > .JSON ALLEEN
             continue
 
         path = os.path.join(cards_folder, file)
@@ -184,6 +186,7 @@ def json_load():
                 cards = json.load(f)
                 if cards:
                     load_cards_database(cards)
+                    print("Success")
                         
         except Exception as e:
             print(f"Error in {file}: {e}")

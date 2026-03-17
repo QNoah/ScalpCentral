@@ -17,69 +17,41 @@ def get_connection():
         return False
 
 
-def create_table(connection):
+def create_tables(connection):
     cursor = connection.cursor()
     cursor.execute(
         """
-        CREATE TABLE IF NOT EXISTS sets (
-            id VARCHAR(255) PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS cards (
+            id VARCHAR(255) NOT NULL,
+            set_id VARCHAR(255) NOT NULL,
             name VARCHAR(255) NOT NULL,
-            series VARCHAR(255),
-            total INT NOT NULL,
-            price DECIMAL(10,2) NOT NULL,
-            release_date VARCHAR(255) NOT NULL,
-            image VARCHAR(255) NOT NULL
-        )
+            supertype VARCHAR(255) NOT NULL,
+            hp INT NOT NULL,
+            evolves_from_name VARCHAR(255),
+            artist VARCHAR(255) NOT NULL,
+            rarity VARCHAR(255) NOT NULL,
+            flavor_text VARCHAR(255) NOT NULL,
+            images_id INT,
+            soft_delete BOOL NOT NULL,
+            PRIMARY KEY (id),
+            CONSTRAINT fk_set_id
+                FOREIGN KEY (set_id)
+                REFERENCES sets(id)
+        );
         """
     )
+
     connection.commit()
     cursor.close()
-
-
-def json_load():
-    try:
-        with open("./json/sets.json", "r") as file:
-            data = json.load(file)
-            return data
-    except Exception as e:
-        print("JSON laden mislukt:", e)
-        return False
 
 
 connection = get_connection()
 if connection == False:
     exit()
 
-create_table(connection)
-
-data = json_load()
-if data == False:
-    connection.close()
-    exit()
-
-cursor = connection.cursor()
-
-for set in data:
-    print("---------")
-
-    id = set["id"]
-    name = set["name"]
-    series = set["series"]
-    total = set["total"]
-    release = set["releaseDate"]
-    image = set["images"]["logo"]
-
-    cursor.execute(
-        """
-        INSERT INTO sets (id, name, series, total, price, release_date, image)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """,
-        (id, name, series, total, 67.00, release, image),  ## 67 MUST BE UPDATED LATER.
-    )
+create_tables(connection)
 
 connection.commit()
-
-cursor.close()
 connection.close()
 
 print("Import klaar.")

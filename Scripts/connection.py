@@ -22,9 +22,10 @@ def get_connection():
         return False
 
 
-def get_cursor():
+def get_cursor(con):
     return con.cursor()
 
 
 if __name__ == "__main__":
-    get_connection()
+    con = get_connection()
+    cursor = get_cursor(con)

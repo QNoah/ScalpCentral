@@ -1,12 +1,11 @@
-# import cards
-import sets
+import import_script
 import psycopg2
 
 
-def create_connection():
+def create_connection(db_name: str):
     try:
         con = psycopg2.connect(
-            dbname="postgres",
+            dbname=db_name,
             user="postgres",
             password="",
             host="127.0.0.1",
@@ -21,8 +20,9 @@ def create_connection():
 def create_database(con: psycopg2.extensions.connection):
     try:
         con.autocommit = True
-        query = """CREATE DATABASE scalpcentral ENCODING='UTF8' TEMPLATE='template0'"""
+        query = """CREATE DATABASE scalpcentral ENCODING='UTF-8' TEMPLATE='template0'"""
         cursor = con.cursor()
+        cursor.connection
         cursor.execute(query)
         cursor.close()
         print("Successvol de database aangemaakt")
@@ -32,9 +32,7 @@ def create_database(con: psycopg2.extensions.connection):
 
 
 if __name__ == "__main__":
-    con = create_connection()
-    # create_database(con)
-    sets()
-
-
-# print("Begonnen met het laden van de sets")
+    con = create_connection("postgres")
+    create_database(con)
+    con = create_connection("scalpcentral")
+    import_script.run(con)

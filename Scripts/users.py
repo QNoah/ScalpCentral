@@ -1,11 +1,12 @@
 import connection
 
+
 def create_user_table():
     con = connection.get_connection()
     cur = connection.get_cursor(con)
 
     schema_sql = """CREATE TABLE IF NOT EXISTS users (
-            id VARCHAR(255) PRIMARY KEY,
+            id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
             email TEXT NOT NULL,

@@ -250,4 +250,8 @@ def run(connection):
     return
 
 if __name__ == "__main__":
-    run()
+    connection = get_connection()
+    if connection is False:
+        print("Error: Connection is False")
+        sys.exit(1)
+    run(connection)

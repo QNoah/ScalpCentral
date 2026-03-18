@@ -1,6 +1,4 @@
-import psycopg2
 import connection
-
 
 def create_user_table():
     con = connection.get_connection()
@@ -32,4 +30,4 @@ def create_user_table():
 ##PASSWORD MOET OOIT WORDEN VERANDERD NAAR ENCRYPTION.
 
 if __name__ == "__main__":
-    create_user_table()
+    print("Je kan deze file niet runnen gebruik: Main.py")

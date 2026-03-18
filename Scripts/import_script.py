@@ -165,7 +165,7 @@ def insert_cards(cards, connection):
 
         if c_attacks:
             for attack in c_attacks:
-                cursor.execute("""INSERT INTO attacks (name, damage, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_attacks_only DO UPDATE SET name = EXCLUDED.name RETURNING id;""", (attack["name"], attack.get("damage"), attack.get("text")))
+
                 attack_id = cursor.fetchone()[0]
                 cursor.execute("""INSERT INTO cards_to_attacks (card_id, attack_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_id, attack_id))
 

@@ -1,0 +1,64 @@
+productId,name,cleanName,imageUrl,categoryId,groupId,url,modifiedOn,imageCount,extNumber,extRarity,extCardType,extHP,extStage,extCardText,extAttack1,extAttack2,extWeakness,extRetreatCost,lowPrice,midPrice,highPrice,marketPrice,directLowPrice,subTypeName,extResistance
+83623,Armaldo ex (Non-Holo),Armaldo ex Non Holo,https://tcgplayer-cdn.tcgplayer.com/product/83623_200w.jpg,3,1422,https://cpt.tcgcsv.com/tsH,2022-09-23T18:09:39.51,1,016/017,Ultra Rare,Fighting,160,Stage 2,"<em>Pokémon-EX rule — When a Pokémon-EX has been Knocked Out, your opponent takes 2 Prize cards.</em>","[1F] Twin Blade
+<br>Does 30 damage to each Defending Pokémon.","[3FF] Supersonic Claws (80)
+<br>This attack's damage is not affected by Resistance.",GW,3,19.99,25.66,39.99,23.18,,Normal,
+83756,Beautifly,Beautifly,https://tcgplayer-cdn.tcgplayer.com/product/83756_200w.jpg,3,1422,https://cpt.tcgcsv.com/8wH,2022-09-23T18:10:45.793,1,006/017,Uncommon,Grass,100,Stage 2,,"[1G] Blot (30)
+<br>Remove 1 damage counter from Beautifly.","[3] Whirlwind (40)
+<br>Your opponent switches the Defending Pokémon with 1 of his or her Benched Pokémon.",R,,5.89,11.0,20.0,7.25,,Normal,
+83905,Blaziken,Blaziken,https://tcgplayer-cdn.tcgplayer.com/product/83905_200w.jpg,3,1422,https://cpt.tcgcsv.com/7BH,2022-09-23T18:12:01.257,1,001/017,Rare,Fire,110,Stage 2,,[1R] Fire Punch (40),"[3] Double Kick (50x)
+<br>Flip 2 coins. This attack does 50 damage times the number of heads.",W,2,6.5,9.0,17.5,9.61,,Normal,
+83905,Blaziken,Blaziken,https://tcgplayer-cdn.tcgplayer.com/product/83905_200w.jpg,3,1422,https://cpt.tcgcsv.com/7BH,2022-09-23T18:12:01.257,1,001/017,Rare,Fire,110,Stage 2,,[1R] Fire Punch (40),"[3] Double Kick (50x)
+<br>Flip 2 coins. This attack does 50 damage times the number of heads.",W,2,3.5,5.54,15.57,10.56,,Holofoil,
+86636,Larvitar,Larvitar,https://tcgplayer-cdn.tcgplayer.com/product/86636_200w.jpg,3,1422,https://cpt.tcgcsv.com/LGJ,2022-09-23T18:12:38.047,1,011/017,Common,Fighting,40,Basic,,"[F] Sand Attack (10)
+<br>If the Defending Pokémon tries to attack during your opponent's next turn, your opponent flips a coin. If tails, that attack does nothing.",,W,1,0.6,1.4,9.0,1.61,,Normal,
+87245,Masquerain,Masquerain,https://tcgplayer-cdn.tcgplayer.com/product/87245_200w.jpg,3,1422,https://cpt.tcgcsv.com/WVJ,2022-09-23T18:13:44.11,1,007/017,Uncommon,Grass,70,Stage 1,,"[1] Quick Attack (10+)
+<br>Flip a coin. If heads, this attack does 10 damage plus 20 more damage.",[2G] Gust (50),L,,4.84,7.66,11.99,5.29,,Normal,F
+87336,Metagross,Metagross,https://tcgplayer-cdn.tcgplayer.com/product/87336_200w.jpg,3,1422,https://cpt.tcgcsv.com/LXJ,2022-09-23T18:14:40.783,1,002/017,Rare,Metal,100,Stage 2,,[1M] Metal Claw (30),"[4] Hyper Beam (50)
+<br>Flip a coin. If heads, discard 1 energy attached to the Defending Pokémon.",R,3,3.99,4.5,24.95,5.24,,Normal,G
+87336,Metagross,Metagross,https://tcgplayer-cdn.tcgplayer.com/product/87336_200w.jpg,3,1422,https://cpt.tcgcsv.com/LXJ,2022-09-23T18:14:40.783,1,002/017,Rare,Metal,100,Stage 2,,[1M] Metal Claw (30),"[4] Hyper Beam (50)
+<br>Flip a coin. If heads, discard 1 energy attached to the Defending Pokémon.",R,3,3.35,4.66,8.97,4.68,,Holofoil,G
+87483,Minun,Minun,https://tcgplayer-cdn.tcgplayer.com/product/87483_200w.jpg,3,1422,https://cpt.tcgcsv.com/H_J,2022-12-30T18:43:48.887,1,012/017,Common,Lightning,50,Basic,,"[L] Thunder Wave (10)
+<br>Flip a coin. If heads, the Defending Pokémon is now Paralyzed.","[2] Spark (10)
+<br>Choose 2 of your opponent's Benched Pokémon. This attack does 10 damage to each of those Pokémon. <em>(Don't apply Weakness and Resistance for Benched Pokémon.)</em>",F,1,0.99,1.47,10.0,1.59,,Normal,M
+87650,Murkrow,Murkrow,https://tcgplayer-cdn.tcgplayer.com/product/87650_200w.jpg,3,1422,https://cpt.tcgcsv.com/05K,2022-09-23T18:16:41.073,1,008/017,Uncommon,Darkness,60,Basic,"<strong>Poké-BODY — Insomnia</strong>
+<br>
+Murkrow can't be Asleep.","[2] Feint Attack
+<br>Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. This attack's damage isn't affected by Weakness, Resistance, Poké-Powers, Poké-Bodies, or any other effects on that Pokémon.",,F,1,18.65,24.94,29.78,17.75,,Normal,P
+88163,Plusle,Plusle,https://tcgplayer-cdn.tcgplayer.com/product/88163_200w.jpg,3,1422,https://cpt.tcgcsv.com/hhK,2022-11-26T17:40:15.33,1,013/017,Common,Lightning,50,Basic,,"[1] Quick Attack (10+)
+<br>Flip a coin. If heads, this attack does 10 damage plus 10 more damage.","[1L] Agility (20)
+<br>Flip a coin. If heads, prevent all effects of an attack, including damage, done to Plusle during your opponent's next turn.",F,1,0.99,2.22,10.0,2.1,3.31,Normal,M
+88448,Pupitar,Pupitar,https://tcgplayer-cdn.tcgplayer.com/product/88448_200w.jpg,3,1422,https://cpt.tcgcsv.com/-nK,2022-09-23T18:19:26.747,1,009/017,Uncommon,Fighting,70,Stage 1,,"[1F] Rock Smash (20+)
+<br>Flip a coin. If heads, this attack does 20 damage plus 10 more damage.",,W,1,8.49,11.74,14.99,8.88,,Normal,
+88624,Rayquaza,Rayquaza,https://tcgplayer-cdn.tcgplayer.com/product/88624_200w.jpg,3,1422,https://cpt.tcgcsv.com/vsK,2022-09-23T18:20:53.777,1,003/017,Rare,Colorless,80,Basic,,"[1] Fly (10)
+<br>Flip a coin. If tails, this attack does nothing. If heads, prevent all effects of an attack, including damage, done to Rayquaza during your opponent's next turn.",[RL] Dragon Claw (30),C,1,37.0,51.67,100.0,51.67,,Normal,
+88624,Rayquaza,Rayquaza,https://tcgplayer-cdn.tcgplayer.com/product/88624_200w.jpg,3,1422,https://cpt.tcgcsv.com/vsK,2022-09-23T18:20:53.777,1,003/017,Rare,Colorless,80,Basic,,"[1] Fly (10)
+<br>Flip a coin. If tails, this attack does nothing. If heads, prevent all effects of an attack, including damage, done to Rayquaza during your opponent's next turn.",[RL] Dragon Claw (30),C,1,23.76,74.07,299.99,57.76,29.72,Holofoil,
+88946,Sceptile,Sceptile,https://tcgplayer-cdn.tcgplayer.com/product/88946_200w.jpg,3,1422,https://cpt.tcgcsv.com/XBK,2022-09-23T18:22:06.52,1,004/017,Rare,Grass,100,Stage 2,,"[G] Cling (20)
+<br>After your attack, remove from Sceptile the number of damage counters equal to the damage you did to the Defending Pokémon. If Sceptile has fewer damage counters than that, remove all of them.","[1GG] Leaf Blade (40+)
+<br>Flip a coin. If heads, this attack does 40 damage plus 30 more damage.",R,2,3.67,4.4,19.5,16.75,,Normal,W
+88946,Sceptile,Sceptile,https://tcgplayer-cdn.tcgplayer.com/product/88946_200w.jpg,3,1422,https://cpt.tcgcsv.com/XBK,2022-09-23T18:22:06.52,1,004/017,Rare,Grass,100,Stage 2,,"[G] Cling (20)
+<br>After your attack, remove from Sceptile the number of damage counters equal to the damage you did to the Defending Pokémon. If Sceptile has fewer damage counters than that, remove all of them.","[1GG] Leaf Blade (40+)
+<br>Flip a coin. If heads, this attack does 40 damage plus 30 more damage.",R,2,9.72,11.75,175.98,16.25,,Holofoil,W
+89647,Surskit,Surskit,https://tcgplayer-cdn.tcgplayer.com/product/89647_200w.jpg,3,1422,https://cpt.tcgcsv.com/ZSK,2022-09-23T18:22:42.113,1,014/017,Common,Water,50,Basic,,"[W] Bubble (10)
+<br>Flip a coin. If heads, the Defending Pokémon is now Paralyzed.",,L,1,0.5,0.83,5.0,0.96,,Normal,
+89677,Swampert,Swampert,https://tcgplayer-cdn.tcgplayer.com/product/89677_200w.jpg,3,1422,https://cpt.tcgcsv.com/zTK,2022-09-23T18:23:59.073,1,005/017,Rare,Water,100,Stage 2,,"[W] Bubble (20)
+<br>Flip a coin. If heads, the Defending Pokémon is now Paralyzed.","[1WW] Mud Splash (50)
+<br>If your opponent has any Benched Pokémon, choose 1 of them and flip a coin. If heads, this attack does 20 damage to that Pokémon. <em>(Don't apply Weakness and Resistance for Benched Pokémon.)</em>",L,2,6.37,10.69,15.0,9.26,,Normal,
+89677,Swampert,Swampert,https://tcgplayer-cdn.tcgplayer.com/product/89677_200w.jpg,3,1422,https://cpt.tcgcsv.com/zTK,2022-09-23T18:23:59.073,1,005/017,Rare,Water,100,Stage 2,,"[W] Bubble (20)
+<br>Flip a coin. If heads, the Defending Pokémon is now Paralyzed.","[1WW] Mud Splash (50)
+<br>If your opponent has any Benched Pokémon, choose 1 of them and flip a coin. If heads, this attack does 20 damage to that Pokémon. <em>(Don't apply Weakness and Resistance for Benched Pokémon.)</em>",L,2,9.99,15.97,29.99,24.65,,Holofoil,
+89690,Swellow,Swellow,https://tcgplayer-cdn.tcgplayer.com/product/89690_200w.jpg,3,1422,https://cpt.tcgcsv.com/QTK,2022-09-23T18:25:18.417,1,015/017,Common,Colorless,70,Stage 1,,"[1] Focus Energy
+<br>During your next turn, base damage of Swellow's Agility is 70 instead of 30.","[2] Agility (30)
+<br>Flip a coin. If heads, prevent all effects of an attack, including damage, done to Swellow during your opponent's next turn.",L,1,0.4,0.61,5.0,0.62,,Normal,F
+89967,Torkoal,Torkoal,https://tcgplayer-cdn.tcgplayer.com/product/89967_200w.jpg,3,1422,https://cpt.tcgcsv.com/m_K,2022-09-23T18:26:25.803,1,010/017,Uncommon,Fighting,80,Basic,,"[1] Amnesia
+<br>Choose 1 of the Defending Pokémon's attacks. That Pokémon can't use that attack during your opponent's next turn.","[1F] Body Slam (20)
+<br>
+Flip a coin. If heads, the Defending Pokémon is now Paralyzed.",W,2,6.67,9.01,15.0,10.75,,Normal,
+90124,Tyranitar ex (Holo),Tyranitar ex Holo,https://tcgplayer-cdn.tcgplayer.com/product/90124_200w.jpg,3,1422,https://cpt.tcgcsv.com/v3L,2022-09-23T18:27:23.463,1,017/017,Ultra Rare,Darkness,150,Stage 2,"<em>Pokémon-EX rule — When a Pokémon-EX has been Knocked Out, your opponent takes 2 Prize cards.</em>",[1] Scratch (20),"[2FF] Critical Crush (80)
+<br>Discard 2 basic Energy cards attached to Tyranitar ex or this attack does nothing.",GR,4,139.99,220.25,345.0,108.22,,Holofoil,P
+97806,Armaldo ex (Holo),Armaldo ex Holo,https://tcgplayer-cdn.tcgplayer.com/product/97806_200w.jpg,3,1422,https://cpt.tcgcsv.com/88P,2025-03-17T17:09:52.317,1,016/017,Ultra Rare,Fighting,160,Stage 2,"<em>Pokémon-EX rule — When a Pokémon-EX has been Knocked Out, your opponent takes 2 Prize cards.</em>","[1F] Twin Blade
+<br>Does 30 damage to each Defending Pokemon.","[3FF] Supersonic Claws (80)
+<br>This attack's damage is not affected by Resistance.",GW,3,49.69,2185.35,4321.0,46.75,,Holofoil,
+97807,Tyranitar ex (Non-Holo),Tyranitar ex Non Holo,https://tcgplayer-cdn.tcgplayer.com/product/97807_200w.jpg,3,1422,https://cpt.tcgcsv.com/98P,2022-09-23T18:27:51.887,1,017/017,Ultra Rare,Darkness,150,Stage 2,,[1] Scratch (20),"[2FF] Critical Crush (80)
+<br>Discard 2 basic Energy cards attached to Tyranitar ex or this attack does nothing.",GR,4,109.99,118.96,127.93,50.25,,Normal,P
+141227,POP Series 1 Pack,POP Series 1 Pack,https://tcgplayer-cdn.tcgplayer.com/product/141227_200w.jpg,3,1422,https://cpt.tcgcsv.com/zv82,2017-08-16T19:06:59.76,1,,,,,,Each POP Series 1 Pack contains 2 random cards for the Promotional POP Series 1.,,,,,68.87,71.37,88.62,70.64,,Normal,

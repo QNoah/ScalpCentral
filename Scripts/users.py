@@ -1,4 +1,5 @@
 import connection
+import psycopg2
 
 
 def create_user_table():
@@ -26,6 +27,7 @@ def create_user_table():
         ); """
     cur.execute(schema_sql)
     con.commit()
+    con.close()
 
 
 ##PASSWORD MOET OOIT WORDEN VERANDERD NAAR ENCRYPTION.

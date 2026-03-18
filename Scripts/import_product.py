@@ -29,7 +29,7 @@ def create_table(connection):
     cursor = connection.cursor()
     table_sql = """
 CREATE TABLE IF NOT EXISTS products(
-id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 set_id VARCHAR(255) REFERENCES sets(id),
 name VARCHAR(255) NOT NULL,
 type VARCHAR(255) NOT NULL,
@@ -37,8 +37,8 @@ description TEXT,
 price NUMERIC(10, 2) NOT NULL DEFAULT 0,
 saleprice_modifier NUMERIC(5,2),
 stock INT NOT NULL DEFAULT 0,
-created_at TIMESTAMPZ NOT NULL DEFAULT NOW(),
-deleted_at TIMESTAMPZ,
+created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+deleted_at TIMESTAMPTZ,
 soft_delete BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -53,18 +53,23 @@ PRIMARY KEY (product_id, image)
     cursor.close()
 
 def csv_load_products(connection):
-    csv_folder = "./csv"
+    csv_folder = "./sealed_csv"
     for file in os.listdir(csv_folder):
         if not file.endswith(".csv"):
             continue
 
+        match_id_and_name = match_set(file, connection)
+
+        if match_id_and_name is None:
+            continue
+        
         path = os.path.join(csv_folder, file)
 
         try:
             with open(path, encoding="utf-8") as f:
                 filedata = csv.DictReader(f)
                 if filedata:
-                    insert_products(filedata, connection)
+                    insert_products(filedata, connection, match_id_and_name[0], match_id_and_name[1])
                     print(f"Succes PRODUCT: {file} imported")
         except Exception as e:
             print(f"Error in {file}: {e}")
@@ -82,7 +87,7 @@ def to_decimal(v):
     except Exception:
         return None
 
-def insert_products(dataset, connection):
+def insert_products(dataset, connection, set_id_arg : str, set_name_arg : str):
     cursor = connection.cursor()
     for row in dataset:
         price_keys = ("marketPrice", "midPrice", "highPrice", "lowPrice")
@@ -93,14 +98,12 @@ def insert_products(dataset, connection):
         filter_result = product_filter(row["name"])
 
         if filter_result and prices:
-            setname = 0
-            cursor.execute("SELECT id FROM sets as s WHERE s.name = (%s)", (setname,))
-            set_id = cursor.fetchone()[0]
+            set_id = set_id_arg
             name = row["name"]
             type = filter_result
             description = row["extCardText"]
             price = max(prices)
-            cursor.excecute("INSERT INTO products VALUES (set_id, name, type, description, price, stock) VALUES (%s, %s, %s, %s, %s)",(set_id, name, type, description, price, 20))
+            cursor.execute("INSERT INTO products (set_id, name, type, description, price, stock) VALUES (%s, %s, %s, %s, %s, 20)",(set_id, name, type, description, price))
     
 
 
@@ -161,58 +164,83 @@ def product_filter(name: str):
             return key
         
     return None
-        
-def check_set_names(connection):
+
+
+def _normalize_set_name(name: str) -> str:
+    name = name.replace("Ã©", "é")
+    name = name.replace("â€”", "—")
+    name = name.replace("&", "and")
+    name = "".join(name.split())
+    return name.lower()
+
+def match_set(filename: str, connection) -> tuple[str, str] | None:
     cursor = connection.cursor()
-    cursor.execute("SELECT name FROM sets;")
-    all_names = []
-    found = []
-    missing = []
-    print("All names found: ")
-    for (name,) in cursor.fetchall():
-        if "PokÃ©mon" in name:
-            fix = "e".join(name.split("Ã©"))
-            all_names.append("".join(fix.split()))
-            continue
+    cursor.execute("SELECT id, name FROM sets;")
+
+    normalized_filename = filename.lower()
+
+    best: tuple[str, str] | None = None
+    best_len = -1
+
+    for set_id, set_name in cursor.fetchall():
+        norm = _normalize_set_name(set_name)
+
+        if norm in normalized_filename and len(norm) > best_len:
+            best = (set_id, set_name)
+            best_len = len(norm)
+
+    return best
+  
+# def check_set_names(connection):
+#     cursor = connection.cursor()
+#     cursor.execute("SELECT name FROM sets;")
+#     all_names = []
+#     found = []
+#     missing = []
+#     print("All names found: ")
+#     for (name,) in cursor.fetchall():
+#         if "PokÃ©mon" in name:
+#             fix = "e".join(name.split("Ã©"))
+#             all_names.append("".join(fix.split()))
+#             continue
         
-        if "HSâ€”" in name:
-            fix = name.split("â€”")[1]
-            all_names.append("".join(fix.split()))
-            continue
+#         if "HSâ€”" in name:
+#             fix = name.split("â€”")[1]
+#             all_names.append("".join(fix.split()))
+#             continue
 
-        if "&" in name:
-            fix = "and".join(name.split("&"))
-            all_names.append("".join(fix.split()))
-            continue
+#         if "&" in name:
+#             fix = "and".join(name.split("&"))
+#             all_names.append("".join(fix.split()))
+#             continue
 
-        all_names.append("".join(name.split()))
-    for name in all_names:
-        print(str(name).lower())
-    for file in os.listdir("./sealed_csv"):
-        current_match = ""
-        match_length = 0
+#         all_names.append("".join(name.split()))
+#     for name in all_names:
+#         print(str(name).lower())
+#     for file in os.listdir("./sealed_csv"):
+#         current_match = ""
+#         match_length = 0
 
-        for name in all_names:
-            if str(name).lower() in file.lower():
-                current_match = name
-                match_length = len(current_match)
+#         for name in all_names:
+#             if str(name).lower() in file.lower():
+#                 current_match = name
+#                 match_length = len(current_match)
 
-        if match_length > 0:
-            found.append(file)
-            print(f"FOUND: {str(file).split("Products")[0]}   MATCH: {current_match}")
-        else:
-            missing.append(file)
-            print(f"MISSING: {str(file).split("Products")[0]}")
+#         if match_length > 0:
+#             found.append(file)
+#             print(f"FOUND: {str(file).split("Products")[0]}   MATCH: {current_match}")
+#         else:
+#             missing.append(file)
+#             print(f"MISSING: {str(file).split("Products")[0]}")
 
-def delete_empty():
-    for file in os.listdir("./sealed_csv"):
-        path = os.path.join("./sealed_csv", file)
-        with open(path, "r", encoding="UTF8", newline="") as file:
-            reader = csv.DictReader(file)
-            first_row = next(reader, None)
-
-        if first_row is None:
-            os.remove(path)
+# def delete_empty():
+#     for file in os.listdir("./sealed_csv"):
+#         path = os.path.join("./sealed_csv", file)
+#         with open(path, "r", encoding="UTF8", newline="") as file:
+#             reader = csv.DictReader(file)
+#             first_row = next(reader, None)
+#         if first_row is None:
+#             os.remove(path)
 
 def run(con):
     create_table(con)
@@ -225,5 +253,5 @@ if __name__ == "__main__":
     if con is False:
         print("Connection failed.")
         sys.exit(1)
-    # run(con)
-    check_set_names(con)
+    run(con)
+    # check_set_names(con)

@@ -46,40 +46,49 @@ def json_load():
         return False
 
 
-connection = get_connection()
-if connection == False:
-    exit()
+if __name__ == "__main__":
+    connection = get_connection()
+    if connection == False:
+        exit()
 
-create_table(connection)
+    create_table(connection)
 
-data = json_load()
-if data == False:
+    data = json_load()
+    if data == False:
+        connection.close()
+        exit()
+
+    cursor = connection.cursor()
+
+    for set in data:
+        print("---------")
+
+        id = set["id"]
+        name = set["name"]
+        series = set["series"]
+        total = set["total"]
+        release = set["releaseDate"]
+        image = set["images"]["logo"]
+
+        cursor.execute(
+            """
+            INSERT INTO sets (id, name, series, total, price, release_date, image)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                id,
+                name,
+                series,
+                total,
+                67.00,
+                release,
+                image,
+            ),  ## 67 MUST BE UPDATED LATER.
+        )
+
+    connection.commit()
+
+    cursor.close()
     connection.close()
-    exit()
 
-cursor = connection.cursor()
-
-for set in data:
-    print("---------")
-
-    id = set["id"]
-    name = set["name"]
-    series = set["series"]
-    total = set["total"]
-    release = set["releaseDate"]
-    image = set["images"]["logo"]
-
-    cursor.execute(
-        """
-        INSERT INTO sets (id, name, series, total, price, release_date, image)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """,
-        (id, name, series, total, 67.00, release, image),  ## 67 MUST BE UPDATED LATER.
-    )
-
-connection.commit()
-
-cursor.close()
-connection.close()
-
-print("Import klaar.")
+    print("Import klaar.")

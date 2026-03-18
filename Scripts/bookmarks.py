@@ -2,9 +2,7 @@ import connection
 import psycopg2
 
 
-def create_bookmarks_table():
-    con = connection.get_connection()
-    cur = connection.get_cursor(con)
+def create_bookmarks_table(cur: psycopg2.extensions.cursor):
 
     schema_sql = """CREATE TABLE IF NOT EXISTS bookmarks (
             id VARCHAR(255) PRIMARY KEY,
@@ -12,8 +10,6 @@ def create_bookmarks_table():
             product_id BIGINT NOT NULL REFERENCES products(id)
         ); """
     cur.execute(schema_sql)
-    con.commit()
-    con.close()
 
 
 if __name__ == "__main__":

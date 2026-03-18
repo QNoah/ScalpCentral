@@ -2,9 +2,9 @@ import connection
 import psycopg2
 
 
-def create_user_table():
-    con = connection.get_connection()
-    cur = connection.get_cursor(con)
+def create_user_table(cur: psycopg2.extensions.cursor):
+    # con = connection.get_connection()
+    # cur = connection.get_cursor(con)
 
     schema_sql = """CREATE TABLE IF NOT EXISTS users (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -26,8 +26,6 @@ def create_user_table():
             soft_delete BOOLEAN NOT NULL DEFAULT FALSE
         ); """
     cur.execute(schema_sql)
-    con.commit()
-    con.close()
 
 
 ##PASSWORD MOET OOIT WORDEN VERANDERD NAAR ENCRYPTION.

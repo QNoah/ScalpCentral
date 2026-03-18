@@ -93,7 +93,9 @@ def insert_products(dataset, connection):
         filter_result = product_filter(row["name"])
 
         if filter_result and prices:
-            set_id = ...
+            setname = 0
+            cursor.execute("SELECT id FROM sets as s WHERE s.name = (%s)", (setname,))
+            set_id = cursor.fetchone()[0]
             name = row["name"]
             type = filter_result
             description = row["extCardText"]
@@ -160,7 +162,58 @@ def product_filter(name: str):
         
     return None
         
-            
+def check_set_names(connection):
+    cursor = connection.cursor()
+    cursor.execute("SELECT name FROM sets;")
+    all_names = []
+    found = []
+    missing = []
+    print("All names found: ")
+    for (name,) in cursor.fetchall():
+        if "PokÃ©mon" in name:
+            fix = "e".join(name.split("Ã©"))
+            all_names.append("".join(fix.split()))
+            continue
+        
+        if "HSâ€”" in name:
+            fix = name.split("â€”")[1]
+            all_names.append("".join(fix.split()))
+            continue
+
+        if "&" in name:
+            fix = "and".join(name.split("&"))
+            all_names.append("".join(fix.split()))
+            continue
+
+        all_names.append("".join(name.split()))
+    for name in all_names:
+        print(str(name).lower())
+    for file in os.listdir("./sealed_csv"):
+        current_match = ""
+        match_length = 0
+
+        for name in all_names:
+            if str(name).lower() in file.lower():
+                current_match = name
+                match_length = len(current_match)
+
+        if match_length > 0:
+            found.append(file)
+            print(f"FOUND: {str(file).split("Products")[0]}   MATCH: {current_match}")
+        else:
+            missing.append(file)
+            print(f"MISSING: {str(file).split("Products")[0]}")
+
+def delete_empty():
+    for file in os.listdir("./sealed_csv"):
+        path = os.path.join("./sealed_csv", file)
+        with open(path, "r", encoding="UTF8", newline="") as file:
+            reader = csv.DictReader(file)
+            first_row = next(reader, None)
+
+        if first_row is None:
+            os.remove(path)
+
 def run(con):
     create_table(con)
     csv_load_products(con)
@@ -172,4 +225,5 @@ if __name__ == "__main__":
     if con is False:
         print("Connection failed.")
         sys.exit(1)
-    run(con)
+    # run(con)
+    check_set_names(con)

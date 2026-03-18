@@ -289,7 +289,6 @@ def run(connection):
     json_load_sets(connection)
     json_load_cards(connection)
     connection.commit()
-    connection.close()
     print(f"import_script.py ran succesfully.")
     return
 

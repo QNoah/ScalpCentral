@@ -23,9 +23,9 @@ if __name__ == "__main__":
 
     con = connection.get_connection()
     cur = con.cursor()
+    import_script.run(con)
     users.create_user_table(cur)
     # products here
 
     bookmarks.create_bookmarks_table(cur)
-    # con.close()
-    # import_script.run(con)
+    con.close()

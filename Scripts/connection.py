@@ -1,10 +1,10 @@
 import psycopg2
 
 
-def get_connection():
+def get_connection(db_name: str = "scalpcentral"):
     try:
         connection = psycopg2.connect(
-            database="scalpcentral",
+            database=db_name,
             user="postgres",
             password="",
             host="127.0.0.1",
@@ -27,5 +27,4 @@ def get_cursor(con):
 
 
 if __name__ == "__main__":
-    con = get_connection()
-    cursor = get_cursor(con)
+    print("Je kan deze file niet runnen gebruik: Main.py")

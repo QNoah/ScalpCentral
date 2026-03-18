@@ -1,10 +1,8 @@
 import json
 import psycopg2
 import os
-import traceback
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
-
 
 
 def get_connection():
@@ -31,6 +29,16 @@ def get_connection():
 def create_tables(connection):
     cursor = connection.cursor()
     schema_sql = """
+CREATE TABLE IF NOT EXISTS sets (
+            id VARCHAR(255) PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            series VARCHAR(255) NOT NULL,
+            total_cards INT NOT NULL,
+            release_date DATE NOT NULL,
+            image_logo VARCHAR(255) NOT NULL,
+            soft_delete BOOLEAN NOT NULL DEFAULT FALSE
+        );
+
 CREATE TABLE IF NOT EXISTS attacks(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -73,7 +81,7 @@ CREATE TABLE IF NOT EXISTS cards (
     set_id VARCHAR(255) NOT NULL REFERENCES sets(id),
     name VARCHAR(255) NOT NULL,
     supertype VARCHAR(255) NOT NULL,
-    hp INT,
+    hp VARCHAR(255),
     evolves_from_name VARCHAR(255),
     artist VARCHAR(255),
     rarity VARCHAR(255),
@@ -124,7 +132,7 @@ CREATE TABLE IF NOT EXISTS cards_to_subtypes(
     connection.commit()
     cursor.close()
 
-def load_cards_database(cards, connection):
+def insert_cards(cards, connection):
     cursor = connection.cursor()
 
     for c in cards:
@@ -147,7 +155,6 @@ def load_cards_database(cards, connection):
 
         cursor.execute("""INSERT INTO card_images (small, large) VALUES (%s, %s) RETURNING id""", (c_imagesmall, c_imagelarge))
         images_id = cursor.fetchone()[0]
-        # print(f"pre insert check after this line ill insert a card: {c_id, c_name, c_evolves_from_name}")
 
         cursor.execute(
                         """
@@ -185,10 +192,31 @@ def load_cards_database(cards, connection):
                 type_id = cursor.fetchone()[0]
                 cursor.execute("""INSERT INTO cards_to_types (card_id, type_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_id, type_id))
 
-def json_load(connection):
+def insert_sets(data, connection):
+    cursor = connection.cursor()
+
+    for set in data:
+        id = set["id"]
+        name = set["name"]
+        series = set["series"]
+        total = set["total"]
+        release = set["releaseDate"]
+        image = set["images"]["logo"]
+
+        cursor.execute(
+            """
+            INSERT INTO sets (id, name, series, total_cards, release_date, image_logo, soft_delete)
+            VALUES (%s, %s, %s, %s, %s, %s, DEFAULT)
+            """,
+            (id, name, series, total, release, image)
+        )
+
+        print(f"Succes SET: {name} imported.")
+
+def json_load_cards(connection):
     cards_folder = "./json/cards"
     for file in os.listdir(cards_folder):
-        if not file.endswith(".json"): ## DIT MOET OOIT VERANDERD WORDEN > ".json"
+        if not file.endswith(".json"):
             continue
 
         path = os.path.join(cards_folder, file)
@@ -197,30 +225,28 @@ def json_load(connection):
             with open(path, encoding="utf8") as f:
                 cards = json.load(f)
                 if cards:
-                    load_cards_database(cards, connection)
-                    print(f"Succes: {file} imported")
+                    insert_cards(cards, connection)
+                    print(f"Succes CARDS: {file} imported")
                         
         except Exception as e:
-            print(f"Error in {file}: {e!r}", file=sys.stderr)
-            traceback.print_exc()
+            print(f"Error in {file}: {e}")
 
-            diag = getattr(e, "diag", None)
-            if diag:
-                print("Postgres diagnostics:", file=sys.stderr)
-                for attr in ("severity", "sqlstate", "message_primary", "message_detail",
-                            "message_hint", "statement_position", "context",
-                            "schema_name", "table_name", "column_name",
-                            "constraint_name", "datatype_name"):
-                    val = getattr(diag, attr, None)
-                    if val:
-                        print(f"  {attr}: {val}", file=sys.stderr)
+def json_load_sets(connection):
+    try:
+        with open("./json/sets.json", "r") as file:
+            data = json.load(file)
+            insert_sets(data, connection)
+            return
+    except Exception as e:
+        print("JSON laden mislukt:", e)
 
-if __name__ == "__main__":         
+if __name__ == "__main__":
     connection = get_connection()
     if connection == False:
         exit()
     create_tables(connection)
-    json_load(connection)
+    json_load_sets(connection)
+    json_load_cards(connection)
     connection.commit()
     connection.close()
 

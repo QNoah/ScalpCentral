@@ -240,15 +240,18 @@ def json_load_sets(connection):
     except Exception as e:
         print("JSON laden mislukt:", e)
 
-if __name__ == "__main__":
-    connection = get_connection()
-    if connection == False:
-        exit()
+def run(connection):
     create_tables(connection)
     json_load_sets(connection)
     json_load_cards(connection)
     connection.commit()
     connection.close()
+    print(f"import_script.py ran succesfully.")
+    return
 
-
-    print("Success")
+if __name__ == "__main__":
+    connection = get_connection()
+    if connection is False:
+        print("Error: Connection is False")
+        sys.exit(1)
+    run(connection)

@@ -2,6 +2,7 @@ import json
 import psycopg2
 import os
 import sys
+import import_product
 sys.stdout.reconfigure(encoding='utf-8')
 
 
@@ -165,7 +166,7 @@ def insert_cards(cards, connection):
 
         if c_attacks:
             for attack in c_attacks:
-
+                cursor.execute("INSERT INTO attacks (name, damage, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_attacks_only DO UPDATE SET name = EXCLUDED.name RETURNING id;", (attack.get("name"), attack.get("damage"), attack.get("text")))
                 attack_id = cursor.fetchone()[0]
                 cursor.execute("""INSERT INTO cards_to_attacks (card_id, attack_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_id, attack_id))
 
@@ -233,21 +234,27 @@ def json_load_cards(connection):
 
 def json_load_sets(connection):
     try:
-        with open("./json/sets.json", "r") as file:
+        with open("./json/sets.json", "r", encoding="utf8") as file:
             data = json.load(file)
             insert_sets(data, connection)
             return
     except Exception as e:
         print("JSON laden mislukt:", e)
 
-if __name__ == "__main__":
-    connection = get_connection()
-    if connection == False:
-        exit()
+def run(connection):
     create_tables(connection)
     json_load_sets(connection)
     json_load_cards(connection)
     connection.commit()
+    print(f"import_script.py ran succesfully.")
+    return
+
+if __name__ == "__main__":
+    connection = get_connection()
+    if connection == False:
+        exit()
+    run(connection)
+    import_product.run(connection)
     connection.close()
 
 

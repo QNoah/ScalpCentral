@@ -44,8 +44,8 @@ soft_delete BOOLEAN NOT NULL DEFAULT FALSE
 
 CREATE TABLE IF NOT EXISTS product_images(
 product_id BIGINT NOT NULL REFERENCES products(id),
-image TEXT NOT NULL,
-PRIMARY KEY (product_id, image)
+image_url TEXT,
+PRIMARY KEY (product_id, image_url)
 );
 """
     cursor.execute(table_sql)
@@ -70,7 +70,8 @@ def csv_load_products(connection):
                 filedata = csv.DictReader(f)
                 if filedata:
                     insert_products(filedata, connection, match_id_and_name[0], match_id_and_name[1])
-                    print(f"Succes PRODUCT: {file} imported")
+                    print(f"Succes PRODUCT: {file.split("__")[0]} imported MATCHED NAME: {match_id_and_name[1]}")
+                    
         except Exception as e:
             print(f"Error in {file}: {e}")
 
@@ -103,8 +104,11 @@ def insert_products(dataset, connection, set_id_arg : str, set_name_arg : str):
             type = filter_result
             description = row["extCardText"]
             price = max(prices)
-            cursor.execute("INSERT INTO products (set_id, name, type, description, price, stock) VALUES (%s, %s, %s, %s, %s, 20)",(set_id, name, type, description, price))
-    
+            cursor.execute("INSERT INTO products (set_id, name, type, description, price, stock) VALUES (%s, %s, %s, %s, %s, 20) RETURNING id",(set_id, name, type, description, price))
+
+            image_url = row["imageUrl"]
+            product_id = cursor.fetchone()[0]
+            cursor.execute("INSERT INTO product_images (product_id, image_url) VALUES (%s, %s)", (product_id, image_url))
 
 
 def product_filter(name: str):
@@ -168,7 +172,10 @@ def product_filter(name: str):
 
 def _normalize_set_name(name: str) -> str:
     name = name.replace("Ã©", "é")
-    name = name.replace("â€”", "—")
+    name = name.replace("é", "e")
+    name = name.replace("â€”", "")
+    name = name.replace("ld & S", "ldS")
+    name = name.replace("HS—", "")
     name = name.replace("&", "and")
     name = "".join(name.split())
     return name.lower()
@@ -185,9 +192,22 @@ def match_set(filename: str, connection) -> tuple[str, str] | None:
     for set_id, set_name in cursor.fetchall():
         norm = _normalize_set_name(set_name)
 
+        if "XYBase" in filename and norm == "xy":
+            best = (set_id, set_name)
+            best_len = 12
+            break
+
+        if "SMBase" in filename and norm == "sunandmoon":
+            best = (set_id, set_name)
+            best_len = 12
+            break
+    
         if norm in normalized_filename and len(norm) > best_len:
             best = (set_id, set_name)
             best_len = len(norm)
+
+    if best_len == -1:
+        print(f"Uh oh, we couldn't match: {filename.split("__")[0]}")
 
     return best
   
@@ -246,7 +266,6 @@ def run(con):
     create_table(con)
     csv_load_products(con)
     con.commit()
-    con.close()
         
 if __name__ == "__main__":
     con = get_connection()
@@ -254,4 +273,5 @@ if __name__ == "__main__":
         print("Connection failed.")
         sys.exit(1)
     run(con)
+    con.close()
     # check_set_names(con)

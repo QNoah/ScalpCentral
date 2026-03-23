@@ -1,9 +1,35 @@
+using System.Security.Claims;
+using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "ScalpCentral.Api";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "ScalpCentral.Frontend";
+var jwtSigningKey = builder.Configuration["Jwt:SigningKey"];
+
+if (string.IsNullOrWhiteSpace(jwtSigningKey))
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        jwtSigningKey = "K0pe2Q912SPbrCpdqlV9JXTfrvauEijv";
+    }
+    else
+    {
+        throw new InvalidOperationException("Jwt:SigningKey must be configured outside development.");
+    }
+}
+
+if (jwtSigningKey.Length < 32)
+{
+    throw new InvalidOperationException("Jwt:SigningKey must be at least 32 characters.");
+}
+
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -24,27 +50,49 @@ builder.Services.AddHttpLogging(o =>
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Frontend", policy =>
+    options.AddPolicy("AllowReactApp", policy =>
         policy.WithOrigins(
-                "https://scalpcenter.com",
                 "http://localhost:3000")
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
 // Authentication/Authorization
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.Authority = builder.Configuration["Jwt:Authority"];
-        options.Audience = builder.Configuration["Jwt:Audience"];
-    });
-
-builder.Services.AddAuthorization(options =>
+builder.Services.AddAuthentication(options =>
 {
-    options.AddPolicy("CanTrade", p => p.RequireAuthenticatedUser());
-    options.AddPolicy("CanBuyPacks", p => p.RequireAuthenticatedUser());
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // Look for token in cookie first
+            if (context.Request.Cookies.ContainsKey("jwt"))
+            {
+                context.Token = context.Request.Cookies["jwt"];
+            }
+            return Task.CompletedTask;
+        }
+    };
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = signingKey,
+        RoleClaimType = ClaimTypes.Role
+    };
 });
+
+builder.Services.AddAuthorization();
 
 // Rate limit
 builder.Services.AddRateLimiter(options =>
@@ -87,11 +135,12 @@ app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseHttpLogging();
-app.UseCors("Frontend");
-app.UseRateLimiter();
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapHealthChecks("/health");
 app.MapControllers();

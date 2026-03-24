@@ -29,7 +29,7 @@ def create_tables(connection):
     schema_sql = """
 CREATE TABLE IF NOT EXISTS product_reviews (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            user_id BIGINT) REFERENCES users(id) NOT NULL,
+            user_id BIGINT REFERENCES users(id) NOT NULL,
             product_id BIGINT REFERENCES products(id) NOT NULL,
             stars NUMERIC(2, 1) NOT NULL CHECK (stars >= 0 AND stars <= 5),
             title TEXT,

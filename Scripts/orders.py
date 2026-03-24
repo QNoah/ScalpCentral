@@ -29,7 +29,7 @@ def create_tables(connection):
 CREATE TABLE IF NOT EXISTS orders (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     order_number VARCHAR(255) NOT NULL,
-    user_id VARCHAR(255) REFERENCES users(id) NOT NULL,
+    user_id BIGINT REFERENCES users(id) NOT NULL,
     phone_number TEXT,
     email TEXT NOT NULL,
     price NUMERIC(10, 2) NOT NULL,

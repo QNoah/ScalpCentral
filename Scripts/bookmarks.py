@@ -5,7 +5,7 @@ import psycopg2
 def create_bookmarks_table(cur: psycopg2.extensions.cursor):
 
     schema_sql = """CREATE TABLE IF NOT EXISTS bookmarks (
-            id VARCHAR(255) PRIMARY KEY,
+            id BIGINT PRIMARY KEY,
             user_id BIGINT NOT NULL REFERENCES users(id),
             product_id BIGINT NOT NULL REFERENCES products(id)
         ); """

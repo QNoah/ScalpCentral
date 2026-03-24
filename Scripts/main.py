@@ -19,7 +19,6 @@ def create_database(cur: psycopg2.extensions.cursor):
 
 
 if __name__ == "__main__":
-    sys.cl
     con = connection.get_connection("postgres")
     cur = con.cursor()
     create_database(cur)

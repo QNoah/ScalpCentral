@@ -1,11 +1,10 @@
 import json
 import psycopg2
 import os
-import traceback
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
-
+sys.stdout.reconfigure(encoding="utf-8")
 
 def get_connection():
     try:
@@ -16,7 +15,7 @@ def get_connection():
             host="127.0.0.1",
             port=5432,
         )
-        connection.set_client_encoding('UTF8')
+        connection.set_client_encoding("UTF8")
         with connection.cursor() as cur:
             cur.execute("""SHOW client_encoding;""")
             print(cur.fetchone())
@@ -31,6 +30,16 @@ def get_connection():
 def create_tables(connection):
     cursor = connection.cursor()
     schema_sql = """
+CREATE TABLE IF NOT EXISTS sets (
+            id VARCHAR(255) PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            series VARCHAR(255) NOT NULL,
+            total_cards INT NOT NULL,
+            release_date DATE NOT NULL,
+            image_logo VARCHAR(255) NOT NULL,
+            soft_delete BOOLEAN NOT NULL DEFAULT FALSE
+        );
+
 CREATE TABLE IF NOT EXISTS attacks(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -73,7 +82,7 @@ CREATE TABLE IF NOT EXISTS cards (
     set_id VARCHAR(255) NOT NULL REFERENCES sets(id),
     name VARCHAR(255) NOT NULL,
     supertype VARCHAR(255) NOT NULL,
-    hp INT,
+    hp VARCHAR(255),
     evolves_from_name VARCHAR(255),
     artist VARCHAR(255),
     rarity VARCHAR(255),
@@ -118,18 +127,16 @@ CREATE TABLE IF NOT EXISTS cards_to_subtypes(
     PRIMARY KEY (card_id, subtype_id)
 );
 """
-    cursor.execute(
-        schema_sql
-    )
+    cursor.execute(schema_sql)
     connection.commit()
     cursor.close()
 
-def load_cards_database(cards, connection):
+def insert_cards(cards, connection):
     cursor = connection.cursor()
 
     for c in cards:
         c_id = c["id"]
-        c_set_id = (c["id"].split("-")[0])
+        c_set_id = c["id"].split("-")[0]
         c_name = c.get("name")
         c_supertype = c["supertype"]
         c_subtypes = c.get("subtypes")
@@ -145,50 +152,116 @@ def load_cards_database(cards, connection):
         c_imagesmall = c["images"]["small"]
         c_imagelarge = c["images"]["large"]
 
-        cursor.execute("""INSERT INTO card_images (small, large) VALUES (%s, %s) RETURNING id""", (c_imagesmall, c_imagelarge))
+        cursor.execute(
+            """INSERT INTO card_images (small, large) VALUES (%s, %s) RETURNING id""",
+            (c_imagesmall, c_imagelarge),
+        )
         images_id = cursor.fetchone()[0]
-        # print(f"pre insert check after this line ill insert a card: {c_id, c_name, c_evolves_from_name}")
 
         cursor.execute(
-                        """
+            """
                         INSERT INTO cards (id, set_id, name, supertype, hp, evolves_from_name, artist, rarity, flavor_text, images_id, soft_delete)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT)
-                        """, (c_id, c_set_id, c_name, c_supertype, c_hp, c_evolves_from_name, c_artist, c_rarity, c_flavor_text, images_id)
+                        """,
+            (
+                c_id,
+                c_set_id,
+                c_name,
+                c_supertype,
+                c_hp,
+                c_evolves_from_name,
+                c_artist,
+                c_rarity,
+                c_flavor_text,
+                images_id,
+            ),
         )
 
         if c_attacks:
             for attack in c_attacks:
-                cursor.execute("""INSERT INTO attacks (name, damage, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_attacks_only DO UPDATE SET name = EXCLUDED.name RETURNING id;""", (attack["name"], attack.get("damage"), attack.get("text")))
+                cursor.execute(
+                    """INSERT INTO attacks (name, damage, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_attacks_only DO UPDATE SET name = EXCLUDED.name RETURNING id;""",
+                    (attack["name"], attack.get("damage"), attack.get("text")),
+                )
                 attack_id = cursor.fetchone()[0]
-                cursor.execute("""INSERT INTO cards_to_attacks (card_id, attack_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_id, attack_id))
+                cursor.execute(
+                    """INSERT INTO cards_to_attacks (card_id, attack_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
+                    (c_id, attack_id),
+                )
 
         if c_abilities:
             for ability in c_abilities:
-                cursor.execute("""INSERT INTO abilities (name, type, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_abilities_only DO UPDATE SET name = EXCLUDED.name RETURNING id;""", (ability["name"], ability.get("type"), ability.get("text")))
+                cursor.execute(
+                    """INSERT INTO abilities (name, type, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_abilities_only DO UPDATE SET name = EXCLUDED.name RETURNING id;""",
+                    (ability["name"], ability.get("type"), ability.get("text")),
+                )
                 ability_id = cursor.fetchone()[0]
-                cursor.execute("""INSERT INTO cards_to_abilities (card_id, ability_id) VALUEs (%s, %s) ON CONFLICT DO NOTHING""", (c_id, ability_id))
+                cursor.execute(
+                    """INSERT INTO cards_to_abilities (card_id, ability_id) VALUEs (%s, %s) ON CONFLICT DO NOTHING""",
+                    (c_id, ability_id),
+                )
 
         if c_rules:
             for rule in c_rules:
-                cursor.execute("""INSERT INTO rules (description) VALUES (%s) ON CONFLICT (description) DO UPDATE SET description = EXCLUDED.description RETURNING id;""", (rule,))
+                cursor.execute(
+                    """INSERT INTO rules (description) VALUES (%s) ON CONFLICT (description) DO UPDATE SET description = EXCLUDED.description RETURNING id;""",
+                    (rule,),
+                )
                 rule_id = cursor.fetchone()[0]
-                cursor.execute("""INSERT INTO cards_to_rules (card_id, rule_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_id, rule_id))
+                cursor.execute(
+                    """INSERT INTO cards_to_rules (card_id, rule_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
+                    (c_id, rule_id),
+                )
 
         if c_subtypes:
             for subtype in c_subtypes:
-                cursor.execute("""INSERT INTO subtypes (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id;""", (subtype,))
+                cursor.execute(
+                    """INSERT INTO subtypes (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id;""",
+                    (subtype,),
+                )
                 subtype_id = cursor.fetchone()[0]
-                cursor.execute("""INSERT INTO cards_to_subtypes (card_id, subtype_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_id, subtype_id))
+                cursor.execute(
+                    """INSERT INTO cards_to_subtypes (card_id, subtype_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
+                    (c_id, subtype_id),
+                )
         if c_types:
             for type in c_types:
-                cursor.execute("""INSERT INTO types (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id""", (type,))
+                cursor.execute(
+                    """INSERT INTO types (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id""",
+                    (type,),
+                )
                 type_id = cursor.fetchone()[0]
-                cursor.execute("""INSERT INTO cards_to_types (card_id, type_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_id, type_id))
+                cursor.execute(
+                    """INSERT INTO cards_to_types (card_id, type_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
+                    (c_id, type_id),
+                )
 
-def json_load(connection):
+
+def insert_sets(data, connection):
+    cursor = connection.cursor()
+
+    for set in data:
+        id = set["id"]
+        name = set["name"]
+        series = set["series"]
+        total = set["total"]
+        release = set["releaseDate"]
+        image = set["images"]["logo"]
+
+        cursor.execute(
+            """
+            INSERT INTO sets (id, name, series, total_cards, release_date, image_logo, soft_delete)
+            VALUES (%s, %s, %s, %s, %s, %s, DEFAULT)
+            """,
+            (id, name, series, total, release, image)
+        )
+
+        print(f"Succes SET: {name} imported.")
+
+def json_load_cards(connection):
     cards_folder = "./json/cards"
     for file in os.listdir(cards_folder):
-        if not file.endswith(".json"): ## DIT MOET OOIT VERANDERD WORDEN > ".json"
+        if not file.endswith(".json"):
             continue
 
         path = os.path.join(cards_folder, file)
@@ -197,32 +270,32 @@ def json_load(connection):
             with open(path, encoding="utf8") as f:
                 cards = json.load(f)
                 if cards:
-                    load_cards_database(cards, connection)
-                    print(f"Succes: {file} imported")
+                    insert_cards(cards, connection)
+                    print(f"Succes CARDS: {file} imported")
                         
         except Exception as e:
-            print(f"Error in {file}: {e!r}", file=sys.stderr)
-            traceback.print_exc()
+            print(f"Error in {file}: {e}")
 
-            diag = getattr(e, "diag", None)
-            if diag:
-                print("Postgres diagnostics:", file=sys.stderr)
-                for attr in ("severity", "sqlstate", "message_primary", "message_detail",
-                            "message_hint", "statement_position", "context",
-                            "schema_name", "table_name", "column_name",
-                            "constraint_name", "datatype_name"):
-                    val = getattr(diag, attr, None)
-                    if val:
-                        print(f"  {attr}: {val}", file=sys.stderr)
+def json_load_sets(connection):
+    try:
+        with open("./json/sets.json", "r", encoding="utf8") as file:
+            data = json.load(file)
+            insert_sets(data, connection)
+            return
+    except Exception as e:
+        print("JSON laden mislukt:", e)
 
-if __name__ == "__main__":         
-    connection = get_connection()
-    if connection == False:
-        exit()
+def run(connection):
     create_tables(connection)
-    json_load(connection)
+    json_load_sets(connection)
+    json_load_cards(connection)
     connection.commit()
-    connection.close()
+    print(f"import_script.py ran succesfully.")
+    return
 
-
-    print("Success")
+if __name__ == "__main__":
+    connection = get_connection()
+    if connection is False:
+        print("Error: Connection is False")
+        sys.exit(1)
+    run(connection)

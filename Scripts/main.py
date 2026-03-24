@@ -3,6 +3,9 @@ import psycopg2
 import connection
 import users
 import bookmarks
+import products
+import orders
+import orderContents
 
 
 def create_database(cur: psycopg2.extensions.cursor):
@@ -16,6 +19,7 @@ def create_database(cur: psycopg2.extensions.cursor):
 
 
 if __name__ == "__main__":
+    sys.cl
     con = connection.get_connection("postgres")
     cur = con.cursor()
     create_database(cur)
@@ -23,9 +27,11 @@ if __name__ == "__main__":
 
     con = connection.get_connection()
     cur = con.cursor()
-    import_script.run(con)
-    users.create_user_table(cur)
-    # products here
 
+    import_script.run(con)  # kaarten en sets
+    users.create_user_table(cur)
+    products.run(con)
+    orders.run(con)
+    orderContents.run(con)
     bookmarks.create_bookmarks_table(cur)
     con.close()

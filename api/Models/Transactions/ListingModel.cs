@@ -1,3 +1,5 @@
+using ScalpCentral.Api.Models;
+
 public class ListingModel
 {
     public required int Id {get; set;}

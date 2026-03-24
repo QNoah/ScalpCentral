@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
+using ScalpCentral.Api.DataAccess;
+using ScalpCentral.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.RateLimiting;
@@ -34,6 +36,10 @@ var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey))
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// App services
+builder.Services.AddScoped<IUserAccess, UserAccess>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Errors
 builder.Services.AddProblemDetails();

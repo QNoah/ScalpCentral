@@ -7,7 +7,7 @@ using Dapper;
 
 public interface ICardAccess
 {
-    
+    public List<CardModel> GetPagedCards(CardQueryOptions options, int limit, int offset);
 }
 
 public class CardAccess : AAccess
@@ -29,7 +29,7 @@ public class CardAccess : AAccess
         var abilities = GetAbilities(cardIds);
         var images = GetImages(cardIds);
 
-        // assemble
+
         foreach (var card in cards)
         {
             card.Subtypes = subtypes.GetValueOrDefault(card.Id, new());

@@ -70,7 +70,7 @@ def csv_load_products(connection):
                 filedata = csv.DictReader(f)
                 if filedata:
                     insert_products(filedata, connection, match_id_and_name[0], match_id_and_name[1])
-                    print(f"Succes PRODUCT: {file.split("__")[0]} imported MATCHED NAME: {match_id_and_name[1]}")
+                    print(f"Succes PRODUCT: {file.split('__')[0]} imported MATCHED NAME: {match_id_and_name[1]}")
                     
         except Exception as e:
             print(f"Error in {file}: {e}")
@@ -207,7 +207,7 @@ def match_set(filename: str, connection) -> tuple[str, str] | None:
             best_len = len(norm)
 
     if best_len == -1:
-        print(f"Uh oh, we couldn't match: {filename.split("__")[0]}")
+        print(f"Uh oh, we couldn't match: {filename.split('__')[0]}")
 
     return best
   

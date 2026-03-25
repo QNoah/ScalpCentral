@@ -16,21 +16,21 @@ public class CardAccess : AAccess
 
     public List<CardModel> GetPagedCards(CardQueryOptions options, int limit, int offset)
     {
-        var cardIds = GetPagedCardIds(options, limit, offset);
+        List<string> cardIds = GetPagedCardIds(options, limit, offset);
 
         if (!cardIds.Any())
             return new List<CardModel>();
 
-        var cards = GetBaseCards(cardIds);
-        var subtypes = GetSubtypes(cardIds);
-        var types = GetTypes(cardIds);
-        var rules = GetRules(cardIds);
-        var attacks = GetAttacks(cardIds);
-        var abilities = GetAbilities(cardIds);
-        var images = GetImages(cardIds);
+        List<CardModel> cards = GetBaseCards(cardIds);
+        Dictionary<string, List<string>> subtypes = GetSubtypes(cardIds);
+        Dictionary<string, List<string>> types = GetTypes(cardIds);
+        Dictionary<string, List<string>> rules = GetRules(cardIds);
+        Dictionary<string, List<AttackModel>> attacks = GetAttacks(cardIds);
+        Dictionary<string, List<AbilityModel>> abilities = GetAbilities(cardIds);
+        Dictionary<string, ImageModel> images = GetImages(cardIds);
 
 
-        foreach (var card in cards)
+        foreach (CardModel card in cards)
         {
             card.Subtypes = subtypes.GetValueOrDefault(card.Id, new());
             card.Types = types.GetValueOrDefault(card.Id, new());
@@ -45,10 +45,10 @@ public class CardAccess : AAccess
 
     private List<string> GetPagedCardIds(CardQueryOptions options, int limit, int offset)
     {
-        var sql = "SELECT DISTINCT c.id FROM cards c";
+        string sql = "SELECT DISTINCT c.id FROM cards c";
 
-        var where = new List<string>();
-        var parameters = new DynamicParameters();
+        List<string> where = new();
+        DynamicParameters parameters = new();
 
         if (!string.IsNullOrWhiteSpace(options.Search))
         {
@@ -106,7 +106,7 @@ public class CardAccess : AAccess
 
     private Dictionary<string, List<string>> GetTypes(List<string> ids)
     {
-        var rows = _con.Query<(string cardId, string typeName)>(@"
+        IEnumerable<(string cardId, string typeName)> rows = _con.Query<(string cardId, string typeName)>(@"
             SELECT ctt.card_id, t.name
             FROM cards_to_types ctt
             JOIN types t ON t.id = ctt.type_id
@@ -123,7 +123,7 @@ public class CardAccess : AAccess
 
     private Dictionary<string, List<string>> GetSubtypes(List<string> ids)
     {
-        var rows = _con.Query<(string cardId, string name)>(@"
+        IEnumerable<(string cardId, string name)> rows = _con.Query<(string cardId, string name)>(@"
         SELECT cts.card_id, st.name
         FROM cards_to_subtypes cts
         JOIN subtypes st ON st.id = cts.subtype_id
@@ -140,11 +140,11 @@ public class CardAccess : AAccess
 
     private Dictionary<string, List<AttackModel>> GetAttacks(List<string> ids)
     {
-        var rows = _con.Query<(string cardId, string name, string damage, string description)>(@"
+        IEnumerable<(string cardId, string name, string damage, string description)> rows = _con.Query<(string cardId, string name, string damage, string description)>(@"
         SELECT cta.card_id, a.name, a.damage, a.description
         FROM cards_to_attacks cta
-        JOIN attacks a ON a.id = ctt.attack_id
-        WHERE ctt.card_id = ANY(@Ids)
+        JOIN attacks a ON a.id = cta.attack_id
+        WHERE cta.card_id = ANY(@Ids)
         ", new { Ids = ids });
 
         return rows
@@ -164,11 +164,11 @@ public class CardAccess : AAccess
 
     private Dictionary<string, List<AbilityModel>> GetAbilities(List<string> ids)
     {
-        var rows = _con.Query<(string cardId, string name, string type, string description)>(@"
+        IEnumerable<(string cardId, string name, string type, string description)> rows = _con.Query<(string cardId, string name, string type, string description)>(@"
         SELECT cta.card_id, a.name, a.type, a.description
         FROM cards_to_abilities cta
-        JOIN abilities a ON a.id = ctt.ability_id
-        WHERE ctt.card_id = ANY(@Ids)
+        JOIN abilities a ON a.id = cta.ability_id
+        WHERE cta.card_id = ANY(@Ids)
         ", new { Ids = ids });
         
         return rows
@@ -189,7 +189,7 @@ public class CardAccess : AAccess
 
     private Dictionary<string, List<string>> GetRules(List<string> ids)
     {
-        var rows = _con.Query<(string cardId, string description)>(@"
+        IEnumerable<(string cardId, string description)> rows = _con.Query<(string cardId, string description)>(@"
             SELECT ctr.card_id, r.description
             FROM cards_to_rules ctr
             JOIN rules r ON r.id = ctr.rule_id
@@ -206,7 +206,7 @@ public class CardAccess : AAccess
 
     private Dictionary<string, ImageModel> GetImages(List<string> ids)
     {
-        var rows = _con.Query<(string cardId, string small, string large)>(@"
+        IEnumerable<(string cardId, string small, string large)> rows = _con.Query<(string cardId, string small, string large)>(@"
             SELECT c.id, i.small, i.large
             FROM cards c
             JOIN card_images i ON i.id = c.images_id

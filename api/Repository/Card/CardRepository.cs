@@ -5,12 +5,9 @@ using System.Data.SqlTypes;
 using System.Text;
 using Dapper;
 
-public interface ICardAccess
-{
-    public List<CardModel> GetPagedCards(CardQueryOptions options, int limit, int offset);
-}
+namespace ScalpCentral.Api.Repository;
 
-public class CardAccess : AAccess
+public class CardRepository : RepositoryAccessBase, ICardRepository
 {
     public override string Table() => "cards";
 
@@ -43,7 +40,7 @@ public class CardAccess : AAccess
         return cards;
     }
 
-    private List<string> GetPagedCardIds(CardQueryOptions options, int limit, int offset)
+    public List<string> GetPagedCardIds(CardQueryOptions options, int limit, int offset)
     {
         string sql = "SELECT DISTINCT c.id FROM cards c";
 
@@ -97,14 +94,14 @@ public class CardAccess : AAccess
         return _con.Query<string>(sql, parameters).ToList();
     }
 
-    private List<CardModel> GetBaseCards(List<string> ids)
+    public List<CardModel> GetBaseCards(List<string> ids)
     {
         string sql = @"SELECT id, name, supertype, hp, evolves_from as EvolvesFrom, artist, rarity, flavor_text as FlavorText, soft_delete as SoftDeleted
             FROM cards WHERE id = ANY(@Ids)";
         return _con.Query<CardModel>(sql, new { Ids = ids }).ToList();
     }
 
-    private Dictionary<string, List<string>> GetTypes(List<string> ids)
+    public Dictionary<string, List<string>> GetTypes(List<string> ids)
     {
         IEnumerable<(string cardId, string typeName)> rows = _con.Query<(string cardId, string typeName)>(@"
             SELECT ctt.card_id, t.name
@@ -121,7 +118,7 @@ public class CardAccess : AAccess
             );
     }
 
-    private Dictionary<string, List<string>> GetSubtypes(List<string> ids)
+    public Dictionary<string, List<string>> GetSubtypes(List<string> ids)
     {
         IEnumerable<(string cardId, string name)> rows = _con.Query<(string cardId, string name)>(@"
         SELECT cts.card_id, st.name
@@ -138,7 +135,7 @@ public class CardAccess : AAccess
             );
     }
 
-    private Dictionary<string, List<AttackModel>> GetAttacks(List<string> ids)
+    public Dictionary<string, List<AttackModel>> GetAttacks(List<string> ids)
     {
         IEnumerable<(string cardId, string name, string damage, string description)> rows = _con.Query<(string cardId, string name, string damage, string description)>(@"
         SELECT cta.card_id, a.name, a.damage, a.description
@@ -162,7 +159,7 @@ public class CardAccess : AAccess
             );
     }
 
-    private Dictionary<string, List<AbilityModel>> GetAbilities(List<string> ids)
+    public Dictionary<string, List<AbilityModel>> GetAbilities(List<string> ids)
     {
         IEnumerable<(string cardId, string name, string type, string description)> rows = _con.Query<(string cardId, string name, string type, string description)>(@"
         SELECT cta.card_id, a.name, a.type, a.description
@@ -187,7 +184,7 @@ public class CardAccess : AAccess
     }
 
 
-    private Dictionary<string, List<string>> GetRules(List<string> ids)
+    public Dictionary<string, List<string>> GetRules(List<string> ids)
     {
         IEnumerable<(string cardId, string description)> rows = _con.Query<(string cardId, string description)>(@"
             SELECT ctr.card_id, r.description
@@ -204,7 +201,7 @@ public class CardAccess : AAccess
     }
 
 
-    private Dictionary<string, ImageModel> GetImages(List<string> ids)
+    public Dictionary<string, ImageModel> GetImages(List<string> ids)
     {
         IEnumerable<(string cardId, string small, string large)> rows = _con.Query<(string cardId, string small, string large)>(@"
             SELECT c.id, i.small, i.large

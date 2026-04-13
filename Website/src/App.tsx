@@ -32,7 +32,6 @@ function App() {
         <Routes>
           <Route path="/" element={isAuthenticated ? <Navigate to="/Main" /> : <LoginPage setIsAuthenticated={setIsAuthenticated} />}/>
           <Route path="/Main" element={isAuthenticated ? <MainPage setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />}/>
-          <Route path="/Login" element={isAuthenticated ? <LoginPage setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />}/>
           <Route path="/Register" element={<RegisterPage />}/>
           <Route path="*" element={<p>Page not found</p>} />
         </Routes>

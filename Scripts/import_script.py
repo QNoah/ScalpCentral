@@ -2,6 +2,7 @@ import json
 import psycopg2
 import os
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -298,7 +299,7 @@ def json_load_cards(connection):
 
 def json_load_sets(connection):
     try:
-        with open("./json/sets.json", "r") as file:
+        with open("./json/sets.json", "r", encoding="utf8") as file:
             data = json.load(file)
             insert_sets(data, connection)
             return
@@ -310,7 +311,6 @@ def run(connection):
     json_load_sets(connection)
     json_load_cards(connection)
     connection.commit()
-    connection.close()
     print(f"import_script.py ran succesfully.")
     return
 

@@ -1,30 +1,17 @@
 import import_script
 import psycopg2
+import connection
+import users
+import bookmarks
+import products
+import orders
+import orderContents
 
 
-def create_connection(db_name: str):
+def create_database(cur: psycopg2.extensions.cursor):
     try:
-        con = psycopg2.connect(
-            dbname=db_name,
-            user="postgres",
-            password="",
-            host="127.0.0.1",
-            port=5432,
-        )
-        return con
-    except Exception as e:
-        print(e)
-        exit()
-
-
-def create_database(con: psycopg2.extensions.connection):
-    try:
-        con.autocommit = True
-        query = """CREATE DATABASE scalpcentral ENCODING='UTF-8' TEMPLATE='template0'"""
-        cursor = con.cursor()
-        cursor.connection
-        cursor.execute(query)
-        cursor.close()
+        query = """CREATE DATABASE scalpcentral ENCODING='UTF8' TEMPLATE='template0'"""
+        cur.execute(query)
         print("Successvol de database aangemaakt")
     except Exception as e:
         print(e)
@@ -32,7 +19,18 @@ def create_database(con: psycopg2.extensions.connection):
 
 
 if __name__ == "__main__":
-    con = create_connection("postgres")
-    create_database(con)
-    con = create_connection("scalpcentral")
-    import_script.run(con)
+    con = connection.get_connection("postgres")
+    cur = con.cursor()
+    create_database(cur)
+    con.close()
+
+    con = connection.get_connection()
+    cur = con.cursor()
+
+    import_script.run(con)  # kaarten en sets
+    users.create_user_table(cur)
+    products.run(con)
+    orders.run(con)
+    orderContents.run(con)
+    bookmarks.create_bookmarks_table(cur)
+    con.close()

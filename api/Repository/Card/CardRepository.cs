@@ -1,12 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Dapper;
 
-public interface ICardAccess
-{
-    
-}
+namespace ScalpCentral.Api.Repository;
 
-public class CardAccess : AAccess
+public class CardRepository : RepositoryAccessBase, ICardRepository
 {
     public override string Table() => "cards";
 

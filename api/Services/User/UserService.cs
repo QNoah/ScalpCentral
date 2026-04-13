@@ -1,19 +1,19 @@
 using ScalpCentral.Api.Models;
-using ScalpCentral.Api.DataAccess;
+using ScalpCentral.Api.Repository;
 
 namespace ScalpCentral.Api.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserAccess _userAccess;
+    private readonly IUserRepository _userRepository;
 
-    public UserService(IUserAccess userAccess)
+    public UserService(IUserRepository userRepository)
     {
-        _userAccess = userAccess;
+        _userRepository = userRepository;
     }
 
     public async Task<List<UserModel>> GetAllUsersAsync()
     {
-        return await _userAccess.GetAllAsync();
+        return await _userRepository.GetAllAsync();
     }
 }

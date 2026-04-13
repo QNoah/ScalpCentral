@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
-using ScalpCentral.Api.DataAccess;
+using ScalpCentral.Api.Repository;
 using ScalpCentral.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
@@ -38,8 +38,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // App services
-builder.Services.AddScoped<IUserAccess, UserAccess>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+// App repositories
+builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Errors
 builder.Services.AddProblemDetails();

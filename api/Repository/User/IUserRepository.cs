@@ -1,8 +1,8 @@
 using ScalpCentral.Api.Models;
 
-namespace ScalpCentral.Api.DataAccess;
+namespace ScalpCentral.Api.Repository;
 
-public interface IUserAccess
+public interface IUserRepository
 {
     Task<List<UserModel>> GetAllAsync();
 }

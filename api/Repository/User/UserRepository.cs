@@ -1,9 +1,9 @@
 using Dapper;
 using ScalpCentral.Api.Models;
 
-namespace ScalpCentral.Api.DataAccess;
+namespace ScalpCentral.Api.Repository;
 
-public class UserAccess : AAccess, IUserAccess
+public class UserRepository : RepositoryAccessBase, IUserRepository
 {
 	public override string Table() => "users";
 

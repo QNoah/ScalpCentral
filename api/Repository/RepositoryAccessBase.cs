@@ -2,13 +2,15 @@ using System;
 using Npgsql;
 using Dapper;
 
-public abstract class AAccess
+
+
+public abstract class RepositoryAccessBase
 {
     protected NpgsqlConnection _con;
 
     public abstract string Table();
 
-    public AAccess()
+    public RepositoryAccessBase()
     {
         string connectionString =
             Environment.GetEnvironmentVariable("DB_CONNECTION") ??

@@ -1,24 +1,23 @@
 import './App.css';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage from './Components/Pages/LoginPage';
-import RegisterPage from "./Components/Pages/RegisterPage";
-import MainPage from "./Components/Pages/MainPage"
+import './Components/Styling/RetroStyles.css';
+import { Routes, Route } from 'react-router-dom';
+import { LoginPage } from './Components/Pages/LoginPage';
+import { RegisterPage } from "./Components/Pages/RegisterPage";
+import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const token = getCookie("authToken");
     if (token) {
       localStorage.setItem("authToken", token);
-      setIsAuthenticated(true);
     } else {
       const storedToken = localStorage.getItem("authToken");
       if (storedToken) {
-        setIsAuthenticated(true);
+        // Token exists
       }
     }
     setIsLoading(false);
@@ -30,8 +29,8 @@ function App() {
     <>
       <main className="pages">
         <Routes>
-          <Route path="/" element={isAuthenticated ? <Navigate to="/Main" /> : <LoginPage setIsAuthenticated={setIsAuthenticated} />}/>
-          <Route path="/Main" element={isAuthenticated ? <MainPage setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />}/>
+          <Route path="/" element={<HomePage />}/>
+          <Route path="/Login" element={<LoginPage />}/>
           <Route path="/Register" element={<RegisterPage />}/>
           <Route path="*" element={<p>Page not found</p>} />
         </Routes>

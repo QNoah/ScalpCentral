@@ -1,0 +1,596 @@
+/* Retro Terminal Theme Styles */
+
+:root {
+  --retro-bg: #0a0a0a;
+  --retro-text: #00ff00;
+  --retro-accent: #00ffff;
+  --retro-secondary: #ffff00;
+  --retro-error: #ff0000;
+  --retro-border: #333;
+  --retro-box-bg: #111;
+  --retro-input-bg: #000;
+  --retro-button-bg: #222;
+  --retro-button-hover: #333;
+  --retro-link: #00ffff;
+  --retro-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.retro-container {
+  min-height: 100vh;
+  background: var(--retro-bg);
+  color: var(--retro-text);
+  font-family: 'Courier New', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-container-home {
+  min-height: 100vh;
+  background: var(--retro-bg);
+  color: var(--retro-text);
+  font-family: 'Courier New', monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.retro-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.retro-box {
+  background: var(--retro-box-bg);
+  border: 2px solid var(--retro-border);
+  border-radius: 8px;
+  box-shadow: var(--retro-shadow);
+  overflow: hidden;
+}
+
+.retro-box-header {
+  background: var(--retro-border);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--retro-text);
+}
+
+.retro-box-title {
+  color: var(--retro-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.retro-label {
+  display: block;
+  color: var(--retro-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.retro-input {
+  width: 100%;
+  background: var(--retro-input-bg);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text);
+  padding: 8px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.retro-input:focus {
+  border-color: var(--retro-accent);
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.retro-input::placeholder {
+  color: rgba(0, 255, 0, 0.5);
+}
+
+.retro-error {
+  color: var(--retro-error);
+  font-size: 12px;
+  margin-top: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.retro-button {
+  background: var(--retro-button-bg);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text);
+  padding: 10px 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+
+.retro-button:hover {
+  background: var(--retro-button-hover);
+  border-color: var(--retro-accent);
+  box-shadow: var(--retro-shadow);
+}
+
+.retro-link {
+  color: var(--retro-link);
+  text-decoration: none;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+
+.retro-link:hover {
+  color: var(--retro-secondary);
+  text-decoration: underline;
+}
+
+.retro-link-text {
+  color: var(--retro-text);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.retro-version {
+  color: var(--retro-secondary);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}
+
+/* Home Page Styles */
+.retro-header {
+  background: var(--retro-box-bg);
+  border-bottom: 2px solid var(--retro-border);
+  padding: 16px 0;
+  box-shadow: var(--retro-shadow);
+}
+
+.retro-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.retro-nav {
+  display: flex;
+  gap: 24px;
+}
+
+.retro-nav-link {
+  color: var(--retro-text);
+  text-decoration: none;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.retro-nav-link:hover,
+.retro-nav-link.active {
+  border-color: var(--retro-accent);
+  color: var(--retro-accent);
+  box-shadow: var(--retro-shadow);
+}
+
+.retro-main {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.retro-content-wrapper {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.retro-search-section {
+  flex: 1;
+}
+
+.retro-search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.retro-search-icon {
+  color: var(--retro-accent);
+}
+
+.retro-search-input {
+  flex: 1;
+  background: var(--retro-input-bg);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text);
+  padding: 12px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.retro-search-input:focus {
+  border-color: var(--retro-accent);
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.retro-search-input::placeholder {
+  color: rgba(0, 255, 0, 0.5);
+}
+
+.retro-filter-button {
+  background: var(--retro-button-bg);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text);
+  padding: 12px 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+
+.retro-filter-button:hover {
+  background: var(--retro-button-hover);
+  border-color: var(--retro-accent);
+  box-shadow: var(--retro-shadow);
+}
+
+.retro-filters-panel {
+  background: var(--retro-box-bg);
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--retro-shadow);
+}
+
+.retro-filter-group {
+  margin-bottom: 20px;
+}
+
+.retro-filter-group h3 {
+  color: var(--retro-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+/* Additional Home Page Styles */
+.retro-filter-label {
+  display: block;
+  color: var(--retro-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.retro-price-inputs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.retro-filter-input {
+  background: var(--retro-input-bg);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text);
+  padding: 6px 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s;
+  flex: 1;
+}
+
+.retro-filter-input:focus {
+  border-color: var(--retro-accent);
+  box-shadow: 0 0 3px rgba(0, 255, 255, 0.5);
+}
+
+.retro-filter-input::placeholder {
+  color: rgba(0, 255, 0, 0.5);
+}
+
+.retro-filter-separator {
+  color: var(--retro-text);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.retro-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--retro-text);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.retro-checkbox {
+  accent-color: var(--retro-accent);
+}
+
+.retro-section-title {
+  color: var(--retro-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.retro-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.retro-category-card {
+  background: var(--retro-box-bg);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text);
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.retro-category-card:hover,
+.retro-category-card.active {
+  border-color: var(--retro-accent);
+  box-shadow: var(--retro-shadow);
+  color: var(--retro-accent);
+}
+
+.retro-products-section {
+  flex: 1;
+}
+
+.retro-product-count {
+  color: var(--retro-secondary);
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.retro-no-results {
+  text-align: center;
+  color: var(--retro-text);
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  padding: 40px;
+  background: var(--retro-box-bg);
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+}
+
+.retro-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.retro-product-card {
+  background: var(--retro-box-bg);
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.retro-product-card:hover {
+  border-color: var(--retro-accent);
+  box-shadow: var(--retro-shadow);
+  transform: translateY(-2px);
+}
+
+.retro-trending-badge {
+  background: var(--retro-error);
+  color: #000;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
+.retro-product-image-wrapper {
+  position: relative;
+  height: 200px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.retro-product-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.retro-product-info {
+  padding: 16px;
+}
+
+.retro-product-category {
+  color: var(--retro-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.retro-product-name {
+  color: var(--retro-text);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.retro-product-stock {
+  color: var(--retro-secondary);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  margin-bottom: 8px;
+}
+
+.retro-product-prices {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.retro-product-original-price {
+  color: var(--retro-error);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  text-decoration: line-through;
+}
+
+.retro-product-price {
+  color: var(--retro-accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.retro-product-button {
+  background: var(--retro-button-bg);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text);
+  padding: 8px 16px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.retro-product-button:hover {
+  background: var(--retro-button-hover);
+  border-color: var(--retro-accent);
+  box-shadow: var(--retro-shadow);
+}
+
+/* Utility Classes */
+.w-full {
+  width: 100%;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.block {
+  display: block;
+}
+
+.text-center {
+  text-align: center;
+}

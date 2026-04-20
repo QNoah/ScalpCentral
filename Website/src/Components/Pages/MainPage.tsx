@@ -3,6 +3,7 @@ import { Search, Filter, TrendingUp, Zap, Flame, Droplet, Sparkles, Leaf } from 
 import { Link } from 'react-router';
 import logoImage from '../../assets/hero.png';
 import '../Styling/HomeStyles.css';
+import Navbar from '../PageParts/Navbar';
 
 interface Product {
   id: number;
@@ -159,22 +160,7 @@ export function HomePage() {
       <div className="scanlines"></div>
       <div className="retro-grid"></div>
 
-      <header className="retro-header">
-        <div className="retro-header-content">
-          <Link to="/">
-            <img src={logoImage} alt="ScalpCentral" style={{ height: '100px' }} />
-          </Link>
-          <nav className="retro-nav">
-            <Link to="/" className="retro-nav-link active">HOME</Link>
-            <Link to="/search" className="retro-nav-link">SEARCH</Link>
-            <Link to="/cart" className="retro-nav-link">CART</Link>
-            <Link to="/faq" className="retro-nav-link">FAQ</Link>
-            <Link to="/contact" className="retro-nav-link">CONTACT</Link>
-            <Link to="/login" className="retro-nav-link">LOGIN</Link>
-            <Link to="/register" className="retro-nav-link">REGISTER</Link>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="retro-main">
         <div className="retro-content-wrapper">

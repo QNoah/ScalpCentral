@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
 import logoImage from '../../assets/hero.png';
+import '../Styling/RetroStyles.css';
 
 export function ResetPasswordPage() {
   const [email, setEmail] = useState('');

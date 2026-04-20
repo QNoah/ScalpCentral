@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Search, Filter, TrendingUp, Zap, Flame, Droplet, Sparkles, Leaf } from 'lucide-react';
 import { Link } from 'react-router';
 import logoImage from '../../assets/hero.png';
+import '../Styling/HomeStyles.css';
 
 interface Product {
   id: number;

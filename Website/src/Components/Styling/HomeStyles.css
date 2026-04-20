@@ -1,3 +1,146 @@
+:root {
+  --retro-bg: #ffffff;
+  --retro-surface: #f7f7f7;
+  --retro-border: #e5e5e5;
+  --retro-text: #222222;
+  --retro-text-muted: #777777;
+  --retro-accent: #6366f1;
+  --retro-accent-light: #818cf8;
+  --retro-purple: #6366f1;
+}
+
+/* Container */
+.retro-container-home {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--retro-bg);
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.retro-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--retro-surface);
+    border-bottom: 2px solid var(--retro-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.retro-header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.retro-logo {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.25rem;
+    color: var(--retro-accent);
+    line-height: 1.5;
+}
+
+.retro-nav {
+    display: flex;
+    gap: 2rem;
+}
+
+.retro-nav-link {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.875rem;
+    color: var(--retro-text);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    border: 2px solid transparent;
+    border-radius: 4px;
+}
+
+.retro-nav-link:hover,
+.retro-nav-link.active {
+    color: var(--retro-accent);
+    border-color: var(--retro-accent);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+/* Main */
+.retro-main {
+    flex: 1;
+    position: relative;
+    z-index: 10;
+    padding: 2rem 0;
+}
+
+.retro-content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Search */
+.retro-search-section {
+    margin-bottom: 3rem;
+}
+
+.retro-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--retro-surface);
+    border: 2px solid var(--retro-border);
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+.retro-search-input {
+    flex: 1;
+    background: #ffffff;
+    border: 2px solid var(--retro-border);
+    color: var(--retro-text);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+}
+
+/* Buttons → OFF WHITE */
+.retro-filter-button,
+.retro-product-button {
+    background: #f1f1f1;
+    color: var(--retro-text);
+    border: 2px solid var(--retro-border);
+}
+
+.retro-filter-button:hover,
+.retro-product-button:hover {
+    background: #e7e7e7;
+    border-color: #dcdcdc;
+}
+
+/* Cards */
+.retro-category-card,
+.retro-product-card {
+    background: var(--retro-surface);
+    border: 2px solid var(--retro-border);
+}
+
+/* Footer */
+.retro-footer-main {
+  text-align: center;
+  padding: 2rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.625rem;
+  color: #777;
+  letter-spacing: 0.1em;
+  border-top: 1px solid var(--retro-border);
+  background: #fafafa;
+}
+
 .retro-container-home {
     min-height: 100vh;
     width: 100%;

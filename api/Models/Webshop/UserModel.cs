@@ -1,8 +1,10 @@
+namespace ScalpCentral.Api.Models;
+
 public class UserModel
 {
     public int Id {get; set;}
-    public required string FName {get; set;}
-    public required string LName {get; set;}
+    public required string FirstName {get; set;}
+    public required string LastName {get; set;}
     public required string Email {get; set;}
     public required string Password {get; set;}
     public required string Iban {get; set;}
@@ -11,11 +13,11 @@ public class UserModel
     public required string City {get; set;}
     public required string StreetName {get; set;}
     public required string StreetNumber {get; set;}
-    public required string Phonenumber {get; set;}
-    public required int NegativeCount {get; set;}
-    public required int PositiveCount {get; set;}
-    public required string Role {get; set;}
-    public required DateTime Created_at {get; set;}
-    public DateTime? Deleted_at {get; set;}
+    public required string PhoneNumber {get; set;}
+    public required int NegativeSellerCount {get; set;}
+    public required int PositiveSellerCount {get; set;}
+    public required string Role {get; set;} = "User";
+    public required DateTime CreatedAt {get; set;}
+    public DateTime? DeletedAt {get; set;}
     public bool SoftDeleted {get; set;}
 }

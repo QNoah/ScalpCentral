@@ -1,3 +1,5 @@
+using ScalpCentral.Api.Models;
+
 public class OrderInfoModel
 {
     public int Id {get; set;}

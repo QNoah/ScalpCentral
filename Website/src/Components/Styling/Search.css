@@ -1,0 +1,50 @@
+:root {
+  --retro-bg: #ffffff;
+  --retro-surface: #f7f7f7;
+  --retro-border: #e5e5e5;
+  --retro-text: #222222;
+  --retro-text-muted: #777777;
+  --retro-accent: #6366f1;
+  --retro-accent-light: #818cf8;
+  --retro-purple: #6366f1;
+}
+
+/* Container */
+.retro-container-search {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--retro-bg);
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-content {
+    flex: 1;
+    display: flex;
+    gap: 1rem;
+    border: 10px solid red;
+}
+
+.sidebar {
+    min-width: 280px;
+    border: 10px solid pink;
+}
+
+.results-content {
+    flex: 1;
+    border: 10px solid blue;
+    display: flex;
+    flex-direction: column;
+}
+
+.results-header {
+    min-height: 40px;
+    border: 10px solid yellow;
+}
+
+.results-grid {
+    flex: 1;
+    border: 10px solid green;
+}

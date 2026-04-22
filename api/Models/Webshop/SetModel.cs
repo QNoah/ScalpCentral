@@ -1,9 +1,9 @@
 public class SetModel
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Series { get; set; } = string.Empty;
-    public int TotalCounts { get; set; }
-    public DateTime ReleaseDate { get; set; }
-    public string ImageLogo { get; set; } = string.Empty;
+    public required string Id {get; set;}
+    public required string Name {get; set;}
+    public required int Series {get; set;}
+    public required int TotalCards {get; set;}
+    public required int ReleaseDate {get; set;}
+    public required string? ImageLogo {get; set;}
 }

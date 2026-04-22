@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 
 namespace ScalpCentral.Api.Controllers;
 
@@ -7,44 +8,110 @@ namespace ScalpCentral.Api.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductService _productservice;
-    public ProductsController()
+    public ProductsController(IProductService productService)
     {
-        _productservice = new ProductService();
+        _productservice = productService;
     }
 
-    [HttpGet("products")]
-    public Task<ActionResult<List<ProductModel>>> GetFiltered([FromQuery] ProductFilter filter)
-    {
-        return _productservice.GetFiltered(filter);
+    [HttpGet()]
+    public async Task<ActionResult<List<ProductModel>>> GetFiltered([FromQuery] ProductFilter filter)
+    {   try
+        {
+            return new ActionResult<List<ProductModel>>(await _productservice.GetFiltered(filter));
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
-    [HttpGet("product/{id}")]
-    public Task<ActionResult<ProductModel>> GetById([FromRoute] int id)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProductModel?>> GetById([FromRoute] long id)
     {
-        return _productservice.GetById(id);
+        try
+        {
+            return new ActionResult<ProductModel?>(await _productservice.GetById(id));
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
-    [HttpPost("products/create")]
-    public Task<ActionResult> Create([FromBody] ProductModel product)
+    [HttpPost("create")]
+    public async Task<ActionResult<long>> Create([FromBody] ProductModel product)
     {
-        return _productservice.Create(product);
+        try
+        {
+            return new ActionResult<long>(await _productservice.Create(product));
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
-    [HttpPut("products/update")]
-    public Task<ActionResult> Update([FromBody] ProductModel product)
+    [HttpPut("update")]
+    public async Task<ActionResult<long>> Update([FromBody] ProductModel product)
     {
-        return _productservice.Update(product);
+        try
+        {
+            return new ActionResult<long>(await _productservice.Update(product));
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
-    [HttpPost("products/delete/{id}")]
-    public Task<ActionResult> SoftDelete([FromRoute] int id)
+    [HttpDelete("delete/{id}")]
+    public async Task<ActionResult<long>> SoftDelete([FromRoute] long id)
     {
-        return _productservice.SoftDelete(id);
+        try
+        {
+            return new ActionResult<long>(await _productservice.SoftDelete(id));
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
-    [HttpPost("products/delete")]
-    public Task<ActionResult> HardDelete()
+    [HttpDelete("delete")]
+    public async Task<ActionResult> HardDelete()
     {
-        return _productservice.HardDelete();
+        try
+        {
+            await _productservice.HardDelete();
+            return StatusCode(200);
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 }

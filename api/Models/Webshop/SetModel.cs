@@ -1,10 +1,9 @@
 public class SetModel
 {
-    public required string Id {get; set;}
-    public required string Name {get; set;}
-    public required int Series {get; set;}
-    public required int Total_cards {get; set;}
-    public required int Release_date {get; set;}
-    public required string? Image_logo {get; set;}
-    public required bool SoftDeleted {get; set;}
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Series { get; set; } = string.Empty;
+    public int TotalCounts { get; set; }
+    public DateTime ReleaseDate { get; set; }
+    public string ImageLogo { get; set; } = string.Empty;
 }

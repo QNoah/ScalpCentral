@@ -10,16 +10,22 @@ namespace ScalpCentral.Api.Repository
     {
         public override string Table() => "sets";
 
-        public async Task<List<SetModel>> GetSets(SetFilters filter = null!)
+        public async Task<List<SetModel>> GetSets(SetFilters? filter)
         {
             var sql = new StringBuilder("SELECT * FROM sets WHERE 1=1");
             var p = new DynamicParameters();
-            if (filter is not null)
-            {
 
-                (sql, p) = HelperFunctions.FilterCheck(filter.Id, "id", "Id", sql, p);
+            if (!string.IsNullOrWhiteSpace(filter.Id))
+            {
+                sql.Append(" AND id = @Id");
+                p.Add("Id", filter.Id);
+            }
+
+            if (filter is not null && filter.Id is null)
+            {
                 (sql, p) = HelperFunctions.FilterCheck(filter.Name, "name", "Name", sql, p);
                 (sql, p) = HelperFunctions.FilterCheck(filter.Series, "series", "Series", sql, p);
+
 
                 if (!string.IsNullOrWhiteSpace(filter.ReleaseDate.ToString()))
                 {
@@ -27,7 +33,7 @@ namespace ScalpCentral.Api.Repository
                     p.Add("ReleaseDate", filter.ReleaseDate);
                 }
             }
-            
+
             var sets = await _con.QueryAsync<SetModel>(sql.ToString(), p);
             return sets.ToList();
         }

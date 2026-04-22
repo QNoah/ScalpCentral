@@ -10,7 +10,7 @@ namespace ScalpCentral.Api.Repository
     {
         public override string Table() => "sets";
 
-        public async Task<List<SetModel>> GetAllSetsAsync()
+        public async Task<List<SetModel>> GetAllAsync()
         {
             string sql = "SELECT * FROM sets";
             var sets = await _con.QueryAsync<SetModel>(sql);
@@ -51,7 +51,7 @@ namespace ScalpCentral.Api.Repository
             string sql = $"DELETE FROM sets WHERE id = {id}";
             await _con.ExecuteAsync(sql);
         }
-        public async Task UpdateSet(SetDTO set)
+        public async Task Update(SetDTO set)
         {
             string sql = @"UPDATE sets (name, series, total_cards, release_date, image_logo) VALUES (@Name, @Series, @TotalCards, @ReleaseDate, @ImageLogo) WHERE Id = @Id;";
             await _con.ExecuteAsync(sql.ToString(), new

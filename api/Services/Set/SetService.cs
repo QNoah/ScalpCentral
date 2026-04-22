@@ -12,7 +12,7 @@ public class SetService : ISetService
         _setRepository = setRepository;
     }
 
-    public async Task<List<UserModel>> GetAllUsersAsync()
+    public async Task<List<SetModel>> GetAllAsync()
     {
         return await _setRepository.GetAllAsync();
     }

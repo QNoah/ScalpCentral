@@ -5,9 +5,9 @@ namespace ScalpCentral.Api.Repository;
 
 public interface ISetRepository
 {
-    Task<List<SetModel>> GetAllSetsAsync();
+    Task<List<SetModel>> GetAllAsync();
     Task<List<SetModel>> GetSets(SetFilters filter);
     Task Add(SetDTO set);
-    Task UpdateSet(SetDTO set);
+    Task Update(SetDTO set);
     Task Delete(int setId);
 }

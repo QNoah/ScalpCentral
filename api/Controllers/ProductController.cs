@@ -15,7 +15,10 @@ public class ProductsController : ControllerBase
 
     [HttpGet()]
     public async Task<ActionResult<List<ProductModel>>> GetFiltered([FromQuery] ProductFilter filter)
-    {   try
+    {
+        Console.WriteLine("Hello");
+        Console.WriteLine(filter.MinPrice.ToString());
+        try
         {
             return new ActionResult<List<ProductModel>>(await _productservice.GetFiltered(filter));
         }
@@ -47,7 +50,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<long>> Create([FromBody] ProductModel product)
+    public async Task<ActionResult<long>> Create([FromBody] CreateProductDto product)
     {
         try
         {

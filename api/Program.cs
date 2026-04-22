@@ -40,11 +40,13 @@ builder.Services.AddSwaggerGen();
 // App services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ISetService, SetService>();
 
 // App repositories
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ISetRepository, SetRepository>();
 
 // Errors
 builder.Services.AddProblemDetails();

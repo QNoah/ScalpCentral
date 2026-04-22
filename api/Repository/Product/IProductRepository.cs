@@ -5,8 +5,8 @@ public interface IProductRepository
     List<ProductModel> GetPaged(int page, int pagesize);
     List<ProductModel> GetFiltered(ProductFilter filter);
     ProductModel? GetById(int id);
-    void Add(ProductModel product);
-    void SoftDelete(ProductModel product);
+    long Create(ProductModel product);
+    long SoftDelete(ProductModel product);
     void HardDelete();
-    void Update(ProductModel product);
+    long Update(ProductModel product);
 }

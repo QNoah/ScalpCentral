@@ -13,10 +13,38 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("products")]
-    public Task<ActionResult<List<ProductModel>>> Get()
+    public Task<ActionResult<List<ProductModel>>> GetFiltered([FromQuery] ProductFilter filter)
     {
-        throw new NotImplementedException();
+        return _productservice.GetFiltered(filter);
     }
 
-    [HttpGet("products/{Id}")]
+    [HttpGet("product/{id}")]
+    public Task<ActionResult<ProductModel>> GetById([FromRoute] int id)
+    {
+        return _productservice.GetById(id);
+    }
+
+    [HttpPost("products/create")]
+    public Task<ActionResult> Create([FromBody] ProductModel product)
+    {
+        return _productservice.Create(product);
+    }
+
+    [HttpPut("products/update")]
+    public Task<ActionResult> Update([FromBody] ProductModel product)
+    {
+        return _productservice.Update(product);
+    }
+
+    [HttpPost("products/delete/{id}")]
+    public Task<ActionResult> SoftDelete([FromRoute] int id)
+    {
+        return _productservice.SoftDelete(id);
+    }
+
+    [HttpPost("products/delete")]
+    public Task<ActionResult> HardDelete()
+    {
+        return _productservice.HardDelete();
+    }
 }

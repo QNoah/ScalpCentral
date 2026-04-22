@@ -1,4 +1,5 @@
 using Dapper;
+using Npgsql;
 
 namespace ScalpCentral.Api.Repository;
 
@@ -117,7 +118,7 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         return product;
     }
 
-    public void Add(ProductModel product)
+    public long Create(ProductModel product)
     {
         string insertProduct = """
         INSERT INTO products (set_id, name, type, description, price, stock) VALUES (@SetId, @Name, @Type, @Description, @Price, @Stock)
@@ -128,6 +129,8 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         INSERT INTO product_images (product_id, image_url) VALUES (@ProductId, @Url)
         """;
 
+        long newId;
+
         DynamicParameters productParameters = new ();
         productParameters.Add("SetId", product.Set.Id);
         productParameters.Add("Name", product.Name);
@@ -136,9 +139,9 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         productParameters.Add("Price", product.Price);
         productParameters.Add("Stock", product.Stock);
 
-        long newId = _con.QuerySingle<long>(insertProduct, productParameters);
+        newId = RepoHelpers.TryQuery(() =>_con.QuerySingle<long>(insertProduct, productParameters));
 
-        if (product.Images == null) return;
+        if (product.Images == null) return newId;
 
         foreach (string url in product.Images)
         {
@@ -147,38 +150,33 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
             imageParameters.Add("Url", url);
             _con.Execute(insertImage, imageParameters);
         }
+
+        return newId;
     }
 
-    public void SoftDelete(ProductModel product)
+    public long SoftDelete(ProductModel product)
     {
         string sql = """
         UPDATE products
         SET soft_delete = NOT soft_delete
         WHERE id = @Id
+        RETURNING id
         """;
 
-        _con.Execute(sql, new {Id = product.Id});
+        return RepoHelpers.TryQuery<long>(() => _con.QuerySingle<long>(sql, new {Id = product.Id}));
     }
 
     public void HardDelete()
     {
         string sql = """
-        DELETE FROM products
-        WHERE soft_delete = true
-        RETURNING id
-        """;
-
-        List<long> ids = _con.Query<long>(sql).ToList();
-
-        sql = """
         DELETE FROM product_images
-        WHERE product_id = ANY(@Ids)
+        WHERE soft_delete = true
         """;
 
-        _con.Execute(sql, new { Ids = ids});
+        RepoHelpers.TryExecute(() =>_con.Execute(sql));
     }
 
-    public void Update(ProductModel product)
+    public long Update(ProductModel product)
     {
         string sql = """
         UPDATE products
@@ -191,9 +189,10 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         stock = @Stock,
         set_id = @SetId
         WHERE id = @Id
+        RETURNING id
         """;
 
-        _con.Execute(sql, new {
+        return RepoHelpers.TryQuery<long>(() => _con.Execute(sql, new {
         product.Name,
         product.Type,
         product.Description,
@@ -202,7 +201,6 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         product.Stock,
         SetId = product.Set.Id,
         product.Id
-        });
+        }));
     }
-
 }

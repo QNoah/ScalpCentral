@@ -8,33 +8,33 @@ public class ProductService : IProductService
     {
         _productrepository = new ProductRepository();
     }
-    public Task<ActionResult> Create(ProductModel product)
+    public async Task<long> Create(ProductModel product)
     {
-        throw new NotImplementedException();
+        return await _productrepository.Create(product);
     }
 
-    public Task<ActionResult<ProductModel>> GetById(int id)
+    public async Task<ProductModel?> GetById(long id)
     {
-        throw new NotImplementedException();
+        return await  _productrepository.GetById(id);
     }
 
-    public Task<ActionResult<List<ProductModel>>> GetFiltered(ProductFilter filter)
+    public async Task<List<ProductModel>> GetFiltered(ProductFilter filter)
     {
-        throw new NotImplementedException();
+        return await _productrepository.GetFiltered(filter);
     }
 
-    public Task<ActionResult> HardDelete()
+    public async Task HardDelete()
     {
-        throw new NotImplementedException();
+        await _productrepository.HardDelete();
     }
 
-    public Task<ActionResult> SoftDelete(int id)
+    public async Task<long> SoftDelete(long id)
     {
-        throw new NotImplementedException();
+        return await _productrepository.SoftDelete(id);
     }
 
-    public Task<ActionResult> Update(ProductModel product)
+    public async Task<long> Update(ProductModel product)
     {
-        throw new NotImplementedException();
+        return await _productrepository.Update(product);
     }
 }

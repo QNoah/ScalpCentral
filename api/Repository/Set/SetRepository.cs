@@ -26,7 +26,7 @@ namespace ScalpCentral.Api.Repository
 
             return _con.Query<SetModel>(sql.ToString(), p).ToList();
         }
-        public void Add(AddSetDto set)
+        public void Add(SetDTO set)
         {
             string sql = @"INSERT into sets (name, series, total_cards, release_date, image_logo) VALUES (@Name, @Series, @TotalCards, @ReleaseDate, @ImageLogo);";
             _con.Execute(sql.ToString(), new
@@ -38,7 +38,23 @@ namespace ScalpCentral.Api.Repository
                 set.ImageLogo
             });
         }
-        public void Delete(int id) { }
-        public void UpdateSet(SetModel set) { }
+        public void Delete(int id)
+        {
+            string sql = $"DELETE FROM sets WHERE id = {id}";
+            _con.Execute(sql);
+        }
+        public void UpdateSet(SetDTO set)
+        {
+            string sql = @"UPDATE sets (name, series, total_cards, release_date, image_logo) VALUES (@Name, @Series, @TotalCards, @ReleaseDate, @ImageLogo) WHERE Id = @Id;";
+            _con.Execute(sql.ToString(), new
+            {
+                set.Id,
+                set.Name,
+                set.Series,
+                set.TotalCards,
+                set.ReleaseDate,
+                set.ImageLogo
+            });
+        }
     }
 }

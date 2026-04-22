@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 
 public interface IProductService
 {
-    Task<ActionResult<List<ProductModel>>> GetFiltered(ProductFilter filter);
-    Task<ActionResult<ProductModel>> GetById(int id);
-    Task<ActionResult> Create(ProductModel product);
-    Task<ActionResult> Update(ProductModel product);
-    Task<ActionResult> SoftDelete(int id);
-    Task<ActionResult> HardDelete();
+    Task<List<ProductModel>> GetFiltered(ProductFilter filter);
+    Task<ProductModel?> GetById(long id);
+    Task<long> Create(ProductModel product);
+    Task<long> Update(ProductModel product);
+    Task<long> SoftDelete(long id);
+    Task HardDelete();
 }

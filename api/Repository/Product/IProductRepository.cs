@@ -2,11 +2,11 @@ namespace ScalpCentral.Api.Repository;
 
 public interface IProductRepository
 {
-    List<ProductModel> GetPaged(int page, int pagesize);
-    List<ProductModel> GetFiltered(ProductFilter filter);
-    ProductModel? GetById(int id);
-    long Create(ProductModel product);
-    long SoftDelete(ProductModel product);
-    void HardDelete();
-    long Update(ProductModel product);
+    Task<List<ProductModel>> GetPaged(int page, int pagesize);
+    Task<List<ProductModel>> GetFiltered(ProductFilter filter);
+    Task<ProductModel?> GetById(long id);
+    Task<long> Create(ProductModel product);
+    Task<long> SoftDelete(long id);
+    Task HardDelete();
+    Task<long> Update(ProductModel product);
 }

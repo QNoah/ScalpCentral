@@ -10,27 +10,24 @@ namespace ScalpCentral.Api.Repository
     {
         public override string Table() => "sets";
 
-        public async Task<List<SetModel>> GetAllAsync()
-        {
-            string sql = "SELECT * FROM sets";
-            var sets = await _con.QueryAsync<SetModel>(sql);
-            return sets.ToList();
-        }
-        public async Task<List<SetModel>> GetSets(SetFilters filter)
+        public async Task<List<SetModel>> GetSets(SetFilters filter = null!)
         {
             var sql = new StringBuilder("SELECT * FROM sets WHERE 1=1");
             var p = new DynamicParameters();
-
-            (sql, p) = HelperFunctions.FilterCheck(filter.Id, "id", "Id", sql, p);
-            (sql, p) = HelperFunctions.FilterCheck(filter.Name, "name", "Name", sql, p);
-            (sql, p) = HelperFunctions.FilterCheck(filter.Series, "series", "Series", sql, p);
-
-            if (!string.IsNullOrWhiteSpace(filter.ReleaseDate.ToString()))
+            if (filter is not null)
             {
-                sql.Append(" AND release_date = @ReleaseDate");
-                p.Add("ReleaseDate", filter.ReleaseDate);
-            }
 
+                (sql, p) = HelperFunctions.FilterCheck(filter.Id, "id", "Id", sql, p);
+                (sql, p) = HelperFunctions.FilterCheck(filter.Name, "name", "Name", sql, p);
+                (sql, p) = HelperFunctions.FilterCheck(filter.Series, "series", "Series", sql, p);
+
+                if (!string.IsNullOrWhiteSpace(filter.ReleaseDate.ToString()))
+                {
+                    sql.Append(" AND release_date = @ReleaseDate");
+                    p.Add("ReleaseDate", filter.ReleaseDate);
+                }
+            }
+            
             var sets = await _con.QueryAsync<SetModel>(sql.ToString(), p);
             return sets.ToList();
         }

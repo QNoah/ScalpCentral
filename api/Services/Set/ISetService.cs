@@ -3,9 +3,8 @@ using ScalpCentral.Api.Repository;
 
 public interface ISetService
 {
-    public Task<List<SetModel>> GetAllAsync();
-    public Task<List<SetModel>> GetSets();
+    public Task<List<SetModel>> GetSets(SetFilters filters = null!);
     public Task Add(SetDTO set);
     public Task Delete(int id);
-    public Task Update(int id);
+    public Task Update(SetDTO set);
 }

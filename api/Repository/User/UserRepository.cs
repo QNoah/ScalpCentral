@@ -33,7 +33,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 			WHERE soft_deleted = FALSE
 			ORDER BY id;";
 
-		var users = await _con.QueryAsync<UserModel>(sql);
+		var users = await RepoHelpers.TryQuery(() => _con.QueryAsync<UserModel>(sql));
 		return users.ToList();
 	}
 
@@ -44,7 +44,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		FROM {Table()}
 		WHERE email = @Email and soft_deleted = FALSE";
 
-		var result = _con.QueryFirstOrDefault<int?>(sql, new { Email = email });
+		var result = RepoHelpers.TryQuery(() => _con.QueryFirstOrDefault<int?>(sql, new { Email = email }));
 		return result.HasValue;
 	}
 
@@ -54,7 +54,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		INSERT INTO {Table()}
 		(email, password)
 		VALUES (@Email, @Password)";
-		_con.Execute(sql, new {Email = userinfo.Email, Password = userinfo.Password});
+		RepoHelpers.TryExecute(() => _con.Execute(sql, new {Email = userinfo.Email, Password = userinfo.Password}));
 		return true;
 	}
 
@@ -64,7 +64,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		SELECT {UserSelectColumns}
 		FROM {Table()}
 		WHERE soft_deleted = FALSE and email = @Email";
-		return _con.QueryFirstOrDefault<UserModel>(sql, new {Email = userinfo.Email});
+		return RepoHelpers.TryQuery(() =>_con.QueryFirstOrDefault<UserModel>(sql, new {Email = userinfo.Email}));
 	}
 
 	public UserModel? GetById(int id)
@@ -73,7 +73,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		SELECT {UserSelectColumns}
 		FROM {Table()}
 		WHERE soft_deleted = FALSE and id = @Id";
-		return _con.QueryFirstOrDefault<UserModel>(sql, new {Id = id});
+		return RepoHelpers.TryQuery(() =>_con.QueryFirstOrDefault<UserModel>(sql, new {Id = id}));
 	}
 
 	public void SoftDelete(UserModel user)
@@ -82,7 +82,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		UPDATE {Table()}
 		SET soft_deleted = NOT soft_deleted AND deleted_at = @Date
 		WHERE id = Id";
-		_con.Execute(sql, new {Id = user.Id, Date = DateTime.Now});
+		RepoHelpers.TryExecute(() => _con.Execute(sql, new {Id = user.Id, Date = DateTime.Now}));
 	}
 
 	public void HardDelete(UserModel user)
@@ -90,7 +90,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 		DELETE FROM {Table()}
 		WHERE id = Id";
-		_con.Execute(sql, new {Id = user.Id});
+		RepoHelpers.TryExecute(() => _con.Execute(sql, new {Id = user.Id}));
 	}
 
 	public void Update(UserModel user)
@@ -113,6 +113,6 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 			positive_seller_count = @PositiveSellerCount,
 			role = @Role
 		WHERE id = @Id";
-		_con.Execute(sql, user);
+		RepoHelpers.TryExecute(() => _con.Execute(sql, user));
 	}
 }

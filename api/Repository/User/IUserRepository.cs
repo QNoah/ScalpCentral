@@ -5,11 +5,11 @@ namespace ScalpCentral.Api.Repository;
 public interface IUserRepository
 {
     Task<List<UserModel>> GetAllAsync();
-    public bool EmailExists(string email);
-    public bool CreateAccount(LoginRequest userinfo);
-    public UserModel? Login(LoginRequest userinfo);
-    public UserModel? GetById(int id);
-    public void SoftDelete(UserModel user);
-    public void HardDelete(UserModel user);
-    public void Update(UserModel user);
+    public Task<bool> EmailExists(string email);
+    public Task<int?> CreateAccount(LoginRequest userinfo);
+    public Task<UserModel?> Login(LoginRequest userinfo);
+    public Task<UserModel?> GetById(int id);
+    public Task SoftDelete(UserModel user);
+    public Task HardDelete(UserModel user);
+    public Task Update(UserModel user);
 }

@@ -26,17 +26,31 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> CreateAccount([FromBody] LoginRequest userinfo)
+    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] LoginRequest userinfo)
     {
-        if(_userService.CreateAccount(userinfo))
-            return Ok();
-        return BadRequest();
+        int? id = await _userService.CreateAccount(userinfo);
+
+        if (id is not int validId || validId == 0)
+            return BadRequest();
+
+        var user = await _userService.GetById(validId);
+
+        return Ok(user);
     }
 
     [HttpGet("login")]
     public async Task<ActionResult<UserModel?>> login([FromBody] LoginRequest userinfo)
     {
-        UserModel? user = _userService.Login(userinfo);
+        UserModel? user = await _userService.Login(userinfo);
+        if(user == null)
+            return Unauthorized();
+        return Ok(user);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<UserModel?>> GetById(int id)
+    {
+        UserModel? user = await _userService.GetById(id);
         if(user == null)
             return Unauthorized();
         return Ok(user);

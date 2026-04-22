@@ -15,10 +15,6 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         WHERE p.soft_delete = false AND s.soft_delete = false
         """;
 
-    public Task<List<ProductModel>> GetPaged(int page, int pagesize)
-    {
-        throw new NotImplementedException();
-    }
     public async Task<List<ProductModel>> GetFiltered(ProductFilter? filter)
     {
         string sql = baseSql;

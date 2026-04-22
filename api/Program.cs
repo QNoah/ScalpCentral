@@ -39,10 +39,12 @@ builder.Services.AddSwaggerGen();
 
 // App services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // App repositories
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Errors
 builder.Services.AddProblemDetails();

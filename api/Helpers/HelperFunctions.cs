@@ -3,7 +3,7 @@ using Dapper;
 
     public static class HelperFunctions
     {
-        #region Filter functions
+        #region Filter
         public static (StringBuilder sql, DynamicParameters p) FilterCheck(
             string filter,
             string colName,

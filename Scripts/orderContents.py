@@ -3,6 +3,7 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 
+
 def get_connection():
     try:
         connection = psycopg2.connect(
@@ -28,8 +29,8 @@ def create_tables(connection):
     cursor = connection.cursor()
     schema_sql = """
 CREATE TABLE IF NOT EXISTS order_contents(
-    order_id BIGINT REFERENCES orders(id) NOT NULL,
-    product_id BIGINT REFERENCES products(id) NOT NULL,
+    order_id BIGINT REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
+    product_id BIGINT REFERENCES products(id) ON DELETE CASCADE NOT NULL,
     amount INT NOT NULL,
     PRIMARY KEY (order_id, product_id)
 );
@@ -37,11 +38,13 @@ CREATE TABLE IF NOT EXISTS order_contents(
     cursor.execute(schema_sql)
     cursor.close()
 
+
 def run(connection):
     create_tables(connection)
     connection.commit()
     print(f"ordersContents.py ran succesfully.")
     return
+
 
 if __name__ == "__main__":
     connection = get_connection()

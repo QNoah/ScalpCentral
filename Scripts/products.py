@@ -30,7 +30,7 @@ def create_table(connection):
     table_sql = """
 CREATE TABLE IF NOT EXISTS products(
 id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-set_id VARCHAR(255) REFERENCES sets(id),
+set_id VARCHAR(255) REFERENCES sets(id) ON DELETE CASCADE,
 name VARCHAR(255) NOT NULL,
 type VARCHAR(255) NOT NULL,
 description TEXT,
@@ -43,7 +43,7 @@ soft_delete BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS product_images(
-product_id BIGINT NOT NULL REFERENCES products(id),
+product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
 image_url TEXT,
 PRIMARY KEY (product_id, image_url)
 );

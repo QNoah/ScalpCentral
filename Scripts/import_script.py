@@ -110,14 +110,14 @@ CREATE TABLE IF NOT EXISTS cards (
     artist VARCHAR(255),
     rarity VARCHAR(255),
     flavor_text TEXT,
-    images_id BIGINT NOT NULL REFERENCES card_images(id) ON DELETE CASCADE,
+    images_id BIGINT REFERENCES card_images(id) ON DELETE SET NULL,
     soft_delete BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_evolutions(
-    card_id VARCHAR(255) NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
+    pokemon_name VARCHAR(255) NOT NULL,
     evolves_to_name VARCHAR(255) NOT NULL,
-    PRIMARY KEY (card_id, evolves_to_name)
+    PRIMARY KEY (pokemon_name, evolves_to_name)
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_abilities(
@@ -167,6 +167,7 @@ def insert_cards(cards, connection):
         c_types = c.get("types")
         c_hp = c.get("hp")
         c_evolves_from_name = c.get("evolvesFrom")
+        c_evolves_to_name = c.get("evolvesTo")
         c_attacks = c.get("attacks")
         c_abilities = c.get("abilities")
         c_rules = c.get("rules")
@@ -184,9 +185,9 @@ def insert_cards(cards, connection):
 
         cursor.execute(
             """
-                        INSERT INTO cards (id, set_id, name, supertype, hp, evolves_from_name, artist, rarity, flavor_text, images_id, soft_delete)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT)
-                        """,
+            INSERT INTO cards (id, set_id, name, supertype, hp, evolves_from_name, artist, rarity, flavor_text, images_id, soft_delete)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT)
+            """,
             (
                 c_id,
                 c_set_id,
@@ -200,6 +201,11 @@ def insert_cards(cards, connection):
                 images_id,
             ),
         )
+        if c_evolves_to_name:
+            for name in c_evolves_to_name:
+                cursor.execute(
+                    """INSERT INTO cards_to_evolutions (pokemon_name, evolves_to_name)
+                    VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_name, name))
 
         if c_attacks:
             for attack in c_attacks:

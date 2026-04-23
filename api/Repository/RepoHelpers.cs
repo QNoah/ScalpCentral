@@ -56,7 +56,7 @@ public static class RepoHelpers
         }
     }
 
-    public static async void TryExecuteAsync(Func<Task> execute)
+    public static async Task TryExecuteAsync(Func<Task> execute)
     {
         try
         {

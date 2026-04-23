@@ -8,7 +8,7 @@ public class ProductService : IProductService
     {
         _productrepository = productRepository;
     }
-    public async Task<long> Create(ProductModel product)
+    public async Task<long> Create(CreateProductDto product)
     {
         return await _productrepository.Create(product);
     }

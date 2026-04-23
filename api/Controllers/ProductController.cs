@@ -16,8 +16,6 @@ public class ProductsController : ControllerBase
     [HttpGet()]
     public async Task<ActionResult<List<ProductModel>>> GetFiltered([FromQuery] ProductFilter filter)
     {
-        Console.WriteLine("Hello");
-        Console.WriteLine(filter.MinPrice.ToString());
         try
         {
             return new ActionResult<List<ProductModel>>(await _productservice.GetFiltered(filter));

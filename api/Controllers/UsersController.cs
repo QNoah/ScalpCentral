@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ScalpCentral.Api.Models;
 using ScalpCentral.Api.Services;
 
@@ -20,5 +23,36 @@ public class UsersController : ControllerBase
     {
         var users = await _userService.GetAllUsersAsync();
         return Ok(users);
+    }
+
+    [HttpPost("register")]
+    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] LoginRequest userinfo)
+    {
+        int? id = await _userService.CreateAccount(userinfo);
+
+        if (id is not int validId || validId == 0)
+            return BadRequest();
+
+        var user = await _userService.GetById(validId);
+
+        return Ok(user);
+    }
+
+    [HttpGet("login")]
+    public async Task<ActionResult<UserModel?>> login([FromBody] LoginRequest userinfo)
+    {
+        UserModel? user = await _userService.Login(userinfo);
+        if(user == null)
+            return Unauthorized();
+        return Ok(user);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<UserModel?>> GetById(int id)
+    {
+        UserModel? user = await _userService.GetById(id);
+        if(user == null)
+            return Unauthorized();
+        return Ok(user);
     }
 }

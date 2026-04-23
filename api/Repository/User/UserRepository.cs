@@ -23,9 +23,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		negative_seller_count AS NegativeSellerCount,
 		positive_seller_count AS PositiveSellerCount,
 		role AS Role,
-		created_at AS CreatedAt,
-		deleted_at AS DeletedAt,
-		soft_deleted AS SoftDeleted";
+		created_at AS CreatedAt";
 
 	public async Task<List<UserModel>> GetAllAsync()
 	{
@@ -35,7 +33,87 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 			WHERE soft_deleted = FALSE
 			ORDER BY id;";
 
-		var users = await _con.QueryAsync<UserModel>(sql);
+		var users = await RepoHelpers.TryQuery(() => _con.QueryAsync<UserModel>(sql));
 		return users.ToList();
+	}
+
+	public async Task<bool> EmailExists(string email)
+	{
+		var sql = $@"
+		SELECT 1
+		FROM {Table()}
+		WHERE email = @Email and soft_deleted = FALSE";
+
+		var result = RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<int?>(sql, new { Email = email }));
+		int? value = await result;
+		return value.HasValue;
+	}
+
+	public async Task<int?> CreateAccount(LoginRequest userinfo)
+	{
+		var sql = $@"
+		INSERT INTO {Table()}
+		(email, password)
+		VALUES (@Email, @Password)
+		RETURNING id";
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync(sql, new {Email = userinfo.Email, Password = userinfo.Password}));
+	}
+
+	public async Task<UserModel?> Login(LoginRequest userinfo)
+	{
+		var sql = $@"
+		SELECT {UserSelectColumns}
+		FROM {Table()}
+		WHERE soft_deleted = FALSE and email = @Email";
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel?>(sql, new {Email = userinfo.Email}));
+	}
+
+	public async Task<UserModel?> GetById(int id)
+	{
+		var sql = $@"
+		SELECT {UserSelectColumns}
+		FROM {Table()}
+		WHERE soft_deleted = FALSE and id = @Id";
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {Id = id}));
+	}
+
+	public async Task SoftDelete(UserModel user)
+	{
+		var sql = $@"
+		UPDATE {Table()}
+		SET soft_deleted = NOT soft_deleted AND deleted_at = @Date
+		WHERE id = Id";
+		RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id, Date = DateTime.Now}));
+	}
+
+	public async Task HardDelete(UserModel user)
+	{
+		var sql = $@"
+		DELETE FROM {Table()}
+		WHERE id = Id";
+		RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id}));
+	}
+
+	public async Task Update(UserModel user)
+	{
+		var sql = $@"
+		UPDATE {Table()}
+		SET 
+			first_name = @FirstName,
+			last_name = @LastName,
+			email = @Email,
+			password = @Password,
+			iban = @Iban,
+			postcode = @Postcode,
+			country = @Country,
+			city = @City,
+			street_name = @StreetName,
+			street_number = @StreetNumber,
+			phone_number = @PhoneNumber,
+			negative_seller_count = @NegativeSellerCount,
+			positive_seller_count = @PositiveSellerCount,
+			role = @Role
+		WHERE id = @Id";
+		RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, user));
 	}
 }

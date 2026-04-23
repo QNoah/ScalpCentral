@@ -248,7 +248,7 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 			DELETE FROM {Table()}
 			WHERE id = @Id;";
 
-		var affectedRows = await RepoHelpers.TryQueryAsync(() => _con.ExecuteAsync(sql, new { Id = id }));
+		var affectedRows = await RepoHelpers.TryQueryAsync(async () => await _con.ExecuteAsync(sql, new { Id = id }));
 		return affectedRows > 0;
 	}
 }

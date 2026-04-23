@@ -15,10 +15,6 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         WHERE p.soft_delete = false AND s.soft_delete = false
         """;
 
-    public Task<List<ProductModel>> GetPaged(int page, int pagesize)
-    {
-        throw new NotImplementedException();
-    }
     public async Task<List<ProductModel>> GetFiltered(ProductFilter? filter)
     {
         string sql = baseSql;
@@ -57,10 +53,10 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
                 parameters.Add("Types", filter.Types);
             }
 
-            if(filter.Sets != null)
+            if(filter.SetNames != null)
             {
                 where.Add("s.name = ANY(@Sets)");
-                parameters.Add("Sets", filter.Sets);
+                parameters.Add("Sets", filter.SetNames);
             }
 
             foreach (string condition in where)
@@ -81,7 +77,7 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
                 SELECT
                 i.product_id, i.image_url
                 FROM product_images as i
-                WHERE i.product_id ANY(@Ids)
+                WHERE i.product_id = ANY(@Ids)
                 """, new {Ids = result.Select(product => product.Id).ToList()});
 
                 Dictionary<long, List<string>> images = imageresult.GroupBy(image => image.productId)
@@ -128,7 +124,7 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         return product;
     }
 
-    public Task<long> Create(ProductModel product)
+    public Task<long> Create(CreateProductDto product)
     {
         string insertProduct = """
         INSERT INTO products (set_id, name, type, description, price, stock) VALUES (@SetId, @Name, @Type, @Description, @Price, @Stock)
@@ -140,7 +136,7 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         """;
 
         DynamicParameters productParameters = new ();
-        productParameters.Add("SetId", product.Set.Id);
+        productParameters.Add("SetId", product.SetId);
         productParameters.Add("Name", product.Name);
         productParameters.Add("Type", product.Type);
         productParameters.Add("Description", product.Description);
@@ -178,11 +174,11 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
     public async Task HardDelete()
     {
         string sql = """
-        DELETE FROM product_images
+        DELETE FROM products
         WHERE soft_delete = true
         """;
 
-        RepoHelpers.TryExecuteAsync(async () => await _con.ExecuteAsync(sql));
+        await RepoHelpers.TryExecuteAsync(async () => await _con.ExecuteAsync(sql));
     }
 
     public async Task<long> Update(ProductModel product)

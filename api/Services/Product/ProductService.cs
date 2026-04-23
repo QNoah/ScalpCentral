@@ -4,11 +4,11 @@ using ScalpCentral.Api.Repository;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productrepository;
-    public ProductService()
+    public ProductService(IProductRepository productRepository)
     {
-        _productrepository = new ProductRepository();
+        _productrepository = productRepository;
     }
-    public async Task<long> Create(ProductModel product)
+    public async Task<long> Create(CreateProductDto product)
     {
         return await _productrepository.Create(product);
     }

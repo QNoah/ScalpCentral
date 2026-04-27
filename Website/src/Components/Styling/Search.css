@@ -9,8 +9,59 @@
   --retro-purple: #6366f1;
 }
 
+.product-card {
+    border: 10px solid palevioletred;
+    height: 450px;
+    width: 250px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-image {
+    height: auto;
+}
+
+.product-card-review-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.product-card-content {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.product-card-title {
+    font-family: inherit;
+    color: #6366f1;
+    font-size: large;
+    font-weight: bold;
+}
+
+.product-card-description {
+    font-family: inherit;
+    font-size: x-small;
+    text-align: left;
+}
+
+.product-card-bookmark-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.product-card-add-to-cart-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
 /* Container */
-.retro-container-search {
+.container-search {
     min-height: 100vh;
     width: 100%;
     background: var(--retro-bg);
@@ -25,11 +76,21 @@
     display: flex;
     gap: 1rem;
     border: 10px solid red;
+    max-width: 1400px;
+    width: 100%;
+    margin-inline: auto;
 }
 
 .sidebar {
+    display: flex;
+    flex-direction: column;
     min-width: 280px;
     border: 10px solid pink;
+}
+
+.filters {
+    display: flex;
+    flex-direction: column;
 }
 
 .results-content {
@@ -40,11 +101,23 @@
 }
 
 .results-header {
+    display: flex;
     min-height: 40px;
     border: 10px solid yellow;
+    justify-content: right;
+    gap: 20px;
+}
+
+.results-count {
+    font-family: 'Times New Roman', Times, serif;
+    color: darkslateblue;
 }
 
 .results-grid {
     flex: 1;
     border: 10px solid green;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    justify-content: space-evenly;
+    row-gap: 20px;
 }

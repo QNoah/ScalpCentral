@@ -11,7 +11,7 @@ export default function Navbar() {
     }
 
     function handleSearchSubmit(event: React.SubmitEvent<HTMLFormElement>) {
-        event.preventDefault();
+    event.preventDefault();
         navigate(`/search?query=${encodeURIComponent(search)}`);
     }
 

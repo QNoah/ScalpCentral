@@ -10,7 +10,7 @@
 }
 
 .product-card {
-    border: 10px solid palevioletred;
+    border: 1px solid palevioletred;
     height: 450px;
     width: 250px;
     position: relative;
@@ -75,7 +75,7 @@
     flex: 1;
     display: flex;
     gap: 1rem;
-    border: 10px solid red;
+    border: 1px solid red;
     max-width: 1400px;
     width: 100%;
     margin-inline: auto;
@@ -85,7 +85,7 @@
     display: flex;
     flex-direction: column;
     min-width: 280px;
-    border: 10px solid pink;
+    border: 1px solid pink;
 }
 
 .filters {
@@ -95,7 +95,7 @@
 
 .results-content {
     flex: 1;
-    border: 10px solid blue;
+    border: 1px solid blue;
     display: flex;
     flex-direction: column;
 }
@@ -103,7 +103,7 @@
 .results-header {
     display: flex;
     min-height: 40px;
-    border: 10px solid yellow;
+    border: 1px solid yellow;
     justify-content: right;
     gap: 20px;
 }
@@ -115,7 +115,7 @@
 
 .results-grid {
     flex: 1;
-    border: 10px solid green;
+    border: 1px solid green;
     display: grid;
     grid-template-columns: auto auto auto;
     justify-content: space-evenly;

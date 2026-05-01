@@ -37,6 +37,8 @@ function App() {
 
     if (localStorage.getItem("debugMode") === "true") {
       document.body.classList.add("debug");
+    } else {
+      document.body.classList.remove("debug");
     }
     
     console.log("listener added");
@@ -47,17 +49,15 @@ function App() {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <body className="debug">
-      <main className="pages">
-        <Routes>
-          <Route path="/" element={<HomePage />}/>
-          <Route path="/Login" element={<LoginPage />}/>
-          <Route path="/Register" element={<RegisterPage />}/>
-          <Route path="/search" element={<SearchResults />} />
-          <Route path="*" element={<p>Page not found</p>} />
-        </Routes>
-      </main>
-    </body>
+    <main className="pages">
+      <Routes>
+        <Route path="/" element={<HomePage />}/>
+        <Route path="/Login" element={<LoginPage />}/>
+        <Route path="/Register" element={<RegisterPage />}/>
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="*" element={<p>Page not found</p>} />
+      </Routes>
+    </main>
   );
 }
 

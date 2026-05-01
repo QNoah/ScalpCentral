@@ -10,7 +10,6 @@
 }
 
 .product-card {
-    border: 1px solid palevioletred;
     height: 450px;
     width: 250px;
     position: relative;
@@ -19,7 +18,9 @@
 }
 
 .product-card-image {
+    max-width: 250px;
     height: auto;
+    object-fit: contain;
 }
 
 .product-card-review-info {
@@ -34,6 +35,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    padding-bottom: 30px;
 }
 
 .product-card-title {
@@ -47,6 +49,14 @@
     font-family: inherit;
     font-size: x-small;
     text-align: left;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.product-card-price {
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 
 .product-card-bookmark-button {
@@ -75,7 +85,6 @@
     flex: 1;
     display: flex;
     gap: 1rem;
-    border: 1px solid red;
     max-width: 1400px;
     width: 100%;
     margin-inline: auto;
@@ -85,7 +94,6 @@
     display: flex;
     flex-direction: column;
     min-width: 280px;
-    border: 1px solid pink;
 }
 
 .filters {
@@ -93,9 +101,15 @@
     flex-direction: column;
 }
 
+.filter-option {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
 .results-content {
     flex: 1;
-    border: 1px solid blue;
     display: flex;
     flex-direction: column;
 }
@@ -103,7 +117,6 @@
 .results-header {
     display: flex;
     min-height: 40px;
-    border: 1px solid yellow;
     justify-content: right;
     gap: 20px;
 }
@@ -115,7 +128,6 @@
 
 .results-grid {
     flex: 1;
-    border: 1px solid green;
     display: grid;
     grid-template-columns: auto auto auto;
     justify-content: space-evenly;

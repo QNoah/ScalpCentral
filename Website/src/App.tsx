@@ -24,10 +24,30 @@ function App() {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      console.log(event.key, event.shiftKey, event.altKey);
+      if (event.shiftKey && event.altKey && event.key === "D") {
+        console.log("Toggling debug mode");
+        document.body.classList.toggle("debug");
+        const isDebugMode = document.body.classList.contains("debug");
+        localStorage.setItem("debugMode", isDebugMode ? "true" : "false");
+      }
+    };
+
+    if (localStorage.getItem("debugMode") === "true") {
+      document.body.classList.add("debug");
+    }
+    
+    console.log("listener added");
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <>
+    <body className="debug">
       <main className="pages">
         <Routes>
           <Route path="/" element={<HomePage />}/>
@@ -37,7 +57,7 @@ function App() {
           <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </main>
-    </>
+    </body>
   );
 }
 

@@ -12,9 +12,11 @@ export function SearchResults() {
 
     const [types, setTypes] = useState<string[]>([]);
     const [sets, setSets] = useState<Set[]>([]);
+    const [series, setSeries] = useState<string[]>([]);
 
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [selectedSets, setSelectedSets] = useState<string[]>([]);
+    const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
     const [minPrice, setMinPrice] = useState<number | null>(null);
     const [maxPrice, setMaxPrice] = useState<number | null>(null);
     const [inStock, setInStock] = useState<boolean>(false);
@@ -27,18 +29,22 @@ export function SearchResults() {
             
             const uniqueTypes: string[] = [];
             const uniqueSets: Set[] = [];
-            data.forEach((result) => {
+            const uniqueSeries: string[] = [];
+            console.log(data);
+            data.forEach((result: Product) => {
                 if (!uniqueTypes.includes(result.type)) {
                     uniqueTypes.push(result.type);
                 }
-                result.sets.forEach (set => {
-                    if (!uniqueSets.some(s => s.name === set.name)) {
-                        uniqueSets.push(set);
-                    }
-                });
+                if (!uniqueSets.some(s => s.name === result.set.name)) {
+                    uniqueSets.push(result.set);
+                }
+                if (!uniqueSeries.includes(result.set.series)) {
+                    uniqueSeries.push(result.set.series);
+                }
             });
             setTypes(uniqueTypes);
             setSets(uniqueSets);
+            setSeries(uniqueSeries);
         };
 
         fetchSearchResults();
@@ -47,6 +53,7 @@ export function SearchResults() {
     function TypeOption (type: string) {
         return (
             <div className="filter-option">
+                <p>{type}</p>
                 <input type="checkbox" id={`type-${type}`} name="type" value={type} onChange={(e) => {
                     if (e.currentTarget.checked) {
                         setSelectedTypes([...selectedTypes, type]);
@@ -58,14 +65,30 @@ export function SearchResults() {
         );
     }
 
-    function SetOption (setName: string) {
+    function SetOption (set: Set) {
         return (
             <div className="filter-option">
-                <input type="checkbox" id={`set-${setName}`} name="set" value={setName} onChange={(e) => {
+                <p>{set.name}</p>
+                <input type="checkbox" id={`set-${set.name}`} name="set" value={set.name} onChange={(e) => {
                     if (e.currentTarget.checked) {
-                        setSelectedSets([...selectedSets, setName]);
+                        setSelectedSets([...selectedSets, set.name]);
                     } else {
-                        setSelectedSets(selectedSets.filter((v) => v !== setName));
+                        setSelectedSets(selectedSets.filter((v) => v !== set.name));
+                    }
+                }} />
+            </div>
+        );
+    }
+
+    function SeriesOption (serie: string) {
+        return (
+            <div className="filter-option">
+                <p>{serie}</p>
+                <input type="checkbox" id={`serie-${serie}`} name="serie" value={serie} onChange={(e) => {
+                    if (e.currentTarget.checked) {
+                        setSelectedSeries([...selectedSeries, serie]);
+                    } else {
+                        setSelectedSeries(selectedSeries.filter((s) => s !== serie));
                     }
                 }} />
             </div>
@@ -74,8 +97,10 @@ export function SearchResults() {
 
     function applyFilters() {
         const params = new URLSearchParams();
+        params.append("name", searchParams.get("name") || "");
         selectedTypes.forEach((type) => params.append("type", type));
         selectedSets.forEach((setName) => params.append("setName", setName));
+        selectedSeries.forEach((serie) => params.append("series", serie));
         if (minPrice !== null) {
             params.append("minPrice", minPrice.toString());
         }
@@ -114,10 +139,9 @@ export function SearchResults() {
                         <p>STAR ICONS</p>
                         <p >REVIEW COUNT</p>
                     </div>
-                    <p className="product-card-description">{data.description}</p>
-                    <p className="product-card-price">${(data.price * (1 - data.salePriceModifier)).toFixed(2)}</p>
+                    <p className="product-card-description" dangerouslySetInnerHTML={{__html:data.description}}></p>
                 </div>
-
+                <p className="product-card-price">€{data.price.toString()}</p>
                 <button className="product-card-add-to-cart-button">ADD TO CART</button>
 
             </div>
@@ -133,17 +157,26 @@ export function SearchResults() {
                     <h2 className="sidebar-header">FILTERS</h2>
                     <div className="filters">
                         <form className="filter-type">
-                            {types.map((type) => TypeOption(type))}
+                            <p>TYPE: {types.length}</p>
+                            {types.map((type: string) => TypeOption(type))}
                         </form>
                         <form className="filter-set">
-                            {sets.map((set) => SetOption(set.name))}
+                            <p>SET: {sets.length}</p>
+                            {sets.map((set: Set) => SetOption(set))}
                         </form>
+                        <form className="filter-series">
+                            <p>SERIES: {series.length}</p>
+                            {series.map((serie: string) => SeriesOption(serie))}
+                        </form>
+                        <p>MIN PRICE</p>
                         <input className="filter-minPrice" type="number" placeholder="0" onChange={
                             (e) => setMinPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
                         } />
+                        <p>MAX PRICE</p>
                         <input className="filter-maxPrice" type="number" placeholder="-" onChange={
                             (e) => setMaxPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
                         } />
+                        <p>IN STOCK</p>
                         <input className="filter-inStock" type="checkbox" name="In Stock" onChange={
                             (e) => setInStock(e.currentTarget.checked)
                         } />

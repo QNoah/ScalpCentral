@@ -59,6 +59,12 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
                 parameters.Add("Sets", filter.SetNames);
             }
 
+            if(filter.Series != null)
+            {
+                where.Add("s.series = ANY(@Series)");
+                parameters.Add("Series", filter.Series);
+            }
+
             foreach (string condition in where)
             {
                 sql += " AND " + condition;

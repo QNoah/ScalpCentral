@@ -9,6 +9,6 @@ export type Product = {
     salePriceModifier : number,
     stock : number,
 
-    sets : Set[],
+    set : Set,
     images : string[]
 }

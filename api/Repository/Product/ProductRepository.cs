@@ -29,6 +29,11 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
                 where.Add("p.stock > 0");
             }
 
+            if (filter.OnSale)
+            {
+                where.Add("p.saleprice_modifier > 0");
+            }
+
             if (filter.MinPrice != null)
             {
                 where.Add("p.price >= @MinPrice");

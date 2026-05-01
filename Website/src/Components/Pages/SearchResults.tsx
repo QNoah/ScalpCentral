@@ -20,6 +20,8 @@ export function SearchResults() {
     const [minPrice, setMinPrice] = useState<number | null>(null);
     const [maxPrice, setMaxPrice] = useState<number | null>(null);
     const [inStock, setInStock] = useState<boolean>(false);
+    const [onSale, setOnSale] = useState<boolean>(false);
+    const [sortOption, setSortOption] = useState<string>("default");
 
     useEffect(() => {
         async function fetchSearchResults() {
@@ -49,6 +51,22 @@ export function SearchResults() {
 
         fetchSearchResults();
     }, [searchParams]);
+
+    function handleSortChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        e.preventDefault();
+        const value = e.currentTarget.value;
+
+        setSortOption(value);
+
+        const params = new URLSearchParams(searchParams);
+        if (sortOption !== "default") {
+            params.set("sort", value);
+        } else {
+            params.delete("sort");
+        }
+        
+        setSearchParams(params);
+    }
 
     function TypeOption (type: string) {
         return (
@@ -98,6 +116,9 @@ export function SearchResults() {
     function applyFilters() {
         const params = new URLSearchParams();
         params.append("name", searchParams.get("name") || "");
+        if (searchParams.get("sort")) {
+            params.append("sort", searchParams.get("sort") || "");
+        }
         selectedTypes.forEach((type) => params.append("type", type));
         selectedSets.forEach((setName) => params.append("setName", setName));
         selectedSeries.forEach((serie) => params.append("series", serie));
@@ -110,6 +131,13 @@ export function SearchResults() {
         if (inStock) {
             params.append("inStock", "true");
         }
+        if (onSale) {
+            params.append("onSale", "true");
+        }
+        if (sortOption !== "default") {
+            params.append("sort", sortOption);
+        }
+
         setSearchParams(params);
     }
 
@@ -176,6 +204,10 @@ export function SearchResults() {
                         <input className="filter-maxPrice" type="number" placeholder="-" onChange={
                             (e) => setMaxPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
                         } />
+                        <p>ON SALE</p>
+                        <input className="filter-onSale" type="checkbox" name="On Sale" onChange={
+                            (e) => setOnSale(e.currentTarget.checked)
+                        } />
                         <p>IN STOCK</p>
                         <input className="filter-inStock" type="checkbox" name="In Stock" onChange={
                             (e) => setInStock(e.currentTarget.checked)
@@ -187,11 +219,10 @@ export function SearchResults() {
                 <div className="results-content">
                     <div className="results-header">
                         <h2 className="results-count">{searchResults.length} RESULTS</h2>
-                        <select className="sort-dropdown">
-                            <option value="relevance">RELEVANCE</option>
+                        <select className="sort-dropdown" onChange={handleSortChange}>
+                            <option value="default">DEFAULT</option>
                             <option value="priceLowHigh">PRICE: LOW TO HIGH</option>
                             <option value="priceHighLow">PRICE: HIGH TO LOW</option>
-                            <option value="newest">NEWEST</option>
                         </select>
                     </div>
                     <div className="results-grid">

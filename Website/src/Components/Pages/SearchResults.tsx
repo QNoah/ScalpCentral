@@ -128,8 +128,8 @@ export function SearchResults() {
         if (searchParams.get("page")) {
             params.append("page", searchParams.get("page") || "0");
         }
-        selectedTypes.forEach((type) => params.append("type", type));
-        selectedSets.forEach((setName) => params.append("setName", setName));
+        selectedTypes.forEach((type) => params.append("types", type));
+        selectedSets.forEach((setName) => params.append("setNames", setName));
         selectedSeries.forEach((serie) => params.append("series", serie));
         if (minPrice !== null) {
             params.append("minPrice", minPrice.toString());

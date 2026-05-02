@@ -2,6 +2,7 @@ using Npgsql.Internal.Postgres;
 
 public class ProductFilter
 {
+    public int? Page { get; set; } = 0;
     public int? MinPrice { get; set; }
     public int? MaxPrice { get; set; }
     public string? Name { get; set; }

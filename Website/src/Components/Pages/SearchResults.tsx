@@ -7,6 +7,10 @@ import type { Set } from '../Types/Set.ts';
 // import { Heart, ShoppingCart, Star } from 'lucide-react';
 
 export function SearchResults() {
+    const PAGE_SIZE = 24;
+    const [page, setPage] = useState<number>(0);
+    const [totalCount, setTotalCount] = useState<number>(0);
+
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchResults, setSearchResults] = useState<Product[]>([]);
 
@@ -25,15 +29,21 @@ export function SearchResults() {
 
     useEffect(() => {
         async function fetchSearchResults() {
-            const response = await fetch(`http://localhost:5231/api/products?${searchParams.toString()}`);
-            const data: Product[] = await response.json();
-            setSearchResults(data);
+            const response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
+                method: "GET",
+                headers: {
+                    "limit": PAGE_SIZE.toString()
+                }
+            });
+            const data = await response.json();
+            setSearchResults(data.result);
+            setTotalCount(data.totalCount);
             
             const uniqueTypes: string[] = [];
             const uniqueSets: Set[] = [];
             const uniqueSeries: string[] = [];
             console.log(data);
-            data.forEach((result: Product) => {
+            data.result.forEach((result: Product) => {
                 if (!uniqueTypes.includes(result.type)) {
                     uniqueTypes.push(result.type);
                 }
@@ -52,6 +62,13 @@ export function SearchResults() {
         fetchSearchResults();
     }, [searchParams]);
 
+    function handlePageChange(newPage: number) {
+        setPage(newPage);
+        const params = new URLSearchParams(searchParams);
+        params.set("page", newPage.toString());
+        setSearchParams(params);
+    }
+    
     function handleSortChange(e: React.ChangeEvent<HTMLSelectElement>) {
         e.preventDefault();
         const value = e.currentTarget.value;
@@ -119,6 +136,9 @@ export function SearchResults() {
         if (searchParams.get("sort")) {
             params.append("sort", searchParams.get("sort") || "");
         }
+        if (searchParams.get("page")) {
+            params.append("page", searchParams.get("page") || "0");
+        }
         selectedTypes.forEach((type) => params.append("type", type));
         selectedSets.forEach((setName) => params.append("setName", setName));
         selectedSeries.forEach((serie) => params.append("series", serie));
@@ -152,6 +172,19 @@ export function SearchResults() {
         setSearchParams(params);
     }
 
+    function renderButtons() {
+        const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+        const buttons = [];
+        for (let i = 0; i < totalPages; i++) {
+            buttons.push(
+                <button key={i} className={`pagination-button ${i === page ? "active" : ""}`} onClick={() => handlePageChange(i)}>
+                    {i + 1}
+                </button>
+            );
+        }
+        return buttons;
+    }   
+    
     function ProductCard (data: Product)  {
         return (
             <div className="product-card">
@@ -227,6 +260,9 @@ export function SearchResults() {
                     </div>
                     <div className="results-grid">
                         {searchResults.map(result => ProductCard(result))}
+                    </div>
+                    <div className="pagination">
+                        {renderButtons()}
                     </div>
                 </div>
             </div>

@@ -23,6 +23,11 @@ public class ProductService : IProductService
         return await _productrepository.GetFiltered(filter);
     }
 
+    public async Task<PagedResults<ProductModel>> GetPaged(ProductFilter filter, int limit)
+    {
+        return await _productrepository.GetPaged(filter, limit);
+    }
+
     public async Task HardDelete()
     {
         await _productrepository.HardDelete();

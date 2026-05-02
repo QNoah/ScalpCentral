@@ -30,6 +30,23 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [HttpGet("paged")]
+    public async Task<ActionResult<PagedResults<ProductModel>>> GetPaged([FromQuery] ProductFilter filter, [FromHeader] int limit)
+    {
+        try
+        {
+            return new ActionResult<PagedResults<ProductModel>>(await _productservice.GetPaged(filter, limit));
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ProductModel?>> GetById([FromRoute] long id)
     {

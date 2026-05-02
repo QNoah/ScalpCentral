@@ -3,7 +3,6 @@ import Navbar from '../PageParts/Navbar';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
-import type { Set } from '../Types/Set.ts';
 // import { Heart, ShoppingCart, Star } from 'lucide-react';
 
 export function SearchResults() {
@@ -15,7 +14,7 @@ export function SearchResults() {
     const [searchResults, setSearchResults] = useState<Product[]>([]);
 
     const [types, setTypes] = useState<string[]>([]);
-    const [sets, setSets] = useState<Set[]>([]);
+    const [sets, setSets] = useState<string[]>([]);
     const [series, setSeries] = useState<string[]>([]);
 
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
@@ -29,34 +28,24 @@ export function SearchResults() {
 
     useEffect(() => {
         async function fetchSearchResults() {
-            const response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
+            let response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
                 method: "GET",
                 headers: {
                     "limit": PAGE_SIZE.toString()
                 }
             });
-            const data = await response.json();
+            let data = await response.json();
             setSearchResults(data.result);
             setTotalCount(data.totalCount);
-            
-            const uniqueTypes: string[] = [];
-            const uniqueSets: Set[] = [];
-            const uniqueSeries: string[] = [];
-            console.log(data);
-            data.result.forEach((result: Product) => {
-                if (!uniqueTypes.includes(result.type)) {
-                    uniqueTypes.push(result.type);
-                }
-                if (!uniqueSets.some(s => s.name === result.set.name)) {
-                    uniqueSets.push(result.set);
-                }
-                if (!uniqueSeries.includes(result.set.series)) {
-                    uniqueSeries.push(result.set.series);
-                }
-            });
-            setTypes(uniqueTypes);
-            setSets(uniqueSets);
-            setSeries(uniqueSeries);
+
+            if (!searchParams || searchParams.size === 0 || (searchParams.size === 1 && searchParams.has("name"))) {
+                response = await fetch(`http://localhost:5231/api/products/filters?${searchParams.toString()}`);
+                data = await response.json();
+                
+                setTypes(data.types);
+                setSets(data.sets);
+                setSeries(data.series);
+            }
         };
 
         fetchSearchResults();
@@ -76,7 +65,7 @@ export function SearchResults() {
         setSortOption(value);
 
         const params = new URLSearchParams(searchParams);
-        if (sortOption !== "default") {
+        if (value !== "default") {
             params.set("sort", value);
         } else {
             params.delete("sort");
@@ -100,15 +89,15 @@ export function SearchResults() {
         );
     }
 
-    function SetOption (set: Set) {
+    function SetOption (set: string) {
         return (
             <div className="filter-option">
-                <p>{set.name}</p>
-                <input type="checkbox" id={`set-${set.name}`} name="set" value={set.name} onChange={(e) => {
+                <p>{set}</p>
+                <input type="checkbox" id={`set-${set}`} name="set" value={set} onChange={(e) => {
                     if (e.currentTarget.checked) {
-                        setSelectedSets([...selectedSets, set.name]);
+                        setSelectedSets([...selectedSets, set]);
                     } else {
-                        setSelectedSets(selectedSets.filter((v) => v !== set.name));
+                        setSelectedSets(selectedSets.filter((v) => v !== set));
                     }
                 }} />
             </div>
@@ -223,7 +212,7 @@ export function SearchResults() {
                         </form>
                         <form className="filter-set">
                             <p>SET: {sets.length}</p>
-                            {sets.map((set: Set) => SetOption(set))}
+                            {sets.map((set: string) => SetOption(set))}
                         </form>
                         <form className="filter-series">
                             <p>SERIES: {series.length}</p>
@@ -251,7 +240,7 @@ export function SearchResults() {
                 </div>
                 <div className="results-content">
                     <div className="results-header">
-                        <h2 className="results-count">{searchResults.length} RESULTS</h2>
+                        <h2 className="results-count">{totalCount} RESULTS</h2>
                         <select className="sort-dropdown" onChange={handleSortChange}>
                             <option value="default">DEFAULT</option>
                             <option value="priceLowHigh">PRICE: LOW TO HIGH</option>

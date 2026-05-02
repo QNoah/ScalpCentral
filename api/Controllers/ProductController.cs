@@ -47,6 +47,23 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [HttpGet("filters")]
+    public async Task<ActionResult<Dictionary<string, string[]>>> GetFilters([FromQuery] ProductFilter filter)
+    {
+        try
+        {
+            return new ActionResult<Dictionary<string, string[]>>(await _productservice.GetFilters(filter));
+        }
+        catch (PostgresException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ProductModel?>> GetById([FromRoute] long id)
     {

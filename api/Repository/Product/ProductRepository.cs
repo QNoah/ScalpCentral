@@ -116,7 +116,12 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         (string whereClause, DynamicParameters parameters) = buildFilterQuery(filter);
 
         string sql = baseSql + whereClause;
+        if (filter.Sort != null)
+        {
 
+            if (filter.Sort == "priceLowHigh") sql += " ORDER BY p.price ASC";
+            else if (filter.Sort == "priceHighLow") sql += " ORDER BY p.price DESC";
+        }
         sql += " LIMIT @Limit OFFSET @PageOffset";
         parameters.Add("Limit", limit);
         parameters.Add("PageOffset", filter.Page * limit);
@@ -157,6 +162,41 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         return new PagedResults<ProductModel>(count, products);
     }
 
+    public async Task<Dictionary<string, string[]>> GetFilters(ProductFilter filter)
+    {
+        Dictionary<string, string[]> results = [];
+        (string whereClause, DynamicParameters parameters) = buildFilterQuery(filter);
+
+        results.Add("types", await RepoHelpers.TryQueryAsync(async () =>
+        {
+            IEnumerable<string> types = await _con.QueryAsync<string>(GetFilterSql("p.type") + whereClause, parameters);
+            return types.ToArray();
+        }));
+
+        results.Add("sets", await RepoHelpers.TryQueryAsync(async () =>
+        {
+            IEnumerable<string> sets = await _con.QueryAsync<string>(GetFilterSql("s.name") + whereClause, parameters);
+            return sets.ToArray();
+        }));
+
+        results.Add("series", await RepoHelpers.TryQueryAsync(async () =>
+        {
+            IEnumerable<string> series = await _con.QueryAsync<string>(GetFilterSql("s.series") + whereClause, parameters);
+            return series.ToArray();
+        }));
+
+        return results;
+    }
+
+    private string GetFilterSql(string column)
+    {
+        return $"""
+        SELECT DISTINCT {column}
+        FROM products as p 
+        JOIN sets as s ON s.id = p.set_id 
+        WHERE p.soft_delete = false AND s.soft_delete = false
+        """;
+    }
     public async Task<ProductModel?> GetById(long id)
     {
         string sql = baseSql + $" AND p.id = @Id";

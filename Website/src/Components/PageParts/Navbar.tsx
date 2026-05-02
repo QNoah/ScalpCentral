@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logoImage from '../../assets/hero.png';
+import logoImage from '../../assets/NameOnly.png';
 import '../Styling/Navbar.css';
 
 export default function Navbar() {
@@ -21,22 +21,22 @@ export default function Navbar() {
     
     return (
         <div>
-            <header className="retro-header">
-                <div className="retro-header-content">
-                    <Link to="/">
-                    <img src={logoImage} alt="ScalpCentral" style={{ height: '50px' }} />
+            <header className="navbar">
+                <div className="navbar-content">
+                    <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+                    <img src={logoImage} alt="ScalpCentral" style={{ height: '60px' }} />
                     </Link>
-                    <form onSubmit={handleSearchSubmit}>
+                    <form className="navbar-search" onSubmit={handleSearchSubmit}>
                         <input value={search} onChange={handleSearchChange} placeholder="Search products..." />
                     </form>
-                    <nav className="retro-nav">
-                        <Link to="/" className="retro-nav-link active">HOME</Link>
-                        <Link to="/search" className="retro-nav-link">SEARCH</Link>
-                        <Link to="/cart" className="retro-nav-link">CART</Link>
-                        <Link to="/faq" className="retro-nav-link">FAQ</Link>
-                        <Link to="/contact" className="retro-nav-link">CONTACT</Link>
-                        <Link to="/login" className="retro-nav-link">LOGIN</Link>
-                        <Link to="/register" className="retro-nav-link">REGISTER</Link>
+                    <nav className="navbar-links">
+                        <Link to="/" className="navbar-link">HOME</Link>
+                        <Link to="/search" className="navbar-link">SEARCH</Link>
+                        <Link to="/cart" className="navbar-link">CART</Link>
+                        <Link to="/faq" className="navbar-link">FAQ</Link>
+                        <Link to="/contact" className="navbar-link">CONTACT</Link>
+                        <Link to="/login" className="navbar-link">LOGIN</Link>
+                        <Link to="/register" className="navbar-link">REGISTER</Link>
                     </nav>
                 </div>
             </header>

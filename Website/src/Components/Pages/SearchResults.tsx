@@ -248,7 +248,7 @@ export function SearchResults() {
                         </select>
                     </div>
                     <div className="results-grid">
-                        {searchResults.map(result => ProductCard(result))}
+                        {searchResults.map((result: Product) => ProductCard(result))}
                     </div>
                     <div className="pagination">
                         {renderButtons()}

@@ -146,9 +146,6 @@
     @apply border-border outline-ring/50;
   }
 
-  body {
-    @apply bg-background text-foreground;
-  }
 
   /**
   * Default typography styles for HTML elements (h1-h4, p, label, button, input).

@@ -7,6 +7,7 @@ import { SearchResults } from './Components/Pages/SearchResults';
 import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
+import OrderConfirmation from './Components/Pages/OrderConfirmation';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +58,7 @@ function App() {
         <Route path="/Login" element={<LoginPage />}/>
         <Route path="/Register" element={<RegisterPage />}/>
         <Route path="/search" element={<SearchResults />} />
+        <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
         <Route path="*" element={<p>Page not found</p>} />
       </Routes>
     </main>

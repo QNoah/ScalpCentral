@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Search, Filter, TrendingUp, Zap, Flame, Droplet, Sparkles, Leaf } from 'lucide-react';
 import { Link } from 'react-router';
-import logoImage from '../../assets/hero.png';
+import logoImage from '../../assets/imgs/hero.png';
 import '../Styling/HomeStyles.css';
 import Navbar from '../PageParts/Navbar';
 

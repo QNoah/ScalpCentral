@@ -189,7 +189,7 @@ export function SearchResults() {
                         <p>STAR ICONS</p>
                         <p >REVIEW COUNT</p>
                     </div>
-                    <p className="product-card-description" dangerouslySetInnerHTML={{__html:data.description}}></p>
+                    <div className="product-card-description" dangerouslySetInnerHTML={{__html:data.description}}></div>
                 </div>
                 <p className="product-card-price">€{data.price.toString()}</p>
                 <button className="product-card-add-to-cart-button">ADD TO CART</button>

@@ -29,7 +29,7 @@ export function ProductPage() {
             <Navbar />
             <div className="product-container">
                 <div className="product-header">
-                    <button>Return</button>
+                    <button onClick={() => window.history.back()}>Return to Search Results</button>
                 </div>
                 <div className="product-content">
                     <div className="product-card">
@@ -37,8 +37,20 @@ export function ProductPage() {
                         <h2>{product?.name}</h2>
                         <p>reviews: {reviews.length}</p>
                         <img className="product-image" src={product?.images[0]} alt={product?.name} />
-                        <div className="imagesScroll">
-                            other photos n shit
+                        <div className="product-specifications">
+                            <h3 style={{}}>Specifications</h3>
+                            <table>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Set</th>
+                                    <th>Series</th>
+                                </tr>
+                                <tr>
+                                    <td>{product?.type}</td>
+                                    <td>{product?.set.name}</td>
+                                    <td>{product?.set.series}</td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                     <div className="product-details">

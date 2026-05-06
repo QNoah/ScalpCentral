@@ -103,7 +103,7 @@ def insert_products(dataset, connection, set_id_arg : str, set_name_arg : str):
             name = row["name"]
             type = filter_result
             description = row["extCardText"]
-            price = max(prices)
+            price = min(prices)
             cursor.execute("INSERT INTO products (set_id, name, type, description, price, stock) VALUES (%s, %s, %s, %s, %s, 20) RETURNING id",(set_id, name, type, description, price))
 
             image_url = row["imageUrl"]

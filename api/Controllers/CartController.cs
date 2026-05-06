@@ -19,10 +19,9 @@ public class CartController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string userId)
+    public async Task<List<CartItemDTO>> Get(string userId)
     {
-        var cart = await _service.GetCart(userId);
-        return Ok(cart);
+        return await _service.GetCart(userId);
     }
 
     [HttpDelete]

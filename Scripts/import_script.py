@@ -2,9 +2,11 @@ import json
 import psycopg2
 import os
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
 
 sys.stdout.reconfigure(encoding="utf-8")
+
+sys.stdout.reconfigure(encoding="utf-8")
+
 
 def get_connection():
     try:
@@ -100,7 +102,7 @@ CREATE TABLE IF NOT EXISTS subtypes(
 
 CREATE TABLE IF NOT EXISTS cards (
     id VARCHAR(255) UNIQUE NOT NULL PRIMARY KEY,
-    set_id VARCHAR(255) NOT NULL REFERENCES sets(id),
+    set_id VARCHAR(255) NOT NULL REFERENCES sets(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     supertype VARCHAR(255) NOT NULL,
     hp VARCHAR(255),
@@ -108,49 +110,50 @@ CREATE TABLE IF NOT EXISTS cards (
     artist VARCHAR(255),
     rarity VARCHAR(255),
     flavor_text TEXT,
-    images_id BIGINT NOT NULL REFERENCES card_images(id),
+    images_id BIGINT REFERENCES card_images(id) ON DELETE SET NULL,
     soft_delete BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_evolutions(
-    card_id VARCHAR(255) NOT NULL REFERENCES cards(id),
+    pokemon_name VARCHAR(255) NOT NULL,
     evolves_to_name VARCHAR(255) NOT NULL,
-    PRIMARY KEY (card_id, evolves_to_name)
+    PRIMARY KEY (pokemon_name, evolves_to_name)
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_abilities(
-    card_id VARCHAR(255) NOT NULL REFERENCES cards(id),
-    ability_id BIGINT NOT NULL REFERENCES abilities(id),
+    card_id VARCHAR(255) NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
+    ability_id BIGINT NOT NULL REFERENCES abilities(id) ON DELETE CASCADE,
     PRIMARY KEY (card_id, ability_id)
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_attacks(
-    card_id VARCHAR(255) NOT NULL REFERENCES cards(id),
-    attack_id BIGINT NOT NULL REFERENCES attacks(id),
+    card_id VARCHAR(255) NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
+    attack_id BIGINT NOT NULL REFERENCES attacks(id) ON DELETE CASCADE,
     PRIMARY KEY (card_id, attack_id)
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_rules(
-    card_id VARCHAR(255) NOT NULL REFERENCES cards(id),
-    rule_id BIGINT NOT NULL REFERENCES rules(id),
+    card_id VARCHAR(255) NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
+    rule_id BIGINT NOT NULL REFERENCES rules(id) ON DELETE CASCADE,
     PRIMARY KEY (card_id, rule_id)
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_types(
-    card_id VARCHAR(255) NOT NULL REFERENCES cards(id),
-    type_id BIGINT NOT NULL REFERENCES types(id),
+    card_id VARCHAR(255) NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
+    type_id BIGINT NOT NULL REFERENCES types(id) ON DELETE CASCADE,
     PRIMARY KEY (card_id, type_id)
 );
 
 CREATE TABLE IF NOT EXISTS cards_to_subtypes(
-    card_id VARCHAR(255) NOT NULL REFERENCES cards(id),
-    subtype_id BIGINT NOT NULL REFERENCES subtypes(id),
+    card_id VARCHAR(255) NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
+    subtype_id BIGINT NOT NULL REFERENCES subtypes(id) ON DELETE CASCADE,
     PRIMARY KEY (card_id, subtype_id)
 );
 """
     cursor.execute(schema_sql)
     connection.commit()
     cursor.close()
+
 
 def insert_cards(cards, connection):
     cursor = connection.cursor()
@@ -164,6 +167,7 @@ def insert_cards(cards, connection):
         c_types = c.get("types")
         c_hp = c.get("hp")
         c_evolves_from_name = c.get("evolvesFrom")
+        c_evolves_to_name = c.get("evolvesTo")
         c_attacks = c.get("attacks")
         c_abilities = c.get("abilities")
         c_rules = c.get("rules")
@@ -181,9 +185,9 @@ def insert_cards(cards, connection):
 
         cursor.execute(
             """
-                        INSERT INTO cards (id, set_id, name, supertype, hp, evolves_from_name, artist, rarity, flavor_text, images_id, soft_delete)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT)
-                        """,
+            INSERT INTO cards (id, set_id, name, supertype, hp, evolves_from_name, artist, rarity, flavor_text, images_id, soft_delete)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT)
+            """,
             (
                 c_id,
                 c_set_id,
@@ -197,6 +201,11 @@ def insert_cards(cards, connection):
                 images_id,
             ),
         )
+        if c_evolves_to_name:
+            for name in c_evolves_to_name:
+                cursor.execute(
+                    """INSERT INTO cards_to_evolutions (pokemon_name, evolves_to_name)
+                    VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_name, name))
 
         if c_attacks:
             for attack in c_attacks:
@@ -274,10 +283,11 @@ def insert_sets(data, connection):
             INSERT INTO sets (id, name, series, total_cards, release_date, image_logo, soft_delete)
             VALUES (%s, %s, %s, %s, %s, %s, DEFAULT)
             """,
-            (id, name, series, total, release, image)
+            (id, name, series, total, release, image),
         )
 
         print(f"Succes SET: {name} imported.")
+
 
 def json_load_cards(connection):
     cards_folder = "./json/cards"
@@ -293,9 +303,10 @@ def json_load_cards(connection):
                 if cards:
                     insert_cards(cards, connection)
                     print(f"Succes CARDS: {file} imported")
-                        
+
         except Exception as e:
             print(f"Error in {file}: {e}")
+
 
 def json_load_sets(connection):
     try:
@@ -306,6 +317,7 @@ def json_load_sets(connection):
     except Exception as e:
         print("JSON laden mislukt:", e)
 
+
 def run(connection):
     create_tables(connection)
     json_load_sets(connection)
@@ -313,6 +325,7 @@ def run(connection):
     connection.commit()
     print(f"import_script.py ran succesfully.")
     return
+
 
 if __name__ == "__main__":
     connection = get_connection()

@@ -21,17 +21,17 @@ public class UserService : IUserService
         return await _userRepository.GetAllAsync();
     }
 
-    public bool CreateAccount(LoginRequest userinfo)
+    public async Task<int?> CreateAccount(LoginRequest userinfo)
     {
-        if(_userRepository.EmailExists(userinfo.Email))
-            return false;
+        if(await _userRepository.EmailExists(userinfo.Email))
+            return 0;
         userinfo.Password = _hasher.GenerateHash(userinfo.Password, hashKey);
-        return _userRepository.CreateAccount(userinfo);
+        return await _userRepository.CreateAccount(userinfo);
     }
 
-    public UserModel? Login(LoginRequest userinfo)
+    public async Task<UserModel?> Login(LoginRequest userinfo)
     {
-        UserModel? user = _userRepository.Login(userinfo);
+        UserModel? user = await _userRepository.Login(userinfo);
         if(user == null)
             return null;
         else if(user.Password == _hasher.GenerateHash(userinfo.Password, hashKey))
@@ -39,5 +39,13 @@ public class UserService : IUserService
             return user;
         }
         return null;
+    }
+
+    public async Task<UserModel?> GetById(int id)
+    {
+        UserModel? user = await _userRepository.GetById(id);
+        if(user == null)
+            return null;
+        return user;
     }
 }

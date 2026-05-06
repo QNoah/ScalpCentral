@@ -37,4 +37,40 @@ public static class RepoHelpers
             throw;
         }
     }
+
+    public static async Task<T> TryQueryAsync<T>(Func<Task<T>> query)
+    {
+        try
+        {
+            return await query();
+        }
+        catch (PostgresException ex)
+        {
+            Console.WriteLine($"Database Exception: {ex.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+            throw;
+        }
+    }
+
+    public static async Task TryExecuteAsync(Func<Task> execute)
+    {
+        try
+        {
+            await execute();
+        }
+        catch (PostgresException ex)
+        {
+            Console.WriteLine($"Database Exception: {ex.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+            throw;
+        }
+    }
 }

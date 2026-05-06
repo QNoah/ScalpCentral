@@ -1,3 +1,6 @@
+.debug * {
+ outline: 1px solid red;
+}
 .counter {
   font-size: 16px;
   padding: 5px 10px;

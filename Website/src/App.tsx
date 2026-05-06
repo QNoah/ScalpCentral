@@ -22,7 +22,31 @@ function App() {
         // Token exists
       }
     }
+    // shutting up the annoying error about double rendering which is intentional.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      console.log(event.key, event.shiftKey, event.altKey);
+      if (event.shiftKey && event.altKey && event.key === "D") {
+        console.log("Toggling debug mode");
+        document.body.classList.toggle("debug");
+        const isDebugMode = document.body.classList.contains("debug");
+        localStorage.setItem("debugMode", isDebugMode ? "true" : "false");
+      }
+    };
+
+    if (localStorage.getItem("debugMode") === "true") {
+      document.body.classList.add("debug");
+    } else {
+      document.body.classList.remove("debug");
+    }
+    
+    console.log("listener added");
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   if (isLoading) return <div>Loading...</div>;

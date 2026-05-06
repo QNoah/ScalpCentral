@@ -6,6 +6,7 @@ import bookmarks
 import products
 import orders
 import orderContents
+import product_reviews
 
 
 def create_database(cur: psycopg2.extensions.cursor):
@@ -33,4 +34,5 @@ if __name__ == "__main__":
     orders.run(con)
     orderContents.run(con)
     bookmarks.create_bookmarks_table(cur)
+    product_reviews.create_tables(con)
     con.close()

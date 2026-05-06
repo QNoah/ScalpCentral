@@ -1,25 +1,16 @@
-using ScalpCentral.Api.Models;
+namespace ScalpCentral.Api.Models;
 
 public class OrderInfoModel
 {
-    public int Id {get; set;}
-    public required string Ordernumber {get; set;}
-    public required decimal Price {get; set;}
-    public required DateTime Created_at {get; set;}
-    public DateTime? Deleted_at {get; set;}
-    public required bool SoftDeleted {get; set;}
+    public required OrderModel Order { get; set; }
+    public UserModel? User { get; set; }
+    public required List<OrderItemModel> Items { get; set; }
+}
 
-//---------------------------------------------------
-//   either
-//---------------------------------------------------
-
-    public required string Address {get; set;}
-    public required string Email {get; set;}
-    public required string Phonenumber {get; set;}
-
-//---------------------------------------------------
-//   get from different tables
-//---------------------------------------------------
-    public required UserModel User {get; set;}
-    public required Dictionary<ProductModel, int> Cart {get; set;}
+public class OrderItemModel
+{
+    public long ProductId { get; set; }
+    public required string ProductName { get; set; }
+    public decimal UnitPrice { get; set; }
+    public int Amount { get; set; }
 }

@@ -4,37 +4,47 @@ using ScalpCentral.Api.Repository;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productrepository;
-    public ProductService()
+    public ProductService(IProductRepository productRepository)
     {
-        _productrepository = new ProductRepository();
+        _productrepository = productRepository;
     }
-    public Task<ActionResult> Create(ProductModel product)
+    public async Task<long> Create(CreateProductDto product)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<ActionResult<ProductModel>> GetById(int id)
-    {
-        throw new NotImplementedException();
+        return await _productrepository.Create(product);
     }
 
-    public Task<ActionResult<List<ProductModel>>> GetFiltered(ProductFilter filter)
+    public async Task<ProductModel?> GetById(long id)
     {
-        throw new NotImplementedException();
+        return await  _productrepository.GetById(id);
     }
 
-    public Task<ActionResult> HardDelete()
+    public async Task<List<ProductModel>> GetFiltered(ProductFilter filter)
     {
-        throw new NotImplementedException();
+        return await _productrepository.GetFiltered(filter);
     }
 
-    public Task<ActionResult> SoftDelete(int id)
+    public async Task<PagedResults<ProductModel>> GetPaged(ProductFilter filter, int limit)
     {
-        throw new NotImplementedException();
+        return await _productrepository.GetPaged(filter, limit);
     }
 
-    public Task<ActionResult> Update(ProductModel product)
+    public async Task<Dictionary<string, string[]>> GetFilters(ProductFilter filter)
     {
-        throw new NotImplementedException();
+        return await _productrepository.GetFilters(filter);
+    }
+
+    public async Task HardDelete()
+    {
+        await _productrepository.HardDelete();
+    }
+
+    public async Task<long> SoftDelete(long id)
+    {
+        return await _productrepository.SoftDelete(id);
+    }
+
+    public async Task<long> Update(ProductModel product)
+    {
+        return await _productrepository.Update(product);
     }
 }

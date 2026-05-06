@@ -1,14 +1,3 @@
-:root {
-  --retro-bg: #ffffff;
-  --retro-surface: #f7f7f7;
-  --retro-border: #e5e5e5;
-  --retro-text: #222222;
-  --retro-text-muted: #777777;
-  --retro-accent: #6366f1;
-  --retro-accent-light: #818cf8;
-  --retro-purple: #6366f1;
-}
-
 .product-card {
     height: 450px;
     width: 250px;
@@ -74,7 +63,6 @@
 .container-search {
     min-height: 100vh;
     width: 100%;
-    background: var(--retro-bg);
     position: relative;
     overflow-x: hidden;
     display: flex;
@@ -128,7 +116,6 @@
 }
 
 .results-grid {
-    flex: 1;
     display: grid;
     grid-template-columns: auto auto auto;
     justify-content: space-evenly;

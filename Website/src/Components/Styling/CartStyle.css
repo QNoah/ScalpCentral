@@ -24,17 +24,14 @@
     flex: 1;
     display: flex;
     gap: 1rem;
-    border: 10px solid red;
 }
 
 .sidebar {
     min-width: 280px;
-    border: 10px solid pink;
 }
 
 .results-content {
     flex: 1;
-    border: 10px solid blue;
     display: flex;
     flex-direction: column;
 }
@@ -45,10 +42,44 @@
 
 .cart-content {
     min-height: 120px;
-    max-height: 120px;
 
     flex: 1;
-    border: 10px solid green;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px;
+    border-bottom: 1px solid var(--retro-border);
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-info h3 {
+    cursor: pointer;
+    margin: 0;
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-item-quantity button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
 }
 
 h1 {

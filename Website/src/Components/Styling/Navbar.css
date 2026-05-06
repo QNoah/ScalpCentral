@@ -1,15 +1,3 @@
-:root {
-  --retro-bg: #ffffff;
-  --retro-surface: #E9FEBA;
-  --retro-border: #e5e5e5;
-  --retro-text: #222222;
-  --retro-text-muted: #777777;
-  --yellow: #F1F979;
-  --retro-accent-light: #818cf8;
-  --retro-purple: #6366f1;
-}
-
-/* Header */
 .navbar {
     height: 75px;
     position: sticky;
@@ -64,28 +52,4 @@
     color: var(--yellow);
     border-color: var(--yellow);
     background: rgba(99, 102, 241, 0.05);
-}
-
-/* Search */
-.retro-search-section {
-    margin-bottom: 3rem;
-}
-
-.retro-search-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--retro-surface);
-    border: 2px solid var(--retro-border);
-    border-radius: 4px;
-    padding: 1rem;
-}
-
-.retro-search-input {
-    flex: 1;
-    background: #ffffff;
-    border: 2px solid var(--retro-border);
-    color: var(--retro-text);
-    padding: 0.75rem 1rem;
-    border-radius: 4px;
 }

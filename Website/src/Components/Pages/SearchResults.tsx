@@ -259,14 +259,3 @@ export function SearchResults() {
 
     )
 }
-
-{/* <div className="retro-search-bar">
-              <Search className="retro-search-icon" size={20} />
-              <input
-                type="text"
-                placeholder="SEARCH PRODUCTS..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="retro-search-input"
-              />
-            </div> */}

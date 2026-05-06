@@ -15,9 +15,9 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         WHERE p.soft_delete = false AND s.soft_delete = false
         """;
 
-    public async Task<List<ProductModel>> GetFiltered(ProductFilter? filter)
+    private (string, DynamicParameters) buildFilterQuery(ProductFilter? filter)
     {
-        string sql = baseSql;
+        string whereClause = "";
 
         List<string> where = new List<string>();
         DynamicParameters parameters = new DynamicParameters();
@@ -27,6 +27,11 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
             if (filter.InStock)
             {
                 where.Add("p.stock > 0");
+            }
+
+            if (filter.OnSale)
+            {
+                where.Add("p.saleprice_modifier > 0");
             }
 
             if (filter.MinPrice != null)
@@ -59,11 +64,25 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
                 parameters.Add("Sets", filter.SetNames);
             }
 
+            if(filter.Series != null)
+            {
+                where.Add("s.series = ANY(@Series)");
+                parameters.Add("Series", filter.Series);
+            }
+
             foreach (string condition in where)
             {
-                sql += " AND " + condition;
+                whereClause += " AND " + condition;
             }
         }
+        return (whereClause, parameters);
+    }
+
+    public async Task<List<ProductModel>> GetFiltered(ProductFilter? filter)
+    {
+        (string whereClause, DynamicParameters parameters) = buildFilterQuery(filter);
+
+        string sql = baseSql + whereClause;
 
         return await RepoHelpers.TryQueryAsync(async () => {
                 IEnumerable<ProductModel> result = await _con.QueryAsync<ProductModel, SetModel, ProductModel>(sql,(product, set) => {
@@ -92,6 +111,92 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
             });
     }
 
+    public async Task<PagedResults<ProductModel>> GetPaged(ProductFilter filter, int limit)
+    {
+        (string whereClause, DynamicParameters parameters) = buildFilterQuery(filter);
+
+        string sql = baseSql + whereClause;
+        if (filter.Sort != null)
+        {
+
+            if (filter.Sort == "priceLowHigh") sql += " ORDER BY p.price ASC";
+            else if (filter.Sort == "priceHighLow") sql += " ORDER BY p.price DESC";
+        }
+        sql += " LIMIT @Limit OFFSET @PageOffset";
+        parameters.Add("Limit", limit);
+        parameters.Add("PageOffset", filter.Page * limit);
+
+        string countSql = "SELECT COUNT(DISTINCT p.id) FROM products as p JOIN sets as s ON s.id = p.set_id WHERE p.soft_delete = false AND s.soft_delete = false" + whereClause;
+        int count = await RepoHelpers.TryQueryAsync(async () =>
+        {
+            int result = await _con.QuerySingleAsync<int>(countSql, parameters);
+            return result;
+        });
+
+        List<ProductModel> products = await RepoHelpers.TryQueryAsync(async () => {
+            IEnumerable<ProductModel> result = await _con.QueryAsync<ProductModel, SetModel, ProductModel>(sql,(product, set) => {
+            product.Set = set;
+            return product;
+            }, parameters, splitOn: "id");
+            
+            result = result.ToList();
+
+            IEnumerable<(long productId, string imageUrl)> imageresult = await _con.QueryAsync<(long productId, string imageUrl)>("""
+            SELECT
+            i.product_id, i.image_url
+            FROM product_images as i
+            WHERE i.product_id = ANY(@Ids)
+            """, new {Ids = result.Select(product => product.Id).ToList()});
+
+            Dictionary<long, List<string>> images = imageresult.GroupBy(image => image.productId)
+            .ToDictionary(group => group.Key, group => group.Select(i => i.imageUrl).ToList());
+
+            foreach (ProductModel product in result)
+            {
+                product.Images = images.GetValueOrDefault(product.Id);
+            }
+
+            return result.ToList();
+        });
+
+        return new PagedResults<ProductModel>(count, products);
+    }
+
+    public async Task<Dictionary<string, string[]>> GetFilters(ProductFilter filter)
+    {
+        Dictionary<string, string[]> results = [];
+        (string whereClause, DynamicParameters parameters) = buildFilterQuery(filter);
+
+        results.Add("types", await RepoHelpers.TryQueryAsync(async () =>
+        {
+            IEnumerable<string> types = await _con.QueryAsync<string>(GetFilterSql("p.type") + whereClause, parameters);
+            return types.ToArray();
+        }));
+
+        results.Add("sets", await RepoHelpers.TryQueryAsync(async () =>
+        {
+            IEnumerable<string> sets = await _con.QueryAsync<string>(GetFilterSql("s.name") + whereClause, parameters);
+            return sets.ToArray();
+        }));
+
+        results.Add("series", await RepoHelpers.TryQueryAsync(async () =>
+        {
+            IEnumerable<string> series = await _con.QueryAsync<string>(GetFilterSql("s.series") + whereClause, parameters);
+            return series.ToArray();
+        }));
+
+        return results;
+    }
+
+    private string GetFilterSql(string column)
+    {
+        return $"""
+        SELECT DISTINCT {column}
+        FROM products as p 
+        JOIN sets as s ON s.id = p.set_id 
+        WHERE p.soft_delete = false AND s.soft_delete = false
+        """;
+    }
     public async Task<ProductModel?> GetById(long id)
     {
         string sql = baseSql + $" AND p.id = @Id";
@@ -158,6 +263,8 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
                 return newId;
             });
     }
+
+    
 
     public async Task<long> SoftDelete(long id)
     {

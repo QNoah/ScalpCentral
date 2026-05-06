@@ -6,8 +6,8 @@ export default function OrderConfirmation() {
   return (
     <>
       <Navbar />
-      <div className="mx-10 mt-12">
-        <div className="flex justify-center flex-col text-center font-inter mb-5">
+      <div className="mx-10 mt-12 text-center">
+        <div className="font-inter mb-5">
           <div className="text-6xl">
             <CheckCircleIcon fontSize="inherit" color="success" />
           </div>
@@ -17,7 +17,11 @@ export default function OrderConfirmation() {
             placed.
           </p>
         </div>
-        <div className="bg-primary"></div>
+        <div className="flex flex-col text-center justify-center items-center gap-3">
+          <Button Message="Continue Shopping" ButtonColor="bg-white"/>
+          <Button Message="View Order History" ButtonColor="bg-primary" TextColor="text-white"/>
+        </div>
+
       </div>
     </>
   );

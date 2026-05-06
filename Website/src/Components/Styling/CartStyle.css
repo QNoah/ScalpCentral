@@ -20,7 +20,7 @@
     flex-direction: column;
 }
 
-.search-content {
+.cart-page {
     flex: 1;
     display: flex;
     gap: 1rem;
@@ -39,12 +39,20 @@
     flex-direction: column;
 }
 
-.results-header {
+.carts-header {
     min-height: 40px;
-    border: 10px solid yellow;
 }
 
-.results-grid {
+.cart-content {
+    min-height: 120px;
+    max-height: 120px;
+
     flex: 1;
     border: 10px solid green;
+}
+
+h1 {
+    color: black;
+    text-align: left;
+    padding-left: 20px;
 }

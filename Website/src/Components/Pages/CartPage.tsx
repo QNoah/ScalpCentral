@@ -5,15 +5,15 @@ export function CartPage() {
         return (
             <div className="retro-container-search">
                 <Navbar />
-                <div className="search-content">
+                <div className="cart-page">
                     <div className="sidebar">
-    
+
                     </div>
                     <div className="results-content">
-                        <div className="results-header">
-    
+                        <div className="carts-header">
+                            <h1>Cart</h1>
                         </div>
-                        <div className="results-grid">
+                        <div className="cart-content">
     
                         </div>
                     </div>

@@ -11,7 +11,7 @@ export function CartPage() {
                     </div>
                     <div className="results-content">
                         <div className="carts-header">
-                            <h1>Cart</h1>
+                            <h1>Shoppingcart</h1>
                         </div>
                         <div className="cart-content">
     
@@ -19,6 +19,5 @@ export function CartPage() {
                     </div>
                 </div>
             </div>
-    
         )
 }

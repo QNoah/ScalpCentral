@@ -1,15 +1,5 @@
-:root {
-  --retro-bg: #ffffff;
-  --retro-surface: #E9FEBA;
-  --retro-border: #e5e5e5;
-  --retro-text: #222222;
-  --retro-text-muted: #777777;
-  --yellow: #F1F979;
-  --retro-accent-light: #818cf8;
-  --retro-purple: #6366f1;
-}
+@import './colors.css';
 
-/* Header */
 .navbar {
     height: 75px;
     position: sticky;
@@ -50,7 +40,7 @@
 .navbar-link {
     font-family: 'Orbitron', sans-serif;
     font-size: 0.875rem;
-    color: var(--retro-text);
+    color: var(--pokeWhite);
     text-decoration: none;
     letter-spacing: 0.02em;
     transition: all 0.2s ease;
@@ -61,31 +51,7 @@
 
 .navbar-link:hover,
 .navbar-link.active {
-    color: var(--yellow);
-    border-color: var(--yellow);
+    color: var(--pokeYellow);
+    border-color: var(--pokeYellow);
     background: rgba(99, 102, 241, 0.05);
-}
-
-/* Search */
-.retro-search-section {
-    margin-bottom: 3rem;
-}
-
-.retro-search-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--retro-surface);
-    border: 2px solid var(--retro-border);
-    border-radius: 4px;
-    padding: 1rem;
-}
-
-.retro-search-input {
-    flex: 1;
-    background: #ffffff;
-    border: 2px solid var(--retro-border);
-    color: var(--retro-text);
-    padding: 0.75rem 1rem;
-    border-radius: 4px;
 }

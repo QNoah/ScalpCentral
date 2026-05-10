@@ -33,7 +33,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 			WHERE soft_deleted = FALSE
 			ORDER BY id;";
 
-		var users = await RepoHelpers.TryQuery(() => _con.QueryAsync<UserModel>(sql));
+		var users = await RepoHelpers.TryQuery(async() => await _con.QueryAsync<UserModel>(sql));
 		return users.ToList();
 	}
 
@@ -83,7 +83,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		UPDATE {Table()}
 		SET soft_deleted = NOT soft_deleted AND deleted_at = @Date
 		WHERE id = Id";
-		RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id, Date = DateTime.Now}));
+		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id, Date = DateTime.Now}));
 	}
 
 	public async Task HardDelete(UserModel user)
@@ -91,7 +91,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 		DELETE FROM {Table()}
 		WHERE id = Id";
-		RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id}));
+		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id}));
 	}
 
 	public async Task Update(UserModel user)
@@ -114,6 +114,6 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 			positive_seller_count = @PositiveSellerCount,
 			role = @Role
 		WHERE id = @Id";
-		RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, user));
+		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, user));
 	}
 }

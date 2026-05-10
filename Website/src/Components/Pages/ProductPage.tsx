@@ -35,7 +35,7 @@ export function ProductPage() {
                     <div className="product-card">
                         <button className="product-card-bookmark-button">HEART ICON</button>
                         <h2>{product?.name}</h2>
-                        <p>reviews: {reviews.length}</p>
+                        <p>STARS AVERAGE: ***** reviews: {reviews.length}</p> {/* VERVANG MET DAADWERKELIJKE REVIEWS WANNEER API WERKT */}
                         <img className="product-image" src={product?.images[0]} alt={product?.name} />
                         <div className="product-specifications">
                             <h3 style={{}}>Specifications</h3>
@@ -62,6 +62,10 @@ export function ProductPage() {
                         <p dangerouslySetInnerHTML={{__html:product.description}}></p>
                     </div>
                 </div>
+            </div>
+            <div className="reviews-section">
+                <h2>Reviews</h2>
+                {/* VERVANG MET DAADWERKELIJKE REVIEWS WANNEER API WERKT */}
             </div>
         </main>
     );

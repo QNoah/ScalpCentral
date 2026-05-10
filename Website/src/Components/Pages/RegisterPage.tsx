@@ -1,61 +1,61 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
-import { ArrowLeft } from 'lucide-react';
-import logoImage from '../../assets/hero.png';
-import '../Styling/RetroStyles.css';
+import { useState } from "react";
+import { Link } from "react-router";
+import { ArrowLeft } from "lucide-react";
+import logoImage from "../../assets/imgs/hero.png";
+import "../Styling/RetroStyles.css";
 
 export function RegisterPage() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: '' }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
     const newErrors = {
-      email: '',
-      password: '',
-      confirmPassword: '',
+      email: "",
+      password: "",
+      confirmPassword: "",
     };
 
     if (!formData.email) {
-      newErrors.email = 'Email required';
+      newErrors.email = "Email required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email invalid';
+      newErrors.email = "Email invalid";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password required';
+      newErrors.password = "Password required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Confirm password required';
+      newErrors.confirmPassword = "Confirm password required";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error !== '');
+    return !Object.values(newErrors).some((error) => error !== "");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Registration successful!', formData);
+      console.log("Registration successful!", formData);
     }
   };
 
@@ -65,13 +65,29 @@ export function RegisterPage() {
       <div className="retro-grid"></div>
 
       <div className="relative z-10 w-full max-w-md px-6">
-        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', fontFamily: 'Orbitron, sans-serif', fontSize: '0.875rem', color: 'var(--retro-accent)', textDecoration: 'none' }}>
+        <Link
+          to="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            marginBottom: "2rem",
+            fontFamily: "Orbitron, sans-serif",
+            fontSize: "0.875rem",
+            color: "var(--retro-accent)",
+            textDecoration: "none",
+          }}
+        >
           <ArrowLeft size={20} />
           BACK TO HOME
         </Link>
 
         <div className="text-center mb-8">
-          <img src={logoImage} alt="ScalpCentral" style={{ height: '80px', margin: '0 auto 1rem' }} />
+          <img
+            src={logoImage}
+            alt="ScalpCentral"
+            style={{ height: "80px", margin: "0 auto 1rem" }}
+          />
           <div className="retro-version">BETA v1.0</div>
         </div>
 
@@ -141,7 +157,7 @@ export function RegisterPage() {
 
             <div className="text-center mt-4">
               <span className="retro-link-text">
-                ALREADY HAVE AN ACCOUNT?{' '}
+                ALREADY HAVE AN ACCOUNT?{" "}
                 <Link to="/login" className="retro-link">
                   LOGIN HERE
                 </Link>
@@ -150,9 +166,16 @@ export function RegisterPage() {
           </form>
         </div>
 
-        <div className="text-center mt-6" style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.4)' }}>
+        <div
+          className="text-center mt-6"
+          style={{
+            fontFamily: "Orbitron, sans-serif",
+            fontSize: "0.625rem",
+            color: "rgba(255, 255, 255, 0.4)",
+          }}
+        >
           <div>© 2026 ScalpCentral - Your investment, Your platform!</div>
-          <div style={{ marginTop: '0.5rem' }}>
+          <div style={{ marginTop: "0.5rem" }}>
             Secure Pokemon card trading • Authenticity guaranteed
           </div>
         </div>

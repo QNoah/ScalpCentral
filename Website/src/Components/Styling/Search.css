@@ -18,7 +18,7 @@
 }
 
 .product-card-content {
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif !important;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -34,7 +34,7 @@
 }
 
 .product-card-description {
-    font-family: inherit;
+    font-family: inherit !important;
     font-size: x-small;
     text-align: left;
     overflow-y: scroll;
@@ -112,7 +112,7 @@
 }
 
 .results-count {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Times New Roman', Times, serif !important;
     color: darkslateblue;
 }
 

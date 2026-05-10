@@ -1,5 +1,5 @@
 import '../Styling/Search.css';
-import Navbar from '../PageParts/Navbar';
+import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';

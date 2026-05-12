@@ -1,4 +1,4 @@
-import '../Styling/Product.css';
+import {Button, Table, TableHead, TableRow, TableCell, TableBody} from "@mui/material";
 import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -25,48 +25,53 @@ export function ProductPage() {
     }
 
     return (
-        <main className="product-page">
+        <main className="flex flex-col min-h-screen bg-white">
             <Navbar />
-            <div className="product-container">
-                <div className="product-header">
-                    <button onClick={() => window.history.back()}>Return to Search Results</button>
-                </div>
-                <div className="product-content">
-                    <div className="product-card">
-                        <button className="product-card-bookmark-button">HEART ICON</button>
-                        <h2>{product?.name}</h2>
-                        <p>STARS AVERAGE: ***** reviews: {reviews.length}</p> {/* VERVANG MET DAADWERKELIJKE REVIEWS WANNEER API WERKT */}
-                        <img className="product-image" src={product?.images[0]} alt={product?.name} />
-                        <div className="product-specifications">
-                            <h3 style={{}}>Specifications</h3>
-                            <table>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Set</th>
-                                    <th>Series</th>
-                                </tr>
-                                <tr>
-                                    <td>{product?.type}</td>
-                                    <td>{product?.set.name}</td>
-                                    <td>{product?.set.series}</td>
-                                </tr>
-                            </table>
-                        </div>
+            <section id="product-section" className="flex flex-col max-w-screen-xl flex-1 self-center w-full p-1">
+                <nav className="flex justify-start p-1">
+                    <Button onClick={() => window.history.back()}>Return to Search Results</Button>
+                </nav>
+                <section id="product-details" className="flex justify-between flex-1 w-full gap-9 p-1">
+                    <div id="product-card" className="flex flex-col justify-between flex-1 gap-1 p-1">
+                        <h2 className="text-left">{product.name}</h2>
+                        <p>STARS: ***** review: 666</p>
+                        <img className="max-h-[600px] object-contain" src={product?.images[0]} alt="It looks cool I promise <3" />
+                        <h2>Specifications</h2>
+                        <Table size="small" sx={{width: '100%', borderCollapse: 'collapse', backgroundColor: "var(--pokeWhite)"}}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Type</TableCell>
+                                    <TableCell>Set</TableCell>
+                                    <TableCell>Series</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                            <TableRow>
+                                <TableCell>{product?.type}</TableCell>
+                                <TableCell>{product?.set.name}</TableCell>
+                                <TableCell>{product?.set.series}</TableCell>
+                            </TableRow>
+                            </TableBody>
+                        </Table>
                     </div>
-                    <div className="product-details">
-                        <div className="purchase-section">
-                            <p className='product-price'>€{product?.price}</p>
-                            <button className="add-to-cart-button">Add to Cart</button>
+                    <div id="product-utility" className="flex flex-col gap-1 flex-1 max-w-[35rem] p-1">
+                        <div className="flex justify-between gap-8 p-1">
+                            <h1 className="">€{product?.price}</h1>
+                            <Button sx={{
+                                backgroundColor: "#F1F979", 
+                                color: "black",
+                                flex: 1
+                                }} variant="contained" disableElevation>Add to Cart</Button>
                         </div>
                         <h2>Description</h2>
                         <p dangerouslySetInnerHTML={{__html:product.description}}></p>
                     </div>
-                </div>
-            </div>
-            <div className="reviews-section">
-                <h2>Reviews</h2>
+                </section>
+            </section>
+            <section id="reviews-section" className="flex flex-col max-w-screen-2xl flex-1 self-center w-full p-1">
+                <h2 className="text-center">Reviews</h2>
                 {/* VERVANG MET DAADWERKELIJKE REVIEWS WANNEER API WERKT */}
-            </div>
+            </section>
         </main>
     );
 }

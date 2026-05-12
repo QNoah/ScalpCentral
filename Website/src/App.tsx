@@ -16,11 +16,8 @@ function App() {
     } else {
       const storedToken = localStorage.getItem("authToken");
       if (storedToken) {
-        // Token exists
       }
     }
-    // shutting up the annoying error about double rendering which is intentional.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(false);
   }, []);
 

@@ -16,6 +16,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+    else {
+      localStorage.removeItem("user");
+    }
+  }, [user]);
+
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       {children}

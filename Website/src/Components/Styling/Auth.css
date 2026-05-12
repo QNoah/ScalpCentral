@@ -1,0 +1,74 @@
+.box,
+.content,
+.input {
+  box-sizing: border-box;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--retro-bg);
+}
+
+.box {
+  width: 100%;
+  max-width: 420px;
+  background: var(--retro-surface);
+  border: 2px solid var(--retro-border);
+  border-radius: 6px;
+}
+
+.header {
+  background: var(--retro-accent);
+  color: white;
+  padding: 0.75rem;
+  font-family: Orbitron;
+}
+
+.content {
+  padding: 1rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--retro-border);
+  margin-bottom: 0.75rem;
+}
+
+.error {
+  font-size: 0.7rem;
+  color: red;
+  margin-bottom: 0.5rem;
+}
+
+.button {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--retro-accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.links {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.links a {
+  color: var(--retro-accent);
+  text-decoration: underline;
+}

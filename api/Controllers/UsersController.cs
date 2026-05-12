@@ -38,7 +38,7 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    [HttpGet("login")]
+    [HttpPost("login")]
     public async Task<ActionResult<UserModel?>> login([FromBody] LoginRequest userinfo)
     {
         UserModel? user = await _userService.Login(userinfo);

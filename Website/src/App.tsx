@@ -1,8 +1,6 @@
 import './App.css';
-import './Components/Styling/RetroStyles.css';
 import { Routes, Route } from 'react-router-dom';
-import { LoginPage } from './Components/Pages/LoginPage';
-import { RegisterPage } from "./Components/Pages/RegisterPage";
+import { RegisterPage, LoginPage } from "./Components/Pages/AuthPages";
 import { SearchResults } from './Components/Pages/SearchResults';
 import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";

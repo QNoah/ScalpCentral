@@ -54,7 +54,7 @@ export function ProductPage() {
                             </TableBody>
                         </Table>
                     </div>
-                    <div id="product-utility" className="flex flex-col gap-1 flex-1 max-w-[35rem] p-1">
+                    <div id="product-utility" className="flex flex-col gap-1 flex-1 max-w-[30rem] p-1">
                         <div className="flex justify-between gap-8 p-1">
                             <h1 className="">€{product?.price}</h1>
                             <Button sx={{

@@ -1,7 +1,7 @@
 import '../Styling/Search.css';
 import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
 // import { Heart, ShoppingCart, Star } from 'lucide-react';
 
@@ -184,12 +184,12 @@ export function SearchResults() {
                 <button className="product-card-bookmark-button">HEART ICON</button>
                 
                 <div className="product-card-content">
-                    <h3 className="product-card-title">{data.name}</h3>
+                    <h3 className="product-card-title"><Link to={`/product/${data.id}`}>{data.name}</Link></h3>
                     <div className="product-card-review-info">
                         <p>STAR ICONS</p>
                         <p >REVIEW COUNT</p>
                     </div>
-                    <p className="product-card-description" dangerouslySetInnerHTML={{__html:data.description}}></p>
+                    <div className="product-card-description" dangerouslySetInnerHTML={{__html:data.description}}></div>
                 </div>
                 <p className="product-card-price">€{data.price.toString()}</p>
                 <button className="product-card-add-to-cart-button">ADD TO CART</button>

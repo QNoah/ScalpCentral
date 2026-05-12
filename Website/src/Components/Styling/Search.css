@@ -8,10 +8,9 @@
 
 .product-card-image {
     max-width: 250px;
-    height: auto;
+    height: 200px;
     object-fit: contain;
 }
-
 .product-card-review-info {
     display: flex;
     flex-direction: row;
@@ -23,7 +22,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: 250px;
     padding-bottom: 30px;
 }
 
@@ -38,8 +37,9 @@
     font-family: inherit !important;
     font-size: x-small;
     text-align: left;
-    overflow: scroll;
+    overflow-y: scroll;
     scrollbar-width: none;
+    min-height: 0;
 }
 
 .product-card-price {
@@ -108,6 +108,7 @@
     min-height: 40px;
     justify-content: right;
     gap: 20px;
+    padding: 1rem;
 }
 
 .results-count {
@@ -119,6 +120,6 @@
     display: grid;
     grid-template-columns: auto auto auto;
     justify-content: space-evenly;
-    row-gap: 20px;
+    row-gap: 40px;
     padding-bottom: 30px;
 }

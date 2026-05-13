@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="site-footer__links">
         <div className="site-footer__column">
           <h3 className="site-footer__column-heading">About</h3>
-          <p className="site-footer__text">ScalpCentral specialises in Pokémon cards — from loose singles to sealed boosters. Browse verified listings, compare prices, and trade with fellow collectors. We focus on authenticity, fair pricing, and clear condition grading so you can buy and sell with confidence.</p>
+          <p className="site-footer__text">ScalpCentral your specialist in Pokémon cards. From loose singles to sealed boosters. Browse verified listings, compare prices, and trade with fellow collectors. We focus on authenticity, fair pricing, and clear condition grading so you can buy and sell with confidence.</p>
         </div>
 
         <div className="site-footer__column">

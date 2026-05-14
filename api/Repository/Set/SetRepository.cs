@@ -10,6 +10,9 @@ namespace ScalpCentral.Api.Repository
     {
         public override string Table() => "sets";
 
+        public SetRepository(IConfiguration config) : base(config) {}
+
+
         public async Task<List<SetModel>> GetSets(SetFilters? filter)
         {
             var sql = new StringBuilder("SELECT * FROM sets WHERE 1=1");

@@ -51,6 +51,8 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 		created_at AS CreatedAt,
 		deleted_at AS DeletedAt,
 		soft_deleted AS SoftDeleted";
+	
+	public OrderRepository(IConfiguration config) : base(config) {}
 
 	public async Task<List<OrderModel>> GetAllAsync()
 	{

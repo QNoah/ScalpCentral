@@ -317,4 +317,61 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         product.Id
         }));
     }
+
+    public async Task<List<ProductModel>> GetAllById(List<int> ids)
+    {
+        var sql = """
+        SELECT 
+            p.id, 
+            p.name, 
+            p.type, 
+            p.description, 
+            p.price, 
+            p.saleprice_modifier AS SalepriceModifier, 
+            p.stock,
+
+            s.id AS Id, 
+            s.name AS Name, 
+            s.series, 
+            s.release_date,
+
+            pi.image_url
+
+        FROM products p
+        INNER JOIN sets s ON p.set_id = s.id
+        LEFT JOIN product_images pi ON p.id = pi.product_id
+
+        WHERE p.soft_deleted = FALSE
+        AND p.id = ANY(@Ids)
+        """;
+
+        var productDict = new Dictionary<int, ProductModel>();
+
+        var result = await RepoHelpers.TryQueryAsync(async () =>
+            await _con.QueryAsync<ProductModel, SetModel, string, ProductModel>(
+                sql,
+                (product, set, image) =>
+                {
+                    if (!productDict.TryGetValue(product.Id, out var existing))
+                    {
+                        existing = product;
+                        existing.Set = set;
+                        existing.Images = new List<string>();
+                        productDict.Add(existing.Id, existing);
+                    }
+
+                    if (image != null)
+                    {
+                        existing.Images!.Add(image);
+                    }
+
+                    return existing;
+                },
+                new { Ids = ids },
+                splitOn: "Id,image_url"
+            )
+        );
+
+        return productDict.Values.ToList();
+    }
 }

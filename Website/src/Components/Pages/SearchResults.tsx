@@ -288,7 +288,6 @@ export function SearchResults() {
                         {Filter("Sets")}
                         {Filter("Series")}
                         <br></br>
-
                         <p className='font-medium'>MIN PRICE</p>
                         <input type="number" placeholder="0" onChange={
                             (e) => setMinPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
@@ -299,7 +298,6 @@ export function SearchResults() {
                             (e) => setMaxPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
                         } />
                         <br></br>
-
                         <div className="flex justify-between p-1">
                             <p className='font-medium'>ON SALE</p>
                             <input className="filter-onSale" type="checkbox" name="On Sale" onChange={
@@ -307,7 +305,6 @@ export function SearchResults() {
                             } />
                         </div>
                         <br></br>
-
                         <div className="flex justify-between p-1">
                             <p className='font-medium'>IN STOCK</p>
                             <input type="checkbox" name="In Stock" onChange={
@@ -315,7 +312,6 @@ export function SearchResults() {
                             } />
                         </div>
                         <br></br>
-
                         <Button sx={{
                                 backgroundColor: "#F1F979", 
                                 color: "black",
@@ -329,10 +325,7 @@ export function SearchResults() {
                                 }} variant="contained" onClick={clearFilters}>CLEAR FILTERS</Button>
                     </div>
                 </section>
-
-
                 <section id="results-content" className="flex flex-col flex-1 p-1">
-
                     <header className="flex justify-end p-1 gap-4">
                         <h2>{totalCount} RESULTS</h2>
                         <select className="bg-lightYellow rounded-lg" onChange={handleSortChange}>
@@ -341,7 +334,6 @@ export function SearchResults() {
                             <option value="priceHighLow">PRICE: HIGH TO LOW</option>
                         </select>
                     </header>
-
                     <Grid container spacing={2} sx={{paddingBottom: "2rem"}}>
                         {searchResults.map(result => ProductCard(result))}
                     </Grid>

@@ -7,4 +7,13 @@
     --darkPokeYellow: #C4CC1A;
     --pokeYellow: #F1F979;
     --lightPokeYellow: #EAFFC8;
+
+    --retro-bg: #ffffff;
+    --retro-surface: #f7f7f7;
+    --retro-border: #e5e5e5;
+    --retro-text: #222222;
+    --retro-text-muted: #777777;
+    --retro-accent: #6366f1;
+    --retro-accent-light: #818cf8;
+    --retro-purple: #6366f1;
 }

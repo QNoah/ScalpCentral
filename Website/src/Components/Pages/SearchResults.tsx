@@ -219,7 +219,7 @@ export function SearchResults() {
 
     function ProductCard (data: Product)  {
         return (
-            <Grid size={4} sx={{height: "510px", padding: "0.25rem"}}>
+            <Grid size={4} sx={{height: "530px", padding: "0.25rem"}}>
                 <Card sx={{height: "100%", padding: "0.25rem", position: "relative", display: "flex", flexDirection: "column"}}>
                     <Button sx={{alignSelf: "end"}} size='small'>
                         <FavoriteBorderIcon></FavoriteBorderIcon>

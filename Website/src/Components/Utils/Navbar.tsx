@@ -27,7 +27,7 @@ export default function Navbar() {
             <img
               src={logoImage}
               alt="ScalpCentral"
-              className="h-10 w-auto"
+              className="min-h-10 min-w-32 max-h-full"
             />
           </Link>
           <form className="navbar-search" onSubmit={handleSearchSubmit}>

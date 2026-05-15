@@ -3,7 +3,12 @@ import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
-// import { Heart, ShoppingCart, Star } from 'lucide-react';
+import { Grid, Pagination, Card, CardMedia, CardHeader, CardContent, CardActions, Checkbox, List, ListItem, ListItemButton, Button, CardActionArea } from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarHalfIcon from '@mui/icons-material/StarHalf';
 
 export function SearchResults() {
     const PAGE_SIZE = 24;
@@ -51,10 +56,12 @@ export function SearchResults() {
         fetchSearchResults();
     }, [searchParams]);
 
-    function handlePageChange(newPage: number) {
-        setPage(newPage);
+    function handlePageChange(e: React.ChangeEvent<unknown>, value: number) {
+        e.preventDefault();
+        setPage(value);
+
         const params = new URLSearchParams(searchParams);
-        params.set("page", newPage.toString());
+        params.set("page", value.toString());
         setSearchParams(params);
     }
     
@@ -161,101 +168,117 @@ export function SearchResults() {
         setSearchParams(params);
     }
 
-    function renderButtons() {
-        const totalPages = Math.ceil(totalCount / PAGE_SIZE);
-        const buttons = [];
-        for (let i = 0; i < totalPages; i++) {
-            buttons.push(
-                <button key={i} className={`pagination-button ${i === page ? "active" : ""}`} onClick={() => handlePageChange(i)}>
-                    {i + 1}
-                </button>
-            );
-        }
-        return buttons;
-    }   
-    
     function ProductCard (data: Product)  {
         return (
-            <div className="product-card">
-                <div style={{display:"flex", justifyContent:"center", height:"200px"}}>
-                    <img src={data.images[0]} alt={data.name} className="product-card-image" />
-                </div>
-
-                <button className="product-card-bookmark-button">HEART ICON</button>
-                
-                <div className="product-card-content">
-                    <h3 className="product-card-title"><Link to={`/product/${data.id}`}>{data.name}</Link></h3>
-                    <div className="product-card-review-info">
-                        <p>STAR ICONS</p>
-                        <p >REVIEW COUNT</p>
-                    </div>
-                    <div className="product-card-description" dangerouslySetInnerHTML={{__html:data.description}}></div>
-                </div>
-                <p className="product-card-price">€{data.price.toString()}</p>
-                <button className="product-card-add-to-cart-button">ADD TO CART</button>
-
-            </div>
+            <Grid size={4} sx={{height: "510px", padding: "0.25rem"}}>
+                <Card sx={{height: "100%", padding: "0.25rem", position: "relative", display: "flex", flexDirection: "column"}} >
+                    <Button sx={{alignSelf: "end"}} size='small'>
+                        <FavoriteBorderIcon></FavoriteBorderIcon>
+                    </Button>
+                    <CardActionArea component={Link} to={`/product/${data.id}`}>
+                        <CardMedia sx={{height: "300px", backgroundSize: "contain", margin: "0.25rem"}}image={data.images[0]} title={data.name}/>
+                        
+                        <CardContent sx={{padding: "0.25rem", flex: 1, display: "flex", flexDirection: "column"}}>
+                            <h2 className='truncate font-bold text-xl text-lightBlue'> {data.name} </h2>
+                            <div className="flex justify-between text-xs">
+                                <div>
+                                    {/* NIET VERGETEN REVIEWS ECHT TE LADEN HIERO */}
+                                {Array.from({ length: 5}).map(() => ( 
+                                    <StarIcon sx={{color: "var(--pokeYellow)"}} fontSize='small'/>
+                                ))}
+                                </div>
+                                <p>666 reviews</p>
+                            </div>
+                            <ul className='flex flex-1 flex-col justify-evenly p-1'>
+                                <li className="flex justify-between">
+                                    <p className="font-bold">Set</p>
+                                    <p>{data.set.name}</p>
+                                </li>
+                                <li className="flex justify-between">
+                                    <p className="font-bold">Series</p>
+                                    <p>{data.set.series}</p>
+                                </li>
+                                <li className="flex justify-between">
+                                    <p className="font-bold">Type</p>
+                                    <p>{data.type}</p>
+                                </li>
+                            </ul>
+                        </CardContent>
+                    </CardActionArea>
+                    <CardActions sx={{justifyContent: "space-between", padding: "0.25rem"}} disableSpacing>
+                        <h2>€{data.price.toString()}</h2>
+                        <Button size='small'>
+                            <AddShoppingCartIcon></AddShoppingCartIcon>
+                        </Button>
+                    </CardActions>
+                </Card>
+            </Grid>
         );
     }
 
     
     return (
-        <main>
-            <div className="container-search">
-                <Navbar />
-                <div className="search-content">
-                    <div className="sidebar">
-                        <h2 className="sidebar-header">FILTERS</h2>
-                        <div className="filters">
-                            <form className="filter-type">
-                                <p>TYPE: {types.length}</p>
-                                {types.map((type: string) => TypeOption(type))}
-                            </form>
-                            <form className="filter-set">
-                                <p>SET: {sets.length}</p>
-                                {sets.map((set: string) => SetOption(set))}
-                            </form>
-                            <form className="filter-series">
-                                <p>SERIES: {series.length}</p>
-                                {series.map((serie: string) => SeriesOption(serie))}
-                            </form>
-                            <p>MIN PRICE</p>
-                            <input className="filter-minPrice" type="number" placeholder="0" onChange={
-                                (e) => setMinPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
-                            } />
-                            <p>MAX PRICE</p>
-                            <input className="filter-maxPrice" type="number" placeholder="-" onChange={
-                                (e) => setMaxPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
-                            } />
-                            <p>ON SALE</p>
-                            <input className="filter-onSale" type="checkbox" name="On Sale" onChange={
-                                (e) => setOnSale(e.currentTarget.checked)
-                            } />
-                            <p>IN STOCK</p>
-                            <input className="filter-inStock" type="checkbox" name="In Stock" onChange={
-                                (e) => setInStock(e.currentTarget.checked)
-                            } />
-                            <button className="apply-filters-button" onClick={applyFilters}>APPLY FILTERS</button>
-                            <button className="clear-filters-button" onClick={clearFilters}>CLEAR FILTERS</button>
-                        </div>
+        <main className="flex flex-col min-h-screen bg-offWhite">
+            <Navbar/>
+
+            <div id="search-page" className="flex self-center max-w-screen-xl p-1 bg-white">
+
+                <section id="sidebar" className="flex flex-col flex-1 max-w-72 p-1">
+                    <h2>FILTERS</h2>
+                    <div className="filters">
+                        <form className="filter-type">
+                            <p>TYPE: {types.length}</p>
+                            {types.map((type: string) => TypeOption(type))}
+                        </form>
+                        <form className="filter-set">
+                            <p>SET: {sets.length}</p>
+                            {sets.map((set: string) => SetOption(set))}
+                        </form>
+                        <form className="filter-series">
+                            <p>SERIES: {series.length}</p>
+                            {series.map((serie: string) => SeriesOption(serie))}
+                        </form>
+                        <p>MIN PRICE</p>
+                        <input className="filter-minPrice" type="number" placeholder="0" onChange={
+                            (e) => setMinPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
+                        } />
+                        <p>MAX PRICE</p>
+                        <input className="filter-maxPrice" type="number" placeholder="-" onChange={
+                            (e) => setMaxPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
+                        } />
+                        <p>ON SALE</p>
+                        <input className="filter-onSale" type="checkbox" name="On Sale" onChange={
+                            (e) => setOnSale(e.currentTarget.checked)
+                        } />
+                        <p>IN STOCK</p>
+                        <input className="filter-inStock" type="checkbox" name="In Stock" onChange={
+                            (e) => setInStock(e.currentTarget.checked)
+                        } />
+                        <button className="apply-filters-button" onClick={applyFilters}>APPLY FILTERS</button>
+                        <button className="clear-filters-button" onClick={clearFilters}>CLEAR FILTERS</button>
                     </div>
-                    <div className="results-content">
-                        <div className="results-header">
-                            <h2 className="results-count">{totalCount} RESULTS</h2>
-                            <select className="sort-dropdown" onChange={handleSortChange}>
-                                <option value="default">DEFAULT</option>
-                                <option value="priceLowHigh">PRICE: LOW TO HIGH</option>
-                                <option value="priceHighLow">PRICE: HIGH TO LOW</option>
-                            </select>
-                        </div>
-                        <div className="results-grid">
-                            {searchResults.map(result => ProductCard(result))}
-                        </div>
-                        <div className="pagination">
-                            {renderButtons()}
-                        </div>
-                    </div>
-                </div>
+                </section>
+
+
+                <section id="results-content" className="flex flex-col flex-1 p-1">
+
+                    <header className="flex justify-end p-1 gap-4">
+                        <h2>{totalCount} RESULTS</h2>
+                        <select className="bg-lightYellow rounded-lg" onChange={handleSortChange}>
+                            <option value="default">DEFAULT</option>
+                            <option value="priceLowHigh">PRICE: LOW TO HIGH</option>
+                            <option value="priceHighLow">PRICE: HIGH TO LOW</option>
+                        </select>
+                    </header>
+
+                    <Grid container spacing={2} sx={{paddingBottom: "2rem"}}>
+                        {searchResults.map(result => ProductCard(result))}
+                    </Grid>
+
+                    <Pagination sx={{alignSelf: "center", "& .Mui-selected": {backgroundColor: "var(--pokeYellow)", color: "#000"}}} 
+                        count={Math.ceil(totalCount / PAGE_SIZE)} page={page} onChange={handlePageChange} shape="rounded">
+                    </Pagination>
+                </section>
             </div>
         </main>
     )

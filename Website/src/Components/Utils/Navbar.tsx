@@ -23,11 +23,11 @@ export default function Navbar() {
     <div>
       <header className="navbar">
         <div className="navbar-content">
-          <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+          <Link to="/" style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <img
               src={logoImage}
               alt="ScalpCentral"
-              className="min-h-10 min-w-32"
+              className="min-h-10 min-w-32 max-h-full"
             />
           </Link>
           <form className="navbar-search" onSubmit={handleSearchSubmit}>

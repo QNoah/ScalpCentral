@@ -1,6 +1,7 @@
 # Ignore build folders
 bin/
 obj/
+.vite/deps/
 
 # ==================================================
 # Operating System Files
@@ -114,6 +115,7 @@ build/
 # Package Managers
 # ==================================================
 package-lock.json.*
+Website/package-lock.json
 yarn.lock.*
 
 # ==================================================

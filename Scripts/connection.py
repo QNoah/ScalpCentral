@@ -1,12 +1,12 @@
 import psycopg2
 
 
-def get_connection(db_name: str = "scalpcentral"):
+def get_connection(db_name: str = "scalpcentral", db_password: str = ""):
     try:
         connection = psycopg2.connect(
             database=db_name,
             user="postgres",
-            password="",
+            password=db_password,
             host="127.0.0.1",
             port=5432,
         )

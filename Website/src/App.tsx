@@ -7,6 +7,7 @@ import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
+import { CartPage } from './Components/Pages/CartPage';
 import Footer from './Components/PageParts/Footer';
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
         <Route path="/" element={<HomePage />}/>
         <Route path="/Login" element={<LoginPage />}/>
         <Route path="/Register" element={<RegisterPage />}/>
+        <Route path="/Cart" element={<CartPage />}/>
         <Route path="/search" element={<SearchResults />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>

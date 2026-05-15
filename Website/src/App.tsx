@@ -2,9 +2,11 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import { RegisterPage, LoginPage } from "./Components/Pages/AuthPages";
 import { SearchResults } from './Components/Pages/SearchResults';
+import { ProductPage } from './Components/Pages/ProductPage';
 import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
+import OrderConfirmation from './Components/Pages/OrderConfirmation';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +54,8 @@ function App() {
         <Route path="/Login" element={<LoginPage />}/>
         <Route path="/Register" element={<RegisterPage />}/>
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
         <Route path="*" element={<p>Page not found</p>} />
       </Routes>
     </main>

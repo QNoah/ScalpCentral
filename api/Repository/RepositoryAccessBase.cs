@@ -1,8 +1,4 @@
-using System;
 using Npgsql;
-using Dapper;
-
-
 
 public abstract class RepositoryAccessBase
 {
@@ -10,11 +6,13 @@ public abstract class RepositoryAccessBase
 
     public abstract string Table();
 
-    public RepositoryAccessBase()
+    public RepositoryAccessBase(IConfiguration config)
     {
+        string dbPassword = config["db:pw"] ?? "";
+
         string connectionString =
             Environment.GetEnvironmentVariable("DB_CONNECTION") ??
-            "Host=127.0.0.1;Port=5432;Username=postgres;Password=;Database=scalpcentral";
+            $"Host=127.0.0.1;Port=5432;Username=postgres;Password={dbPassword};Database=scalpcentral";
 
         _con = new NpgsqlConnection(connectionString);
     }

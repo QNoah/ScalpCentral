@@ -25,6 +25,9 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		role AS Role,
 		created_at AS CreatedAt";
 
+    public UserRepository(IConfiguration config) : base(config) {}
+
+
 	public async Task<List<UserModel>> GetAllAsync()
 	{
 		var sql = $@"

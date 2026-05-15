@@ -11,6 +11,8 @@ public class CardRepository : RepositoryAccessBase, ICardRepository
 {
     public override string Table() => "cards";
 
+    public CardRepository(IConfiguration config) : base(config) {}
+
     public List<CardModel> GetPagedCards(CardQueryOptions options, int limit, int offset)
     {
         List<string> cardIds = GetPagedCardIds(options, limit, offset);

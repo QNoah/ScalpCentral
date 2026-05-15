@@ -7,6 +7,7 @@ import products
 import orders
 import orderContents
 import product_reviews
+import argparse
 
 
 def create_database(cur: psycopg2.extensions.cursor):
@@ -18,9 +19,15 @@ def create_database(cur: psycopg2.extensions.cursor):
         print(e)
         exit()
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-pw", "--password", default="")
+    return parser.parse_args()
+
 
 if __name__ == "__main__":
-    con = connection.get_connection("postgres")
+    args = parse_args()
+    con = connection.get_connection("postgres", args.password)
     cur = con.cursor()
     create_database(cur)
     con.close()

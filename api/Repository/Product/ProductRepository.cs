@@ -15,6 +15,8 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         WHERE p.soft_delete = false AND s.soft_delete = false
         """;
 
+    public ProductRepository(IConfiguration config) : base(config) {}
+
     private (string, DynamicParameters) buildFilterQuery(ProductFilter? filter)
     {
         string whereClause = "";

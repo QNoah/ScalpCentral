@@ -11,4 +11,5 @@ public interface IProductRepository
     Task<long> SoftDelete(long id);
     Task HardDelete();
     Task<long> Update(ProductModel product);
+    public Task<List<ProductModel>> GetAllById(List<int> ids);
 }

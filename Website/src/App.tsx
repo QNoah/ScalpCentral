@@ -7,6 +7,7 @@ import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
+import { CartPage } from './Components/Pages/CartPage';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -48,17 +49,18 @@ function App() {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <main className="pages">
-      <Routes>
-        <Route path="/" element={<HomePage />}/>
-        <Route path="/Login" element={<LoginPage />}/>
-        <Route path="/Register" element={<RegisterPage />}/>
-        <Route path="/search" element={<SearchResults />} />
-        <Route path="/product/:id" element={<ProductPage />} />
-        <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
-        <Route path="*" element={<p>Page not found</p>} />
-      </Routes>
-    </main>
+    <>
+      <main className="pages">
+        <Routes>
+          <Route path="/" element={<HomePage />}/>
+          <Route path="/Login" element={<LoginPage />}/>
+          <Route path="/Register" element={<RegisterPage />}/>
+          <Route path="/Cart" element={<CartPage />}/>
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="*" element={<p>Page not found</p>} />
+        </Routes>
+      </main>
+    </>
   );
 }
 

@@ -1,0 +1,89 @@
+:root {
+  --retro-bg: #ffffff;
+  --retro-surface: #f7f7f7;
+  --retro-border: #e5e5e5;
+  --retro-text: #222222;
+  --retro-text-muted: #777777;
+  --retro-accent: #6366f1;
+  --retro-accent-light: #818cf8;
+  --retro-purple: #6366f1;
+}
+
+/* Container */
+.retro-container-search {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--retro-bg);
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-page {
+    flex: 1;
+    display: flex;
+    gap: 1rem;
+}
+
+.sidebar {
+    min-width: 280px;
+}
+
+.results-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.carts-header {
+    min-height: 40px;
+}
+
+.cart-content {
+    min-height: 120px;
+
+    flex: 1;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px;
+    border-bottom: 1px solid var(--retro-border);
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-info h3 {
+    cursor: pointer;
+    margin: 0;
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-item-quantity button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+h1 {
+    color: black;
+    text-align: left;
+    padding-left: 20px;
+}

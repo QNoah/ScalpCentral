@@ -43,6 +43,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISetService, SetService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 // App repositories
 builder.Services.AddScoped<ICardRepository, CardRepository>();
@@ -50,6 +51,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISetRepository, SetRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 //redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>

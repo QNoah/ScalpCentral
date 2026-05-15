@@ -13,6 +13,7 @@
 }
 
 .navbar-content {
+    width: 100%;
     max-width: 1400px;
     max-height: 75px;
     height: auto;
@@ -21,7 +22,16 @@
     gap: 1rem;
     flex-grow: 1;
     justify-content: space-between;
+    min-width: 0;
+    align-items: center;
 }
+.navbar-content img {
+    flex-shrink: 0;
+    height: 80px;
+    width: auto;
+    max-width: 100%;
+}
+
 
 .navbar-search {
     flex-grow: 1;

@@ -1,8 +1,6 @@
 import './App.css';
-import './Components/Styling/RetroStyles.css';
 import { Routes, Route } from 'react-router-dom';
-import { LoginPage } from './Components/Pages/LoginPage';
-import { RegisterPage } from "./Components/Pages/RegisterPage";
+import { RegisterPage, LoginPage } from "./Components/Pages/AuthPages";
 import { SearchResults } from './Components/Pages/SearchResults';
 import { ProductPage } from './Components/Pages/ProductPage';
 import { HomePage } from "./Components/Pages/MainPage"
@@ -20,11 +18,8 @@ function App() {
     } else {
       const storedToken = localStorage.getItem("authToken");
       if (storedToken) {
-        // Token exists
       }
     }
-    // shutting up the annoying error about double rendering which is intentional.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(false);
   }, []);
 

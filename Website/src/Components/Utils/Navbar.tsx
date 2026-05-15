@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logoImage from "../../assets/imgs/NameOnly.png";
 import logoIcon from "../../assets/imgs/Symbol.png";
 import "../Styling/Navbar.css";
@@ -23,7 +23,7 @@ export default function Navbar() {
   return (
     <main className="flex h-16 w-screen sticky justify-center" style={{background: "linear-gradient(to top, #00478A, #6F97FF)"}}>
       <div className="flex flex-1 justify-evenly max-w-screen-2xl">
-        <Link to="/" className="flex items-center">
+        <NavLink to="/" className="flex items-center">
           <picture>
               <source media="(max-width: 1100px)" srcSet={logoIcon} />
               <img
@@ -32,7 +32,7 @@ export default function Navbar() {
                   className="min-h-10 min-w-32 max-h-16 object-cover"
               />
           </picture>
-        </Link>
+        </NavLink>
         <form className="flex items-center flex-1 max-w-[300px]" onSubmit={handleSearchSubmit}>
           <input
             className="flex-1 rounded-xl p-1 pl-4 bg-offWhite"
@@ -42,27 +42,27 @@ export default function Navbar() {
           />
         </form>
         <nav className="flex flex-1 max-w-[768px] justify-between items-center">
-          <Link to="/" className="navbar-link">
+          <NavLink to="/" className="navbar-link">
             HOME
-          </Link>
-          <Link to="/search" className="navbar-link">
+          </NavLink>
+          <NavLink to="/search" className="navbar-link">
             SEARCH
-          </Link>
-          <Link to="/cart" className="navbar-link">
+          </NavLink>
+          <NavLink to="/cart" className="navbar-link">
             CART
-          </Link>
-          <Link to="/faq" className="navbar-link">
+          </NavLink>
+          <NavLink to="/faq" className="navbar-link">
             FAQ
-          </Link>
-          <Link to="/contact" className="navbar-link">
+          </NavLink>
+          <NavLink to="/contact" className="navbar-link">
             CONTACT
-          </Link>
-          <Link to="/login" className="navbar-link">
+          </NavLink>
+          <NavLink to="/login" className="navbar-link">
             LOGIN
-          </Link>
-          <Link to="/register" className="navbar-link">
+          </NavLink>
+          <NavLink to="/register" className="navbar-link">
             REGISTER
-          </Link>
+          </NavLink>
         </nav>
       </div>
     </main>

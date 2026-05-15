@@ -9,26 +9,26 @@ public class CartRepository : ICartRepository
         _db = redis.GetDatabase();
     }
 
-    public async Task AddItemAsync(string userId, string productId, int quantity)
+    public async Task AddItemAsync(string cartId, string productId, int quantity)
     {
-        var key = $"cart:{userId}";
+        var key = $"cart:{cartId}";
         await _db.HashIncrementAsync(key, productId, quantity);
     }
 
-    public async Task<HashEntry[]> GetCartAsync(string userId)
+    public async Task<HashEntry[]> GetCartAsync(string cartId)
     {
-        return await _db.HashGetAllAsync($"cart:{userId}");
+        return await _db.HashGetAllAsync($"cart:{cartId}");
     }
 
-    public async Task SetExpiryAsync(string userId)
+    public async Task SetExpiryAsync(string cartId)
     {
-        var key = $"cart:{userId}";
+        var key = $"cart:{cartId}";
         await _db.KeyExpireAsync(key, TimeSpan.FromDays(7));
     }
 
-    public async Task RemoveCartAsync(string userId)
+    public async Task RemoveCartAsync(string cartId)
     {
-        var key = $"cart:{userId}";
+        var key = $"cart:{cartId}";
         await _db.KeyDeleteAsync(key);
     }
 }

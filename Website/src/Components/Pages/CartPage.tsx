@@ -1,8 +1,9 @@
 import '../Styling/CartStyle.css';
-import Navbar from '../PageParts/Navbar';
+import Navbar from '../Utils/Navbar';
 import { useEffect, useState } from "react";
 import type { CartItem } from '../Types/CartItem';
 import { useNavigate } from "react-router-dom";
+import { getCartId } from '../Utils/Cart';
 
 
 
@@ -12,7 +13,8 @@ export function CartPage() {
 
     useEffect(() => {
         async function GetProducts() {
-            let response = await fetch(`http://localhost:5231/api/cart`);
+            const cartId = getCartId();
+            let response = await fetch(`http://localhost:5231/api/cart/${cartId}`)
             const data = await response.json();
             setProducts(data);
         }
@@ -24,6 +26,7 @@ export function CartPage() {
     function goToProduct(id: number) {
         navigate(`/product/${id}`);
     }
+
 
     async function updateQuantity(productId: number, newQuantity: number) {
         if (newQuantity < 1) return;

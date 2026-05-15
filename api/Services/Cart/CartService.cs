@@ -11,15 +11,15 @@ public class CartService : ICartService
         _productRepo = pRepo;
     }
 
-    public async Task AddToCart(string userId, string productId, int quantity)
+    public async Task AddToCart(string cartId, string productId, int quantity)
     {
-        await _cartRepo.AddItemAsync(userId, productId, quantity);
-        await _cartRepo.SetExpiryAsync(userId);
+        await _cartRepo.AddItemAsync(cartId, productId, quantity);
+        await _cartRepo.SetExpiryAsync(cartId);
     }
 
-    public async Task<List<CartItemDTO>> GetCart(string userId)
+    public async Task<List<CartItemDTO>> GetCart(string cartId)
     {
-        var data = await _cartRepo.GetCartAsync(userId);
+        var data = await _cartRepo.GetCartAsync(cartId);
 
         var productIds = data.Select(x => (int)x.Name).ToList();
         var products = await _productRepo.GetAllById(productIds);
@@ -40,8 +40,8 @@ public class CartService : ICartService
         return result;
     }
 
-    public async Task ClearCart(string userId)
+    public async Task ClearCart(string cartId)
     {
-        await _cartRepo.RemoveCartAsync(userId);
+        await _cartRepo.RemoveCartAsync(cartId);
     }
 }

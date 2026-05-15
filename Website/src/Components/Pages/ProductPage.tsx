@@ -3,6 +3,7 @@ import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
+import { getCartId } from '../Utils/Cart.ts';
 
 export function ProductPage() {
     const [product, setProduct] = useState<Product | null>(null);
@@ -22,6 +23,23 @@ export function ProductPage() {
 
     if (!product) {
         return <div>Product not found</div>;
+    }
+
+    async function AddToCart(item: Product)
+    {
+        const cartId = getCartId();
+
+        await fetch("http://localhost:5231/api/cart/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                cartId,
+                productId: item.id,
+                quantity: 1
+            })
+        });
     }
 
     return (
@@ -56,7 +74,7 @@ export function ProductPage() {
                     <div className="product-details">
                         <div className="purchase-section">
                             <p className='product-price'>€{product?.price}</p>
-                            <button className="add-to-cart-button">Add to Cart</button>
+                            <button className="add-to-cart-button" onClick={() => AddToCart(product)}>Add to Cart</button>
                         </div>
                         <h2>Description</h2>
                         <p dangerouslySetInnerHTML={{__html:product.description}}></p>

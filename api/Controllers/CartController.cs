@@ -12,22 +12,22 @@ public class CartController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> Add(string userId, string productId, int quantity)
+    public async Task<IActionResult> Add(string cartId, string productId, int quantity)
     {
-        await _service.AddToCart(userId, productId, quantity);
+        await _service.AddToCart(cartId, productId, quantity);
         return Ok();
     }
 
-    [HttpGet]
-    public async Task<List<CartItemDTO>> Get(string userId)
+    [HttpGet("{cartId}")]
+    public async Task<List<CartItemDTO>> Get(string cartId)
     {
-        return await _service.GetCart(userId);
+        return await _service.GetCart(cartId);
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Clear(string userId)
+    public async Task<IActionResult> Clear(string cartId)
     {
-        await _service.ClearCart(userId);
+        await _service.ClearCart(cartId);
         return Ok();
     }
 }

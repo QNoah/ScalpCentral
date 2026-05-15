@@ -115,6 +115,7 @@ build/
 # Package Managers
 # ==================================================
 package-lock.json.*
+Website/package-lock.json
 yarn.lock.*
 
 # ==================================================

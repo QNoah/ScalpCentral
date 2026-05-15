@@ -13,6 +13,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 
 export function SearchResults() {
     // Ik realiseer mij nu pas dat ik objects had kunnen gebruiken om al deze shit compacter te maken, geen zin in tho -dabboloosefun
+    // comment omdat git tracking wack is
     const PAGE_SIZE = 24;
     const [page, setPage] = useState<number>(0);
     const [totalCount, setTotalCount] = useState<number>(0);

@@ -55,7 +55,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 //redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
-    ConnectionMultiplexer.Connect("localhost:6379"));
+    ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false"));
 
 // Errors
 builder.Services.AddProblemDetails();

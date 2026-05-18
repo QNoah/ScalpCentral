@@ -6,7 +6,6 @@ export function HomePage() {
       <Navbar />
       <main className="main-home">
       </main>
-      {/* footer here */}
     </div>
   );
 }

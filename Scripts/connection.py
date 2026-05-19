@@ -1,13 +1,13 @@
 import psycopg2
 
 
-def get_connection(db_name: str = "scalpcentral", db_password: str = ""):
+def get_connection(db_name: str = "scalpcentral", db_password: str = "scalpsql"):
     try:
         connection = psycopg2.connect(
             database=db_name,
             user="postgres",
             password=db_password,
-            host="127.0.0.1",
+            host="postgres",
             port=5432,
         )
         connection.set_client_encoding("UTF8")

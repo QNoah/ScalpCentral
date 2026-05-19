@@ -8,11 +8,9 @@ public abstract class RepositoryAccessBase
 
     public RepositoryAccessBase(IConfiguration config)
     {
-        string dbPassword = config["db:pw"] ?? "";
-
         string connectionString =
-            Environment.GetEnvironmentVariable("DB_CONNECTION") ??
-            $"Host=127.0.0.1;Port=5432;Username=postgres;Password={dbPassword};Database=scalpcentral";
+            config.GetConnectionString("postgres") ??
+            throw new InvalidOperationException("Postgres connection string not configured");
 
         _con = new NpgsqlConnection(connectionString);
     }

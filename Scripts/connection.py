@@ -7,7 +7,7 @@ def get_connection(db_name: str = "scalpcentral", db_password: str = "scalpsql")
             database=db_name,
             user="postgres",
             password=db_password,
-            host="postgres",
+            host="localhost",
             port=5432,
         )
         connection.set_client_encoding("UTF8")

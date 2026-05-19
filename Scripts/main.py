@@ -1,5 +1,5 @@
-import Scripts.sets_and_cards as sets_and_cards
 import psycopg2
+import sets_and_cards
 import connection
 import users
 import bookmarks

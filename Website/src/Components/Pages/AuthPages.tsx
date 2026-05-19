@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../Functionalities/AuthContext";
 import { setCookie } from "../Functionalities/CookieUtils"
-import "../styling/Auth.css";
+import "../Styling/Auth.css";
 
 /* -------------------- TYPES -------------------- */
 type LoginForm = {

@@ -12,12 +12,8 @@ def get_connection(db_name: str = "scalpcentral", db_password: str = "scalpsql")
         )
         connection.set_client_encoding("UTF8")
         connection.autocommit = True
-        # with connection.cursor() as cur:
-        # cur.execute("""SHOW client_encoding;""")
-        # print(cur.fetchone())
-        # cur.execute("""SHOW server_encoding;""")
-        # print(cur.fetchone())
         return connection
+    
     except Exception as e:
         print("Connectie werkt niet:", e)
         return False

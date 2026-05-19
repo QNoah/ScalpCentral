@@ -1,4 +1,4 @@
-import import_script
+import Scripts.sets_and_cards as sets_and_cards
 import psycopg2
 import connection
 import users
@@ -29,13 +29,13 @@ if __name__ == "__main__":
     args = parse_args()
 
     con = connection.get_connection("scalpcentral", args.password)
-    cur = con.cursor()
 
-    import_script.run(con)  # kaarten en sets
-    users.create_user_table(cur)
+    sets_and_cards.run(con)
+    users.run(con)
     products.run(con)
     orders.run(con)
     orderContents.run(con)
-    bookmarks.create_bookmarks_table(cur)
-    product_reviews.create_tables(con)
+    bookmarks.run(con)
+    product_reviews.run(con)
+    
     con.close()

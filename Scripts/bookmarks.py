@@ -11,6 +11,8 @@ def create_bookmarks_table(cur: psycopg2.extensions.cursor):
         ); """
     cur.execute(schema_sql)
 
+def run(con: psycopg2.extensions.connection):
+    create_bookmarks_table(con.cursor())
 
 if __name__ == "__main__":
     print("Je kan deze file niet runnen gebruik: Main.py")

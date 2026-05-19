@@ -3,9 +3,6 @@ import psycopg2
 
 
 def create_user_table(cur: psycopg2.extensions.cursor):
-    # con = connection.get_connection()
-    # cur = connection.get_cursor(con)
-
     schema_sql = """CREATE TABLE IF NOT EXISTS users (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             first_name VARCHAR(255) NOT NULL,
@@ -27,8 +24,8 @@ def create_user_table(cur: psycopg2.extensions.cursor):
         ); """
     cur.execute(schema_sql)
 
-
-##PASSWORD MOET OOIT WORDEN VERANDERD NAAR ENCRYPTION.
+def run(con: psycopg2.extensions.connection):
+    create_user_table(con.cursor())
 
 if __name__ == "__main__":
     print("Je kan deze file niet runnen gebruik: Main.py")

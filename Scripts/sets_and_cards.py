@@ -7,28 +7,6 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-
-def get_connection():
-    try:
-        connection = psycopg2.connect(
-            database="scalpcentral",
-            user="postgres",
-            password="",
-            host="127.0.0.1",
-            port=5432,
-        )
-        connection.set_client_encoding("UTF8")
-        with connection.cursor() as cur:
-            cur.execute("""SHOW client_encoding;""")
-            print(cur.fetchone())
-            cur.execute("""SHOW server_encoding;""")
-            print(cur.fetchone())
-        return connection
-    except Exception as e:
-        print("Connectie werkt niet:", e)
-        return False
-
-
 def create_tables(connection):
     cursor = connection.cursor()
     schema_sql = """
@@ -320,16 +298,17 @@ def json_load_sets(connection):
 
 def run(connection):
     create_tables(connection)
+    connection.commit()
+
     json_load_sets(connection)
+    connection.commit()
+    
     json_load_cards(connection)
     connection.commit()
-    print(f"import_script.py ran succesfully.")
+    print(f"set_and_cards.py ran succesfully.")
     return
 
 
 if __name__ == "__main__":
-    connection = get_connection()
-    if connection is False:
-        print("Error: Connection is False")
-        sys.exit(1)
-    run(connection)
+    print("Je kan deze file niet runnen gebruik: Main.py")
+

@@ -1,0 +1,55 @@
+import { Paper } from "@mui/material";
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import Navbar from "../../Utils/Navbar";
+import type { Product } from "../../Types/Product";
+import { useState, useEffect } from 'react';
+
+const columns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', flex: 1},
+  { field: 'name', headerName: 'Naam', flex: 2 },
+  { field: 'price', headerName: 'Prijs', flex: 1, type: 'number' },
+];
+
+export default function ProductList() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("http://localhost:5231/api/products/");
+        const data = await response.json();
+        setProducts(data.result ?? data);
+      } catch (err: any) {
+        setError("Error gathering products.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  return (
+    <div>
+      <Navbar />
+      <div className="flex justify-center mt-20" style={{maxHeight: 750}}>
+        <Paper sx={{ width: '80%'}}>
+          <DataGrid
+            rows={products}
+            columns={columns}
+            loading={loading}
+            getRowId={(row) => row.id}
+            initialState={{sorting: {sortModel: [{field: 'id', sort: 'asc'}]}}}
+            // sortingOrder={row}
+            checkboxSelection
+          />
+          {error && <div style={{ color: "red", padding: 16 }}>{error}</div>}
+        </Paper>
+      </div>
+    </div>
+  );
+}

@@ -12,16 +12,26 @@ public class CartController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> Add(string cartId, string productId, int quantity)
+    public async Task<IActionResult> Add([FromBody] AddToCartDTO dto)
     {
-        await _service.AddToCart(cartId, productId, quantity);
+        if (dto == null)
+            return BadRequest("DTO is null");
+
+        await _service.AddToCart(dto.CartId, dto.ProductId, dto.Quantity);
         return Ok();
     }
 
     [HttpGet("{cartId}")]
-    public async Task<List<CartItemDTO>> Get(string cartId)
+    public async Task<ActionResult<List<CartItemDTO>>> Get(string cartId)
     {
-        return await _service.GetCart(cartId);
+        try
+        {
+            return await _service.GetCart(cartId);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpDelete]

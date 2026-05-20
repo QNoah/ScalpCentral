@@ -11,7 +11,7 @@ public class CartService : ICartService
         _productRepo = pRepo;
     }
 
-    public async Task AddToCart(string cartId, string productId, int quantity)
+    public async Task AddToCart(string cartId, int productId, int quantity)
     {
         await _cartRepo.AddItemAsync(cartId, productId, quantity);
         await _cartRepo.SetExpiryAsync(cartId);
@@ -21,11 +21,11 @@ public class CartService : ICartService
     {
         var data = await _cartRepo.GetCartAsync(cartId);
 
-        var productIds = data.Select(x => (int)x.Name).ToList();
+        var productIds = data.Select(x => int.Parse(x.Name!)).ToList();
         var products = await _productRepo.GetAllById(productIds);
 
         var quantityMap = data.ToDictionary(
-            x => (int)x.Name,
+            x => int.Parse(x.Name!),
             x => (int)x.Value
         );
 

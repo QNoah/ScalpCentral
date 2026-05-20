@@ -341,7 +341,7 @@ public class ProductRepository : RepositoryAccessBase, IProductRepository
         INNER JOIN sets s ON p.set_id = s.id
         LEFT JOIN product_images pi ON p.id = pi.product_id
 
-        WHERE p.soft_deleted = FALSE
+        WHERE p.soft_delete = FALSE
         AND p.id = ANY(@Ids)
         """;
 

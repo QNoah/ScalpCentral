@@ -43,7 +43,6 @@ $RECYCLE.BIN/
 # Environment Variables / Secrets
 # ==================================================
 .env
-.env.*
 *.env
 secrets.json
 config.local.*

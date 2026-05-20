@@ -7,6 +7,7 @@ import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
+import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
 import Footer from './Components/PageParts/Footer';
 
@@ -60,6 +61,7 @@ function App() {
         <Route path="/search" element={<SearchResults />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
+        <Route path='product-list' element={<ProductList/>}/>
         <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </main>

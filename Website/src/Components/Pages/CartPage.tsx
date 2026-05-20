@@ -14,9 +14,19 @@ export function CartPage() {
     useEffect(() => {
         async function GetProducts() {
             const cartId = getCartId();
-            let response = await fetch(`http://localhost:5231/api/cart/${cartId}`)
+
+            const response = await fetch(
+                `http://localhost:5231/api/cart/${cartId}`
+            );
+
+            if (!response.ok) {
+                console.error("Failed to load cart");
+                return;
+            }
+
             const data = await response.json();
-            setProducts(data);
+
+            setProducts(Array.isArray(data) ? data : []);
         }
 
         GetProducts();

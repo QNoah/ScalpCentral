@@ -6,6 +6,7 @@ import { Grid, Pagination, Card, CardMedia, CardContent, CardActions, List, List
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import StarIcon from '@mui/icons-material/Star';
+import { getCartId } from '../Utils/Cart.ts';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -77,6 +78,8 @@ export function SearchResults() {
         params.set("page", value.toString());
         setSearchParams(params);
     }
+
+    
     
     function handleSortChange(e: React.ChangeEvent<HTMLSelectElement>) {
         e.preventDefault();
@@ -217,55 +220,77 @@ export function SearchResults() {
         setSearchParams(params);
     }
 
-    function ProductCard (data: Product)  {
+    async function AddToCart(item: Product)
+    {
+        const cartId = getCartId();
+
+        await fetch("http://localhost:5231/api/cart/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                cartId,
+                productId: item.id,
+                quantity: 1
+            })
+        });
+    }
+
+    function ProductCard({ product }: { product: Product })  {
         return (
             <Grid size={4} sx={{height: "530px", padding: "0.25rem"}}>
                 <Card sx={{height: "100%", padding: "0.25rem", position: "relative", display: "flex", flexDirection: "column"}}>
                     <Button sx={{alignSelf: "end"}} size='small'>
                         <FavoriteBorderIcon></FavoriteBorderIcon>
                     </Button>
-                    <CardActionArea component={Link} to={`/product/${data.id}`}>
-                        <CardMedia sx={{height: "300px", backgroundSize: "contain", margin: "0.25rem"}}image={data.images[0]} title={data.name}/>
+                    <CardActionArea component={Link} to={`/product/${product.id}`}>
+                        <CardMedia sx={{height: "300px", backgroundSize: "contain", margin: "0.25rem"}}image={product.images[0]} title={product.name}/>
                         
                         <CardContent sx={{padding: "0.25rem", flex: 1, display: "flex", flexDirection: "column"}}>
-                            <h2 className='truncate font-bold text-xl text-lightBlue'> {data.name} </h2>
+                            <h2 className='truncate font-bold text-xl text-lightBlue'> {product.name} </h2>
                             <div className="flex justify-between text-xs">
                                 <div>
-                                    {/* NIET VERGETEN REVIEWS ECHT TE LADEN HIERO */}
-                                {Array.from({ length: 3}).map(() => ( 
-                                    <StarIcon sx={{color: "var(--darkPokeYellow)",}} fontSize='small'/>
-                                ))}
-                                <StarHalfIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
-                                <StarBorderIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
+                                  {/* NIET VERGETEN REVIEWS ECHT TE LADEN HIERO */}
+                                  {Array.from({ length: 5 }).map((_, index) => (
+                                      <StarIcons
+                                          key={index}
+                                          sx={{ color: "var(--pokeYellow)" }}
+                                          fontSize="small"
+                                      />
+                                  ))}
+                                  <StarHalfIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
+                                  <StarBorderIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
                                 </div>
                                 <p>623 reviews</p>
                             </div>
                             <ul className='flex flex-1 flex-col justify-evenly p-1'>
                                 <li className="flex justify-between">
                                     <p className="font-bold">Set</p>
-                                    <p>{data.set.name}</p>
+                                    <p>{product.set.name}</p>
                                 </li>
                                 <li className="flex justify-between">
                                     <p className="font-bold">Series</p>
-                                    <p>{data.set.series}</p>
+                                    <p>{product.set.series}</p>
                                 </li>
                                 <li className="flex justify-between">
                                     <p className="font-bold">Type</p>
-                                    <p>{data.type}</p>
+                                    <p>{product.type}</p>
                                 </li>
                             </ul>
                         </CardContent>
                     </CardActionArea>
                     <CardActions sx={{justifyContent: "space-between", padding: "0.25rem"}} disableSpacing>
-                        <h2>€{data.price.toString()}</h2>
-                        <Button size='small'>
-                            <AddShoppingCartIcon></AddShoppingCartIcon>
+                        <h2>€{product.price.toString()}</h2>
+                        <Button size="small" onClick={() => AddToCart(product)}>
+                            <AddShoppingCartIcon />
                         </Button>
                     </CardActions>
                 </Card>
             </Grid>
         );
     }
+
 
     
     return ( loading ? 
@@ -335,7 +360,9 @@ export function SearchResults() {
                         </select>
                     </header>
                     <Grid container spacing={2} sx={{paddingBottom: "2rem"}}>
-                        {searchResults.map(result => ProductCard(result))}
+                        {searchResults.map(result => (
+                            <ProductCard key={result.id} product={result} />
+                        ))}
                     </Grid>
 
                     <Pagination sx={{alignSelf: "center", "& .Mui-selected": {backgroundColor: "var(--pokeYellow)", color: "#000"}}} 

@@ -1,4 +1,4 @@
-@import './colors.css';
+@import './Colors.css';
 
 .site-footer {
   background: linear-gradient(to bottom, var(--midPokeBlue), var(--darkPokeBlue));

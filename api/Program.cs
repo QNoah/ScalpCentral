@@ -54,8 +54,11 @@ builder.Services.AddScoped<ISetRepository, SetRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 //redis
-builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
-    ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false"));
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ => {
+    string redisConnection = builder.Configuration.GetConnectionString("redis") ?? 
+    throw new InvalidOperationException("Redis connection string not configured");
+    return ConnectionMultiplexer.Connect($"{redisConnection},abortConnect=false");
+    });
 
 // Errors
 builder.Services.AddProblemDetails();
@@ -72,6 +75,8 @@ builder.Services.AddHttpLogging(o =>
 // CORS
 builder.Services.AddCors(options =>
 {
+    string allowed_origins = builder.Configuration["Cors:AllowedOrigins"] ?? 
+    throw new InvalidOperationException("Cors string not configured");
     options.AddPolicy("AllowReactApp", policy =>
         policy.WithOrigins(
                 "http://localhost:3000")

@@ -1,5 +1,5 @@
-import import_script
 import psycopg2
+import sets_and_cards
 import connection
 import users
 import bookmarks
@@ -21,25 +21,21 @@ def create_database(cur: psycopg2.extensions.cursor):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-pw", "--password", default="")
+    parser.add_argument("-pw", "--password", default="scalpsql")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    con = connection.get_connection("postgres", args.password)
-    cur = con.cursor()
-    create_database(cur)
-    con.close()
 
-    con = connection.get_connection()
-    cur = con.cursor()
+    con = connection.get_connection("scalpcentral", args.password)
 
-    import_script.run(con)  # kaarten en sets
-    users.create_user_table(cur)
+    sets_and_cards.run(con)
+    users.run(con)
     products.run(con)
     orders.run(con)
     orderContents.run(con)
-    bookmarks.create_bookmarks_table(cur)
-    product_reviews.create_tables(con)
+    bookmarks.run(con)
+    product_reviews.run(con)
+    
     con.close()

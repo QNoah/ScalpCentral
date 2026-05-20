@@ -1,4 +1,4 @@
- @import './colors.css';
+@import './Colors.css';
 
 .navbar-link {
     color: var(--pokeWhite);
@@ -17,4 +17,4 @@
 .navbar-link.active {
     background: linear-gradient(to top, var(--lightPokeYellow), var(--pokeYellow));
     color: var(--lightPokeBlue);
-} 
+}

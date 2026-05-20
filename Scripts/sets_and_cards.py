@@ -7,28 +7,6 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-
-def get_connection():
-    try:
-        connection = psycopg2.connect(
-            database="scalpcentral",
-            user="postgres",
-            password="",
-            host="127.0.0.1",
-            port=5432,
-        )
-        connection.set_client_encoding("UTF8")
-        with connection.cursor() as cur:
-            cur.execute("""SHOW client_encoding;""")
-            print(cur.fetchone())
-            cur.execute("""SHOW server_encoding;""")
-            print(cur.fetchone())
-        return connection
-    except Exception as e:
-        print("Connectie werkt niet:", e)
-        return False
-
-
 def create_tables(connection):
     cursor = connection.cursor()
     schema_sql = """
@@ -158,113 +136,104 @@ CREATE TABLE IF NOT EXISTS cards_to_subtypes(
 def insert_cards(cards, connection):
     cursor = connection.cursor()
 
+    # batch insert images and get ids back
+    image_data = [(c["images"]["small"], c["images"]["large"]) for c in cards]
+    image_ids = []
+    for small, large in image_data:
+        cursor.execute(
+            "INSERT INTO card_images (small, large) VALUES (%s, %s) RETURNING id",
+            (small, large)
+        )
+        image_ids.append(cursor.fetchone()[0])
+
+    # batch insert cards
+    card_rows = []
+    for c, images_id in zip(cards, image_ids):
+        card_rows.append((
+            c["id"],
+            c["id"].split("-")[0],
+            c.get("name"),
+            c["supertype"],
+            c.get("hp"),
+            c.get("evolvesFrom"),
+            c.get("artist"),
+            c.get("rarity"),
+            c.get("flavorText"),
+            images_id,
+        ))
+
+    cursor.executemany("""
+        INSERT INTO cards (id, set_id, name, supertype, hp, evolves_from_name, artist, rarity, flavor_text, images_id, soft_delete)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT)
+        ON CONFLICT DO NOTHING
+    """, card_rows)
+
+    # batch relations
+    evolution_rows, attack_rows, ability_rows, rule_rows, subtype_rows, type_rows = [], [], [], [], [], []
+
     for c in cards:
         c_id = c["id"]
-        c_set_id = c["id"].split("-")[0]
         c_name = c.get("name")
-        c_supertype = c["supertype"]
-        c_subtypes = c.get("subtypes")
-        c_types = c.get("types")
-        c_hp = c.get("hp")
-        c_evolves_from_name = c.get("evolvesFrom")
-        c_evolves_to_name = c.get("evolvesTo")
-        c_attacks = c.get("attacks")
-        c_abilities = c.get("abilities")
-        c_rules = c.get("rules")
-        c_artist = c.get("artist")
-        c_rarity = c.get("rarity")
-        c_flavor_text = c.get("flavorText")
-        c_imagesmall = c["images"]["small"]
-        c_imagelarge = c["images"]["large"]
 
-        cursor.execute(
-            """INSERT INTO card_images (small, large) VALUES (%s, %s) RETURNING id""",
-            (c_imagesmall, c_imagelarge),
-        )
-        images_id = cursor.fetchone()[0]
+        if c.get("evolvesTo"):
+            for name in c["evolvesTo"]:
+                evolution_rows.append((c_name, name))
 
-        cursor.execute(
-            """
-            INSERT INTO cards (id, set_id, name, supertype, hp, evolves_from_name, artist, rarity, flavor_text, images_id, soft_delete)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT)
-            """,
-            (
-                c_id,
-                c_set_id,
-                c_name,
-                c_supertype,
-                c_hp,
-                c_evolves_from_name,
-                c_artist,
-                c_rarity,
-                c_flavor_text,
-                images_id,
-            ),
-        )
-        if c_evolves_to_name:
-            for name in c_evolves_to_name:
-                cursor.execute(
-                    """INSERT INTO cards_to_evolutions (pokemon_name, evolves_to_name)
-                    VALUES (%s, %s) ON CONFLICT DO NOTHING""", (c_name, name))
+        if c.get("attacks"):
+            for attack in c["attacks"]:
+                cursor.execute("""
+                    INSERT INTO attacks (name, damage, description) VALUES (%s, %s, %s)
+                    ON CONFLICT ON CONSTRAINT unique_attacks_only DO UPDATE SET name = EXCLUDED.name RETURNING id
+                """, (attack["name"], attack.get("damage"), attack.get("text")))
+                attack_rows.append((c_id, cursor.fetchone()[0]))
 
-        if c_attacks:
-            for attack in c_attacks:
-                cursor.execute(
-                    """INSERT INTO attacks (name, damage, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_attacks_only DO UPDATE SET name = EXCLUDED.name RETURNING id;""",
-                    (attack["name"], attack.get("damage"), attack.get("text")),
-                )
-                attack_id = cursor.fetchone()[0]
-                cursor.execute(
-                    """INSERT INTO cards_to_attacks (card_id, attack_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
-                    (c_id, attack_id),
-                )
+        if c.get("abilities"):
+            for ability in c["abilities"]:
+                cursor.execute("""
+                    INSERT INTO abilities (name, type, description) VALUES (%s, %s, %s)
+                    ON CONFLICT ON CONSTRAINT unique_abilities_only DO UPDATE SET name = EXCLUDED.name RETURNING id
+                """, (ability["name"], ability.get("type"), ability.get("text")))
+                ability_rows.append((c_id, cursor.fetchone()[0]))
 
-        if c_abilities:
-            for ability in c_abilities:
-                cursor.execute(
-                    """INSERT INTO abilities (name, type, description) VALUES (%s, %s, %s) ON CONFLICT ON CONSTRAINT unique_abilities_only DO UPDATE SET name = EXCLUDED.name RETURNING id;""",
-                    (ability["name"], ability.get("type"), ability.get("text")),
-                )
-                ability_id = cursor.fetchone()[0]
-                cursor.execute(
-                    """INSERT INTO cards_to_abilities (card_id, ability_id) VALUEs (%s, %s) ON CONFLICT DO NOTHING""",
-                    (c_id, ability_id),
-                )
+        if c.get("rules"):
+            for rule in c["rules"]:
+                cursor.execute("""
+                    INSERT INTO rules (description) VALUES (%s)
+                    ON CONFLICT (description) DO UPDATE SET description = EXCLUDED.description RETURNING id
+                """, (rule,))
+                rule_rows.append((c_id, cursor.fetchone()[0]))
 
-        if c_rules:
-            for rule in c_rules:
-                cursor.execute(
-                    """INSERT INTO rules (description) VALUES (%s) ON CONFLICT (description) DO UPDATE SET description = EXCLUDED.description RETURNING id;""",
-                    (rule,),
-                )
-                rule_id = cursor.fetchone()[0]
-                cursor.execute(
-                    """INSERT INTO cards_to_rules (card_id, rule_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
-                    (c_id, rule_id),
-                )
+        if c.get("subtypes"):
+            for subtype in c["subtypes"]:
+                cursor.execute("""
+                    INSERT INTO subtypes (name) VALUES (%s)
+                    ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id
+                """, (subtype,))
+                subtype_rows.append((c_id, cursor.fetchone()[0]))
 
-        if c_subtypes:
-            for subtype in c_subtypes:
-                cursor.execute(
-                    """INSERT INTO subtypes (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id;""",
-                    (subtype,),
-                )
-                subtype_id = cursor.fetchone()[0]
-                cursor.execute(
-                    """INSERT INTO cards_to_subtypes (card_id, subtype_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
-                    (c_id, subtype_id),
-                )
-        if c_types:
-            for type in c_types:
-                cursor.execute(
-                    """INSERT INTO types (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id""",
-                    (type,),
-                )
-                type_id = cursor.fetchone()[0]
-                cursor.execute(
-                    """INSERT INTO cards_to_types (card_id, type_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""",
-                    (c_id, type_id),
-                )
+        if c.get("types"):
+            for type in c["types"]:
+                cursor.execute("""
+                    INSERT INTO types (name) VALUES (%s)
+                    ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id
+                """, (type,))
+                type_rows.append((c_id, cursor.fetchone()[0]))
+
+    # bulk insert all relations at once
+    if evolution_rows:
+        cursor.executemany("INSERT INTO cards_to_evolutions VALUES (%s, %s) ON CONFLICT DO NOTHING", evolution_rows)
+    if attack_rows:
+        cursor.executemany("INSERT INTO cards_to_attacks VALUES (%s, %s) ON CONFLICT DO NOTHING", attack_rows)
+    if ability_rows:
+        cursor.executemany("INSERT INTO cards_to_abilities VALUES (%s, %s) ON CONFLICT DO NOTHING", ability_rows)
+    if rule_rows:
+        cursor.executemany("INSERT INTO cards_to_rules VALUES (%s, %s) ON CONFLICT DO NOTHING", rule_rows)
+    if subtype_rows:
+        cursor.executemany("INSERT INTO cards_to_subtypes VALUES (%s, %s) ON CONFLICT DO NOTHING", subtype_rows)
+    if type_rows:
+        cursor.executemany("INSERT INTO cards_to_types VALUES (%s, %s) ON CONFLICT DO NOTHING", type_rows)
+
+    cursor.close()
 
 
 def insert_sets(data, connection):
@@ -320,16 +289,17 @@ def json_load_sets(connection):
 
 def run(connection):
     create_tables(connection)
+    connection.commit()
+
     json_load_sets(connection)
+    connection.commit()
+    
     json_load_cards(connection)
     connection.commit()
-    print(f"import_script.py ran succesfully.")
+    print(f"set_and_cards.py ran succesfully.")
     return
 
 
 if __name__ == "__main__":
-    connection = get_connection()
-    if connection is False:
-        print("Error: Connection is False")
-        sys.exit(1)
-    run(connection)
+    print("Je kan deze file niet runnen gebruik: Main.py")
+

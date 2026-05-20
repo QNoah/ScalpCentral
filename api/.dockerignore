@@ -1,0 +1,40 @@
+# Build output
+bin
+obj
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Visual Studio
+.vs
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea
+
+# Logs
+*.log
+logs
+
+# Runtime
+*.pid
+*.seed
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Misc
+*.md
+.git
+.gitignore

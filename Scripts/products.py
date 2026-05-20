@@ -4,27 +4,6 @@ import os
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
-
-def get_connection():
-    try:
-        connection = psycopg2.connect(
-            database="scalpcentral",
-            user="postgres",
-            password="",
-            host="127.0.0.1",
-            port=5432,
-        )
-        connection.set_client_encoding('UTF8')
-        with connection.cursor() as cur:
-            cur.execute("""SHOW client_encoding;""")
-            print(cur.fetchone())
-            cur.execute("""SHOW server_encoding;""")
-            print(cur.fetchone())
-        return connection
-    except Exception as e:
-        print("Connectie werkt niet:", e)
-        return False
-
 def create_table(connection):
     cursor = connection.cursor()
     table_sql = """
@@ -210,57 +189,6 @@ def match_set(filename: str, connection) -> tuple[str, str] | None:
         print(f"Uh oh, we couldn't match: {filename.split('__')[0]}")
 
     return best
-  
-# def check_set_names(connection):
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT name FROM sets;")
-#     all_names = []
-#     found = []
-#     missing = []
-#     print("All names found: ")
-#     for (name,) in cursor.fetchall():
-#         if "PokÃ©mon" in name:
-#             fix = "e".join(name.split("Ã©"))
-#             all_names.append("".join(fix.split()))
-#             continue
-        
-#         if "HSâ€”" in name:
-#             fix = name.split("â€”")[1]
-#             all_names.append("".join(fix.split()))
-#             continue
-
-#         if "&" in name:
-#             fix = "and".join(name.split("&"))
-#             all_names.append("".join(fix.split()))
-#             continue
-
-#         all_names.append("".join(name.split()))
-#     for name in all_names:
-#         print(str(name).lower())
-#     for file in os.listdir("./sealed_csv"):
-#         current_match = ""
-#         match_length = 0
-
-#         for name in all_names:
-#             if str(name).lower() in file.lower():
-#                 current_match = name
-#                 match_length = len(current_match)
-
-#         if match_length > 0:
-#             found.append(file)
-#             print(f"FOUND: {str(file).split("Products")[0]}   MATCH: {current_match}")
-#         else:
-#             missing.append(file)
-#             print(f"MISSING: {str(file).split("Products")[0]}")
-
-# def delete_empty():
-#     for file in os.listdir("./sealed_csv"):
-#         path = os.path.join("./sealed_csv", file)
-#         with open(path, "r", encoding="UTF8", newline="") as file:
-#             reader = csv.DictReader(file)
-#             first_row = next(reader, None)
-#         if first_row is None:
-#             os.remove(path)
 
 def run(con):
     create_table(con)
@@ -268,10 +196,4 @@ def run(con):
     con.commit()
         
 if __name__ == "__main__":
-    con = get_connection()
-    if con is False:
-        print("Connection failed.")
-        sys.exit(1)
-    run(con)
-    con.close()
-    # check_set_names(con)
+    print("Je kan deze file niet runnen gebruik: Main.py")

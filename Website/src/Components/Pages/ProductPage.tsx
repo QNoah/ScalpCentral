@@ -72,10 +72,14 @@ export function ProductPage() {
                             </TableBody>
                         </Table>
                     </div>
-                    <div className="product-details">
-                        <div className="purchase-section">
-                            <p className='product-price'>€{product?.price}</p>
-                            <button className="add-to-cart-button" onClick={() => AddToCart(product)}>Add to Cart</button>
+                    <div id="product-utility" className="flex flex-col gap-1 flex-1 max-w-[30rem] p-1">
+                        <div className="flex justify-between gap-8 p-1">
+                            <h1 className="">€{product?.price}</h1>
+                            <Button sx={{
+                                backgroundColor: "#F1F979", 
+                                color: "black",
+                                flex: 1
+                                }} variant="contained" onClick={() => AddToCart(product)} disableElevation>Add to Cart</Button>
                         </div>
                         <h2>Description</h2>
                         <p dangerouslySetInnerHTML={{__html:product.description}}></p>

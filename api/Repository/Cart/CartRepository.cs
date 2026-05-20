@@ -9,7 +9,7 @@ public class CartRepository : ICartRepository
         _db = redis.GetDatabase();
     }
 
-    public async Task AddItemAsync(string cartId, string productId, int quantity)
+    public async Task AddItemAsync(string cartId, int productId, int quantity)
     {
         var key = $"cart:{cartId}";
         await _db.HashIncrementAsync(key, productId, quantity);

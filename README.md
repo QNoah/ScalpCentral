@@ -2,10 +2,13 @@
 
 Pokémon card marketplace: C# API + React frontend + Docker
 
+## IMPORTANT: 
+Copy the .env.example to a new .env file in the same directory (or copy it's contents to an existing .env).
+Also make sure you have installed Docker Desktop (and running)
+
 ## Quick Start
 
-IMPORTANT: Copy the .env.example to a new .env file in the same directory (or copy it's contents to an existing .env).
-Also make sure you have installed Docker Desktop (and running)
+
 
 ```bash
 # Start all services

@@ -41,12 +41,15 @@ export function CartPage() {
     async function updateQuantity(productId: number, newQuantity: number) {
         if (newQuantity < 1) return;
 
+        const cartId = getCartId();
+
         await fetch(`http://localhost:5231/api/cart`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                cartId,
                 productId,
                 quantity: newQuantity
             })

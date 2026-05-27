@@ -10,6 +10,7 @@ import OrderConfirmation from './Components/Pages/OrderConfirmation';
 import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
 import Footer from './Components/PageParts/Footer';
+import ProductEdit from './Components/Pages/Admin/ProductEdit';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +61,7 @@ function App() {
         <Route path="/Cart" element={<CartPage />}/>
         <Route path="/search" element={<SearchResults />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/product/edit/:id" element={<ProductEdit />} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
         <Route path='product-list' element={<ProductList/>}/>
         <Route path="*" element={<p>Page not found</p>} />

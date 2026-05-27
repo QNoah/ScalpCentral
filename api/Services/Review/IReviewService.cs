@@ -1,6 +1,4 @@
-namespace ScalpCentral.Api.Repository;
-
-public interface IReviewRepository
+public interface IReviewService
 {
     Task<List<ReviewModel>> GetFiltered(ReviewFilter filter);
     Task<PagedResults<ReviewModel>> GetPaged(ReviewFilter filter, int limit);

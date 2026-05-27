@@ -70,6 +70,7 @@ public class ReviewRepository : RepositoryAccessBase, IReviewRepository
 
         sql += " LIMIT @Limit OFFSET @Page";
         parameters.Add("Page", filter.Page - 1);
+        parameters.Add("Limit", limit);
 
         string countSql = "SELECT COUNT(DISTINCT r.id) FROM product_reviews as r JOIN users as u ON u.id = r.user_id WHERE u.soft_delete = false" + whereClause;
         int count = await RepoHelpers.TryQueryAsync(async () =>
@@ -98,13 +99,13 @@ public class ReviewRepository : RepositoryAccessBase, IReviewRepository
 
         DynamicParameters parameters = new DynamicParameters();
 
-        parameters.Add("Uid", review.ProductId);
+        parameters.Add("Uid", review.UserId);
         parameters.Add("Pid", review.ProductId);
         parameters.Add("Stars", review.Stars);
         parameters.Add("Title", review.Title);
         parameters.Add("Description", review.Description);
 
-        long id = await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync(sql, parameters));
+        long id = await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync<long>(sql, parameters));
 
         return id;
     }

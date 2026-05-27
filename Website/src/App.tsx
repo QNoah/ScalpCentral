@@ -51,8 +51,8 @@ function App() {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <div className="app-shell">
-      <main className="pages">
+    <div className="app-shell flex flex-col min-h-screen">
+      <main className="flex-1">
         <Routes>
         <Route path="/" element={<HomePage />}/>
         <Route path="/Login" element={<LoginPage />}/>

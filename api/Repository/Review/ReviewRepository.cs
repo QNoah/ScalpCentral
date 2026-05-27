@@ -42,7 +42,7 @@ public class ReviewRepository : RepositoryAccessBase, IReviewRepository
 
     public async Task<ReviewModel?> GetById(long id)
     {
-        string sql = baseSql + " WHERE r.id = @Id";
+        string sql = baseSql + " AND r.id = @Id";
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("Id", id);
 
@@ -150,7 +150,7 @@ public class ReviewRepository : RepositoryAccessBase, IReviewRepository
         sql = sql.TrimEnd(',') + " WHERE id = @Id RETURNING id";
         parameters.Add("Id", id);
 
-        return await RepoHelpers.TryQueryAsync(async () => await _con.QuerySingleAsync(sql, parameters));
+        return await RepoHelpers.TryQueryAsync(async () => await _con.QuerySingleAsync<long>(sql, parameters));
 
     }
 

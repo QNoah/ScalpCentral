@@ -35,7 +35,7 @@ public class CartController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateQuantity([FromBody] UpdateCartDTO dto)
+    public async Task<IActionResult> UpdateQuantity([FromBody] AddToCartDTO dto)
     {
         await _service.UpdateQuantity(dto.CartId, dto.ProductId, dto.Quantity);
         return Ok();

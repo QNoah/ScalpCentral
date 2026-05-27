@@ -10,7 +10,7 @@ export default function ProductEdit(){
         return(
         <div>
             <Navbar/>
-        (<h1 className="text-center mt-5">Ongeldig product</h1>)
+        (<h1 className="text-center mt-5">Unknown product</h1>)
         </div>
     );
 }

@@ -31,4 +31,8 @@ public class CartRepository : ICartRepository
         var key = $"cart:{cartId}";
         await _db.KeyDeleteAsync(key);
     }
+    public async Task RemoveItem(string cartId, string productId)
+    {
+        await _db.HashDeleteAsync($"cart:{cartId}", productId);
+    }
 }

@@ -5,4 +5,5 @@ public interface ICartRepository
     public Task<HashEntry[]> GetCartAsync(string cartId);
     public Task SetExpiryAsync(string cartId);
     public Task RemoveCartAsync(string cartId);
+    public Task RemoveItem(string cartId, string productId);
 }

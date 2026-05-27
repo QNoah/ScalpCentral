@@ -40,4 +40,11 @@ public class CartController : ControllerBase
         await _service.ClearCart(cartId);
         return Ok();
     }
+
+    [HttpDelete("remove")]
+    public async Task<IActionResult> Remove([FromBody] RemoveCartItemDTO dto)
+    {
+        await _service.RemoveItem(dto.CartId, dto.ProductId);
+        return Ok();
+    }
 }

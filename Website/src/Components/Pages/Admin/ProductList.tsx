@@ -3,6 +3,7 @@ import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import Navbar from "../../Utils/Navbar";
 import type { Product } from "../../Types/Product";
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', flex: 1},
@@ -11,6 +12,7 @@ const columns: GridColDef[] = [
 ];
 
 export default function ProductList() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function ProductList() {
             loading={loading}
             getRowId={(row) => row.id}
             initialState={{sorting: {sortModel: [{field: 'id', sort: 'asc'}]}}}
-            // sortingOrder={row}
+            onRowClick={(params) => navigate(`/product/edit/${params.row.id}`, {state: {product: params.row}})}
             checkboxSelection
           />
           {error && <div style={{ color: "red", padding: 16 }}>{error}</div>}

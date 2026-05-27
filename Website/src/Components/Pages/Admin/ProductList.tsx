@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'Id', flex: 0.3},
   { field: 'name', headerName: 'Name', flex: 3 },
-  { field: 'type', headerName: 'Type', flex: 1, type: 'number' },
+  { field: 'type', headerName: 'Type', flex: 1, },
   { field: 'price', headerName: 'Price', flex: 1, type: 'number' },
 ];
 

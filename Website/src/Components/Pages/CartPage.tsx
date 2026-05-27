@@ -41,12 +41,15 @@ export function CartPage() {
     async function updateQuantity(productId: number, newQuantity: number) {
         if (newQuantity < 1) return;
 
+        const cartId = getCartId();
+
         await fetch(`http://localhost:5231/api/cart`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                cartId,
                 productId,
                 quantity: newQuantity
             })
@@ -58,6 +61,25 @@ export function CartPage() {
                     ? { ...item, quantity: newQuantity }
                     : item
             )
+        );
+    }
+
+    async function removeFromCart(productId: number) {
+        const cartId = getCartId();
+
+        await fetch(`http://localhost:5231/api/cart/remove`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                cartId,
+                productId
+            })
+        });
+
+        setProducts(prev =>
+            prev.filter(item => item.product.id !== productId)
         );
     }
 
@@ -93,6 +115,9 @@ export function CartPage() {
                                 <span>{item.quantity}</span>
                                 <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)}>
                                     +
+                                </button>
+                                <button className="delete-button" onClick={() => removeFromCart(item.product.id)}>
+                                Delete
                                 </button>
                             </div>
                         </div>

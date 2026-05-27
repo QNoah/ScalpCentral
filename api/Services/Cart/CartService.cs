@@ -44,4 +44,15 @@ public class CartService : ICartService
     {
         await _cartRepo.RemoveCartAsync(cartId);
     }
+
+    public async Task UpdateQuantity(string cartId, int productId, int quantity)
+    {
+        await _cartRepo.UpdateQuantity(cartId, productId, quantity);
+    }
+
+    public async Task RemoveItem(string cartId, int productId)
+    {
+        await _cartRepo.RemoveItem(cartId, productId);
+    }
+    
 }

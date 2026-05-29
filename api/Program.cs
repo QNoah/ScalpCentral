@@ -78,8 +78,9 @@ builder.Services.AddCors(options =>
     string allowed_origins = builder.Configuration["Cors:AllowedOrigins"] ?? 
     throw new InvalidOperationException("Cors string not configured");
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins(
-                "http://localhost:3000")
+    policy.WithOrigins(
+        "http://localhost:3000",
+        "http://localhost:3001")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());

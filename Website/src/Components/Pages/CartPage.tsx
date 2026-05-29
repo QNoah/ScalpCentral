@@ -16,7 +16,7 @@ export function CartPage() {
             const cartId = getCartId();
 
             const response = await fetch(
-                `http://localhost:5231/api/cart/${cartId}`
+                `/api/cart/${cartId}`
             );
 
             if (!response.ok) {
@@ -37,13 +37,17 @@ export function CartPage() {
         navigate(`/product/${id}`);
     }
 
+    function goToCheckout() {
+        navigate("/checkout");
+    }
+
 
     async function updateQuantity(productId: number, newQuantity: number) {
         if (newQuantity < 1) return;
 
         const cartId = getCartId();
 
-        await fetch(`http://localhost:5231/api/cart`, {
+        await fetch(`/api/cart`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -67,7 +71,7 @@ export function CartPage() {
     async function removeFromCart(productId: number) {
         const cartId = getCartId();
 
-        await fetch(`http://localhost:5231/api/cart/remove`, {
+        await fetch(`/api/cart/remove`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -92,6 +96,11 @@ export function CartPage() {
                 <div className="results-content">
                     <div className="carts-header">
                         <h1>Shoppingcart</h1>
+                    </div>
+                    <div className="cart-actions" style={{ marginBottom: "1rem" }}>
+                        <button onClick={goToCheckout} disabled={products.length === 0}>
+                            Go to checkout
+                        </button>
                     </div>
                     <div className="cart-content">
                         {products.map(item => (

@@ -1,14 +1,15 @@
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import { RegisterPage, LoginPage } from "./Components/Pages/AuthPages";
 import { SearchResults } from './Components/Pages/SearchResults';
 import { ProductPage } from './Components/Pages/ProductPage';
-import { HomePage } from "./Components/Pages/MainPage"
+// import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
 import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
+import CheckoutPage from './Components/Pages/CheckoutPage';
 import Footer from './Components/PageParts/Footer';
 
 function App() {
@@ -54,10 +55,11 @@ function App() {
     <div className="app-shell flex flex-col min-h-screen">
       <main className="flex-1">
         <Routes>
-        <Route path="/" element={<HomePage />}/>
+        <Route path="/" element={<Navigate to="/product/1" replace />} />
         <Route path="/Login" element={<LoginPage />}/>
         <Route path="/Register" element={<RegisterPage />}/>
         <Route path="/Cart" element={<CartPage />}/>
+        <Route path="/checkout" element={<CheckoutPage />}/>
         <Route path="/search" element={<SearchResults />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>

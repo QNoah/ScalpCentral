@@ -1,9 +1,9 @@
 import './App.css';
-import { Navigate, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { RegisterPage, LoginPage } from "./Components/Pages/AuthPages";
 import { SearchResults } from './Components/Pages/SearchResults';
 import { ProductPage } from './Components/Pages/ProductPage';
-// import { HomePage } from "./Components/Pages/MainPage"
+import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
 import { getCookie } from "./Components/Functionalities/CookieUtils";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
@@ -55,7 +55,7 @@ function App() {
     <div className="app-shell flex flex-col min-h-screen">
       <main className="flex-1">
         <Routes>
-        <Route path="/" element={<Navigate to="/product/1" replace />} />
+        <Route path="/" element={<HomePage />}/>
         <Route path="/Login" element={<LoginPage />}/>
         <Route path="/Register" element={<RegisterPage />}/>
         <Route path="/Cart" element={<CartPage />}/>

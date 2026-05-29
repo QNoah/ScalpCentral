@@ -16,7 +16,10 @@ export function CartPage() {
             const cartId = getCartId();
 
             const response = await fetch(
-                `http://localhost:5231/api/cart/${cartId}`
+                `http://localhost:5231/api/cart/${cartId}`,
+                {
+                    credentials: "include"
+                }
             );
 
             if (!response.ok) {
@@ -46,6 +49,7 @@ export function CartPage() {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 productId,
                 quantity: newQuantity

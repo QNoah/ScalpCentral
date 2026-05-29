@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
+[Authorize]
 [Route("api/cart")]
 public class CartController : ControllerBase
 {

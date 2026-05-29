@@ -13,7 +13,9 @@ export function ProductPage() {
     useEffect(() => {
         if (productId) {
             const fetchProduct = async () => {
-                const response = await fetch(`http://localhost:5231/api/products/${productId}`);
+                const response = await fetch(`http://localhost:5231/api/products/${productId}`, {
+                    credentials: "include"
+                });
                 const data = await response.json();
                 setProduct(data);
             };
@@ -34,6 +36,7 @@ export function ProductPage() {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 cartId,
                 productId: item.id,

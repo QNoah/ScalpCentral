@@ -102,6 +102,14 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Token = context.Request.Cookies["jwt"];
             }
+            else if (context.Request.Cookies.ContainsKey("authToken"))
+            {
+                context.Token = context.Request.Cookies["authToken"];
+            }
+            else if (context.Request.Cookies.ContainsKey("token"))
+            {
+                context.Token = context.Request.Cookies["token"];
+            }
             return Task.CompletedTask;
         }
     };
@@ -119,7 +127,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
 // Rate limit
 builder.Services.AddRateLimiter(options =>

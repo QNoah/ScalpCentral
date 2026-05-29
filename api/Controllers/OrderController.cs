@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using ScalpCentral.Api.Models;
@@ -16,6 +18,7 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet]
     public async Task<ActionResult<List<OrderModel>>> GetAllOrders()
     {
@@ -23,6 +26,7 @@ public class OrderController : ControllerBase
         return Ok(orders);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("{id:long}")]
     public async Task<ActionResult<OrderModel>> GetOrderById(long id)
     {
@@ -35,6 +39,7 @@ public class OrderController : ControllerBase
         return Ok(order);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("{id:long}/details")]
     public async Task<ActionResult<OrderInfoModel>> GetOrderDetailsById(long id)
     {
@@ -47,23 +52,37 @@ public class OrderController : ControllerBase
         return Ok(orderInfo);
     }
 
+    [Authorize]
     [HttpGet("user/{userId:long}")]
     public async Task<ActionResult<List<OrderModel>>> GetOrdersByUserId(long userId)
     {
+        if (!CanAccessUserData(userId))
+            return Forbid();
+
         var orders = await _orderService.GetOrdersByUserIdAsync(userId);
         return Ok(orders);
     }
 
+    [Authorize]
     [HttpGet("user/{userId:long}/details")]
     public async Task<ActionResult<List<OrderInfoModel>>> GetOrderDetailsByUserId(long userId)
     {
+        if (!CanAccessUserData(userId))
+            return Forbid();
+
         var orders = await _orderService.GetOrderInfoByUserIdAsync(userId);
         return Ok(orders);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<OrderModel>> CreateOrder([FromBody] OrderModel order)
     {
+        if (!User.IsInRole("Admin"))
+        {
+            order.UserId = GetCurrentUserId();
+        }
+
         try
         {
             var createdOrder = await _orderService.CreateOrderAsync(order);
@@ -75,6 +94,7 @@ public class OrderController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{id:long}")]
     public async Task<ActionResult<OrderModel>> UpdateOrder(long id, [FromBody] OrderModel order)
     {
@@ -100,6 +120,7 @@ public class OrderController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("{id:long}")]
     public async Task<IActionResult> DeleteOrder(long id)
     {
@@ -117,5 +138,22 @@ public class OrderController : ControllerBase
         {
             return Conflict("Order cannot be deleted because it still has related order items.");
         }
+    }
+
+    private long GetCurrentUserId()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (long.TryParse(userId, out long parsedUserId))
+            return parsedUserId;
+
+        return 0;
+    }
+
+    private bool CanAccessUserData(long userId)
+    {
+        if (User.IsInRole("Admin"))
+            return true;
+
+        return GetCurrentUserId() == userId;
     }
 }

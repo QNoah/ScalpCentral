@@ -80,6 +80,15 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {Id = id}));
 	}
 
+	public async Task<UserModel?> GetByEmail(string email)
+	{
+		var sql = $@"
+		SELECT {UserSelectColumns}
+		FROM {Table()}
+		WHERE soft_deleted = FALSE and email = @email";
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {mail = email}));
+	}
+
 	public async Task SoftDelete(UserModel user)
 	{
 		var sql = $@"

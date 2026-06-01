@@ -41,6 +41,18 @@ public class UserService : IUserService
         return null;
     }
 
+    public async Task ResetPassword(string email, string password)
+    {
+        var user = await _userRepository.GetByEmail(email);
+
+        if (user == null)
+            throw new Exception("User not found");
+
+        user.Password = _hasher.GenerateHash(password, hashKey);
+
+        await _userRepository.Update(user);
+    }
+
     public async Task<UserModel?> GetById(int id)
     {
         UserModel? user = await _userRepository.GetById(id);

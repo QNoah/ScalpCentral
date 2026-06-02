@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../Functionalities/AuthContext";
-import { setCookie } from "../Functionalities/CookieUtils"
 import "../Styling/Auth.css";
 
 /* -------------------- TYPES -------------------- */
@@ -82,7 +81,6 @@ export function LoginPage() {
 
     const user = await response.json();
     setUser(user);
-    setCookie("authToken", user.token, 7);
     navigate("/");
   }
 
@@ -168,7 +166,6 @@ export function RegisterPage() {
 
     const user = await response.json();
     setUser(user);
-    setCookie("authToken", user.token, 7);
 
     navigate("/");
   }

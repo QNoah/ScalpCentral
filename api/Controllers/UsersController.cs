@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
@@ -45,6 +46,7 @@ public class UsersController : ControllerBase
         if (user is not null)
         {
             user.Token = CreateToken(user);
+            AppendAuthCookie(user.Token);
         }
 
         return Ok(user);
@@ -57,6 +59,7 @@ public class UsersController : ControllerBase
         if(user == null)
             return Unauthorized();
         user.Token = CreateToken(user);
+        AppendAuthCookie(user.Token);
         return Ok(user);
     }
 
@@ -104,6 +107,20 @@ public class UsersController : ControllerBase
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private void AppendAuthCookie(string token)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(7),
+            Path = "/"
+        };
+
+        Response.Cookies.Append("authToken", token, cookieOptions);
     }
 
     private long GetCurrentUserId()

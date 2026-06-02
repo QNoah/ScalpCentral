@@ -5,7 +5,6 @@ import { SearchResults } from './Components/Pages/SearchResults';
 import { ProductPage } from './Components/Pages/ProductPage';
 import { HomePage } from "./Components/Pages/MainPage"
 import { useEffect, useState } from "react";
-import { getCookie } from "./Components/Functionalities/CookieUtils";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
 import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
@@ -15,14 +14,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = getCookie("authToken");
-    if (token) {
-      localStorage.setItem("authToken", token);
-    } else {
-      const storedToken = localStorage.getItem("authToken");
-      if (storedToken) {
-      }
-    }
     setIsLoading(false);
   }, []);
 

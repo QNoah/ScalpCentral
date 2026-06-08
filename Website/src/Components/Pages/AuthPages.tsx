@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../Functionalities/AuthContext";
-import { setCookie } from "../Functionalities/CookieUtils"
+import { setCookie } from "../Functionalities/CookieUtils";
 import "../Styling/Auth.css";
 
 /* -------------------- TYPES -------------------- */
@@ -194,8 +194,27 @@ export function RegisterPage() {
   );
 }
 
-/* -------------------- SHARED UI -------------------- */
-function Input({
+
+/* -------------------- LAYOUT -------------------- */
+function AuthLayout({
+  title,
+  children
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="container">
+      <div className="box">
+        <div className="header">{title}</div>
+        <div className="content">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------- Input -------------------- */
+export function Input({
   name,
   value,
   type = "text",
@@ -215,24 +234,6 @@ function Input({
       />
 
       {error && <div className="error">{error}</div>}
-    </div>
-  );
-}
-
-/* -------------------- LAYOUT -------------------- */
-function AuthLayout({
-  title,
-  children
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="container">
-      <div className="box">
-        <div className="header">{title}</div>
-        <div className="content">{children}</div>
-      </div>
     </div>
   );
 }

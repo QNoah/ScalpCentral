@@ -90,7 +90,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		SELECT {UserSelectColumns}
 		FROM {Table()}
 		WHERE soft_deleted = FALSE and email = @email";
-		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {mail = email}));
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {email = email}));
 	}
 
 	public async Task SoftDelete(UserModel user)

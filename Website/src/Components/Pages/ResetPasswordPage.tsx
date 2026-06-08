@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../Styling/Auth.css";
 
 type ChangePasswordForm = {
@@ -9,7 +8,7 @@ type ChangePasswordForm = {
     confirmPassword: string;
 };
 
-export function ChangePasswordPage() {
+export function ResetPasswordPage() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState<ChangePasswordForm>({
@@ -37,25 +36,21 @@ export function ChangePasswordPage() {
     function validate() {
         const e: Partial<ChangePasswordForm> = {};
 
-        if (!form.email)
-            e.email = "Required";
+        if (!form.email) e.email = "Required";
+        if (!form.password) e.password = "Required";
 
-        if (!form.password)
-            e.password = "Required";
-
-        if (form.password !== form.confirmPassword)
+        if (form.password !== form.confirmPassword) {
             e.confirmPassword = "Passwords do not match";
+        }
 
         setError(e);
-
         return Object.keys(e).length === 0;
     }
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        if (!validate())
-            return;
+        if (!validate()) return;
 
         const response = await fetch(
             "http://localhost:5231/api/users/reset-password",
@@ -72,8 +67,10 @@ export function ChangePasswordPage() {
         );
 
         if (!response.ok) {
+            const msg = await response.text();
+
             setError({
-                email: "User not found"
+                email: msg || "User not found"
             });
 
             return;
@@ -86,26 +83,29 @@ export function ChangePasswordPage() {
         <AuthLayout title="// CHANGE PASSWORD">
             <form onSubmit={onSubmit}>
                 <Input
-                    name="email"
-                    value={form.email}
-                    onChange={onChange}
-                    error={error.email}
+                field="email"
+                label="Email"
+                value={form.email}
+                onChange={onChange}
+                error={error.email}
                 />
 
                 <Input
-                    name="password"
-                    type="password"
-                    value={form.password}
-                    onChange={onChange}
-                    error={error.password}
+                field="password"
+                label="Change Password"
+                type="password"
+                value={form.password}
+                onChange={onChange}
+                error={error.password}
                 />
 
                 <Input
-                    name="confirmPassword"
-                    type="password"
-                    value={form.confirmPassword}
-                    onChange={onChange}
-                    error={error.confirmPassword}
+                field="confirmPassword"
+                label="Confirm Change Password"
+                type="password"
+                value={form.confirmPassword}
+                onChange={onChange}
+                error={error.confirmPassword}
                 />
 
                 <button className="button">
@@ -113,65 +113,61 @@ export function ChangePasswordPage() {
                 </button>
             </form>
 
-            <AuthLinks mode="register" />
+            <AuthLinks />
         </AuthLayout>
     );
+}
 
-    function Input({
-      name,
-      value,
-      type = "text",
-      error,
-      onChange
-    }: any) {
-      return (
-        <div>
-          <label className="label">{name.toUpperCase()}</label>
-
-          <input
-            name={name}
-            value={value}
-            type={type}
-            onChange={onChange}
-            className="input"
-          />
-
-          {error && <div className="error">{error}</div>}
-        </div>
-      );
-    }
-
-    function AuthLayout({
-      title,
-      children
-    }: {
-      title: string;
-      children: React.ReactNode;
-    }) {
-      return (
+/* -------------------- LAYOUT -------------------- */
+function AuthLayout({
+    title,
+    children
+}: {
+    title: string;
+    children: React.ReactNode;
+}) {
+    return (
         <div className="container">
-          <div className="box">
-            <div className="header">{title}</div>
-            <div className="content">{children}</div>
-          </div>
+            <div className="box">
+                <div className="header">{title}</div>
+                <div className="content">{children}</div>
+            </div>
         </div>
-      );
-    }
+    );
+}
 
-    function AuthLinks({ mode }: { mode: "login" | "register" }) {
-      return (
+/* -------------------- Input -------------------- */
+export function Input({
+  field,
+  label,
+  value,
+  type = "text",
+  error,
+  onChange
+}: any) {
+  return (
+    <div>
+      <label className="label">{label}</label>
+
+      <input
+        name={field}
+        value={value}
+        type={type}
+        onChange={onChange}
+        className="input"
+      />
+
+      {error && <div className="error">{error}</div>}
+    </div>
+  );
+}
+
+/* -------------------- LINKS -------------------- */
+function AuthLinks() {
+    return (
         <div className="links">
-          {mode === "login" ? (
-            <>
-              <Link to="/register">No account? Register</Link>
-              <Link to="/reset-password">Forgot password?</Link>
-            </>
-          ) : (
-            <Link to="/login">Already have an account? Login</Link>
-          )}
-
-          <Link to="/">← Back to home</Link>
+            <Link to="/login">← Back to login</Link>
+            <Link to="/">← Back to home</Link>
         </div>
-      );
-    }
+    );
 }

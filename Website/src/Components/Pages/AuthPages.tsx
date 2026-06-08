@@ -11,6 +11,8 @@ type LoginForm = {
 };
 
 type RegisterForm = {
+  fName: string;
+  lName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -104,6 +106,8 @@ export function RegisterPage() {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState<RegisterForm>({
+    fName: "",
+    lName: "",
     email: "",
     password: "",
     confirmPassword: ""
@@ -150,6 +154,8 @@ export function RegisterPage() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
+          fName: form.fName,
+          lName: form.lName,
           email: form.email,
           password: form.password
         })
@@ -174,6 +180,8 @@ export function RegisterPage() {
   return (
     <AuthLayout title="// REGISTER">
       <form onSubmit={onSubmit}>
+        <Input name="fName" value={form.fName} onChange={onChange} error={error.fName} />
+        <Input name="lName" value={form.lName} onChange={onChange} error={error.lName} />
         <Input name="email" value={form.email} onChange={onChange} error={error.email} />
         <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} />
         <Input name="confirmPassword" type="password" value={form.confirmPassword} onChange={onChange} error={error.confirmPassword} />

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../Functionalities/AuthContext";
 import logoImage from "../../assets/imgs/NameOnly.png";
 import logoIcon from "../../assets/imgs/Symbol.png";
 import "../Styling/Navbar.css";
 
 export default function Navbar() {
+  const { user, setUser } = useAuth();
   const [search, setSearch] = useState("");
 
   function handleSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -19,6 +21,10 @@ export default function Navbar() {
   function navigate(path: string) {
     window.location.href = path;
   }
+
+  function logout() {
+  setUser(null);
+}
 
   return (
     <main className="flex h-16 w-screen sticky justify-center" style={{background: "linear-gradient(to top, #00478A, #6F97FF)"}}>
@@ -57,12 +63,34 @@ export default function Navbar() {
           <NavLink to="/contact" className="navbar-link">
             CONTACT
           </NavLink>
-          <NavLink to="/login" className="navbar-link">
-            LOGIN
-          </NavLink>
-          <NavLink to="/register" className="navbar-link">
-            REGISTER
-          </NavLink>
+           {user ? (
+              <>
+                <button
+                  className="navbar-link"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    setUser(null)
+                    window.location.reload();
+                  }}
+                >
+                  LOGOUT
+                </button>
+
+                <NavLink to="/profile" className="navbar-link">
+                  PROFILE
+                </NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink to="/login" className="navbar-link">
+                  LOGIN
+                </NavLink>
+
+                <NavLink to="/register" className="navbar-link">
+                  REGISTER
+                </NavLink>
+              </>
+            )}
         </nav>
       </div>
     </main>

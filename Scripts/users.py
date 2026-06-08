@@ -19,7 +19,7 @@ def create_user_table(cur: psycopg2.extensions.cursor):
             positive_seller_count int,
             role VARCHAR(255) NOT NULL,
             created_at DATE NOT NULL,
-            deleted_at DATE NOT NULL,
+            deleted_at DATE NULL,
             soft_delete BOOLEAN NOT NULL DEFAULT FALSE
         ); """
     cur.execute(schema_sql)

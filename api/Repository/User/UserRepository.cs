@@ -56,13 +56,14 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 	{
 		var sql = $@"
 		INSERT INTO {Table()}
-		(first_name, last_name, email, password, created_at, iban)
-		VALUES (@FName, @LName, @Email, @Password, @createdAt, @Iban)
+		(first_name, last_name, email, password, created_at, iban, role)
+		VALUES (@FName, @LName, @Email, @Password, @createdAt, @Iban, @Role)
 		RETURNING id";
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync(sql, new {
 			FName = userinfo.FName, LName = userinfo.LName, 
 			Email = userinfo.Email, Password = userinfo.Password,
-			createdAt = DateTime.Now, Iban = "Placeholder"
+			createdAt = DateTime.Now, Iban = "Placeholder", 
+			Role = "User"
 			}));
 	}
 

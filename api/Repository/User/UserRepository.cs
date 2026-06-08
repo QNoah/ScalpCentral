@@ -33,7 +33,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 			SELECT {UserSelectColumns}
 			FROM {Table()}
-			WHERE soft_deleted = FALSE
+			WHERE soft_delete = false
 			ORDER BY id;";
 
 		var users = await RepoHelpers.TryQuery(async() => await _con.QueryAsync<UserModel>(sql));
@@ -45,7 +45,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 		SELECT 1
 		FROM {Table()}
-		WHERE email = @Email and soft_deleted = FALSE";
+		WHERE email = @Email and soft_delete = FALSE";
 
 		var result = RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<int?>(sql, new { Email = email }));
 		int? value = await result;
@@ -59,7 +59,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		(email, password)
 		VALUES (@Email, @Password)
 		RETURNING id";
-		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync(sql, new {Email = userinfo.Email, Password = userinfo.Password}));
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync<int?>(sql, new {Email = userinfo.Email, Password = userinfo.Password}));
 	}
 
 	public async Task<UserModel?> Login(LoginRequest userinfo)
@@ -67,7 +67,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 		SELECT {UserSelectColumns}
 		FROM {Table()}
-		WHERE soft_deleted = FALSE and email = @Email";
+		WHERE soft_delete = FALSE and email = @Email";
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel?>(sql, new {Email = userinfo.Email}));
 	}
 
@@ -76,7 +76,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 		SELECT {UserSelectColumns}
 		FROM {Table()}
-		WHERE soft_deleted = FALSE and id = @Id";
+		WHERE soft_delete = FALSE and id = @Id";
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {Id = id}));
 	}
 
@@ -84,8 +84,8 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 	{
 		var sql = $@"
 		UPDATE {Table()}
-		SET soft_deleted = NOT soft_deleted AND deleted_at = @Date
-		WHERE id = Id";
+		SET soft_delete = NOT soft_delete AND deleted_at = @Date
+		WHERE id = @Id";
 		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id, Date = DateTime.Now}));
 	}
 
@@ -93,7 +93,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 	{
 		var sql = $@"
 		DELETE FROM {Table()}
-		WHERE id = Id";
+		WHERE id = @Id";
 		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id}));
 	}
 

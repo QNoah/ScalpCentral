@@ -26,8 +26,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] LoginRequest userinfo)
+    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] RegisterRequest userinfo)
     {
+
         int? id = await _userService.CreateAccount(userinfo);
 
         if (id is not int validId || validId == 0)

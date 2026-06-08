@@ -21,11 +21,16 @@ public class UserService : IUserService
         return await _userRepository.GetAllAsync();
     }
 
-    public async Task<int?> CreateAccount(LoginRequest userinfo)
+    public async Task<int?> CreateAccount(RegisterRequest userinfo)
     {
-        if(await _userRepository.EmailExists(userinfo.Email))
+
+        if (await _userRepository.EmailExists(userinfo.Email))
+        {
             return 0;
+        }
+
         userinfo.Password = _hasher.GenerateHash(userinfo.Password, hashKey);
+
         return await _userRepository.CreateAccount(userinfo);
     }
 

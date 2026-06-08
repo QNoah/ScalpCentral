@@ -52,18 +52,17 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		return value.HasValue;
 	}
 
-	public async Task<int?> CreateAccount(LoginRequest userinfo)
+	public async Task<int?> CreateAccount(RegisterRequest userinfo)
 	{
 		var sql = $@"
 		INSERT INTO {Table()}
-		(first_name, last_name, email, password, created_at, iban, role)
-		VALUES (@FName, @LName, @Email, @Password, @createdAt, @Iban, @Role)
+		(first_name, last_name, email, password, role, created_at)
+		VALUES (@FName, @LName, @Email, @Password, @Role, @createdAt)
 		RETURNING id";
-		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync(sql, new {
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync<int>(sql, new {
 			FName = userinfo.FName, LName = userinfo.LName, 
 			Email = userinfo.Email, Password = userinfo.Password,
-			createdAt = DateTime.Now, Iban = "Placeholder", 
-			Role = "User"
+			createdAt = DateTime.Now, Role = "User"
 			}));
 	}
 

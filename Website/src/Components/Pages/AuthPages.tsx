@@ -154,10 +154,10 @@ export function RegisterPage() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          fName: form.fName,
-          lName: form.lName,
-          email: form.email,
-          password: form.password
+          FName: form.fName,
+          LName: form.lName,
+          Email: form.email,
+          Password: form.password
         })
       }
     );

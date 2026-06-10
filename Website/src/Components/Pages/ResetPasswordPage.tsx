@@ -1,136 +1,173 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
-import { ArrowLeft } from 'lucide-react';
-import logoImage from '../../assets/hero.png';
-import '../Styling/RetroStyles.css';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import "../Styling/Auth.css";
+
+type ChangePasswordForm = {
+    email: string;
+    password: string;
+    confirmPassword: string;
+};
 
 export function ResetPasswordPage() {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+    const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    const [form, setForm] = useState<ChangePasswordForm>({
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
 
-    if (!email) {
-      setError('Email required');
-      return;
+    const [error, setError] = useState<Partial<ChangePasswordForm>>({});
+
+    function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = e.target;
+
+        setForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        setError(prev => ({
+            ...prev,
+            [name]: ""
+        }));
     }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Email invalid');
-      return;
+    function validate() {
+        const e: Partial<ChangePasswordForm> = {};
+
+        if (!form.email) e.email = "Required";
+        if (!form.password) e.password = "Required";
+
+        if (form.password !== form.confirmPassword) {
+            e.confirmPassword = "Passwords do not match";
+        }
+
+        setError(e);
+        return Object.keys(e).length === 0;
     }
 
-    setError('');
-    setSubmitted(true);
-    console.log('Password reset requested for:', email);
-  };
+    async function onSubmit(e: React.FormEvent) {
+        e.preventDefault();
 
-  return (
-    <div className="retro-container">
-      <div className="scanlines"></div>
-      <div className="retro-grid"></div>
+        if (!validate()) return;
 
-      <div className="relative z-10 w-full max-w-md px-6">
-        <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', fontFamily: 'Orbitron, sans-serif', fontSize: '0.875rem', color: 'var(--retro-accent)', textDecoration: 'none' }}>
-          <ArrowLeft size={20} />
-          BACK TO LOGIN
-        </Link>
+        const response = await fetch(
+            "http://localhost:5231/api/users/reset-password",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: form.email,
+                    password: form.password
+                })
+            }
+        );
 
-        <div className="text-center mb-8">
-          <img src={logoImage} alt="ScalpCentral" style={{ height: '80px', margin: '0 auto 1rem' }} />
-          <div className="retro-version">BETA v1.0</div>
-        </div>
+        if (!response.ok) {
+            const msg = await response.text();
 
-        <div className="retro-box">
-          <div className="retro-box-header">
-            <span className="retro-box-title">// RESET PASSWORD</span>
-          </div>
+            setError({
+                email: msg || "User not found"
+            });
 
-          {!submitted ? (
-            <form onSubmit={handleSubmit} className="space-y-4 p-6">
-              <div style={{
-                fontFamily: 'Orbitron, sans-serif',
-                fontSize: '0.875rem',
-                color: 'var(--retro-text-muted)',
-                marginBottom: '1rem',
-              }}>
-                Enter your email address and we'll send you a link to reset your password.
-              </div>
+            return;
+        }
 
-              <div>
-                <label htmlFor="email" className="retro-label">
-                  &gt; EMAIL
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setError('');
-                  }}
-                  className="retro-input"
-                  placeholder="USER@DOMAIN.COM"
+        navigate("/login");
+    }
+
+    return (
+        <AuthLayout title="// CHANGE PASSWORD">
+            <form onSubmit={onSubmit}>
+                <Input
+                field="email"
+                label="Email"
+                value={form.email}
+                onChange={onChange}
+                error={error.email}
                 />
-                {error && (
-                  <div className="retro-error">{error}</div>
-                )}
-              </div>
 
-              <button type="submit" className="retro-button w-full">
-                [ SEND RESET LINK ]
-              </button>
+                <Input
+                field="password"
+                label="Change Password"
+                type="password"
+                value={form.password}
+                onChange={onChange}
+                error={error.password}
+                />
 
-              <div className="text-center mt-4">
-                <Link to="/login" className="retro-link-text">
-                  <ArrowLeft size={14} style={{ display: 'inline', marginRight: '0.5rem' }} />
-                  <span className="retro-link">Back to login</span>
-                </Link>
-              </div>
+                <Input
+                field="confirmPassword"
+                label="Confirm Change Password"
+                type="password"
+                value={form.confirmPassword}
+                onChange={onChange}
+                error={error.confirmPassword}
+                />
+
+                <button className="button">
+                    CHANGE PASSWORD
+                </button>
             </form>
-          ) : (
-            <div className="p-6">
-              <div style={{
-                fontFamily: 'Orbitron, sans-serif',
-                fontSize: '0.875rem',
-                color: 'var(--retro-accent)',
-                marginBottom: '1.5rem',
-                textAlign: 'center',
-                padding: '1rem',
-                background: 'rgba(99, 102, 241, 0.1)',
-                borderRadius: '4px',
-                border: '2px solid var(--retro-accent)',
-              }}>
-                ✓ PASSWORD RESET LINK SENT!
-              </div>
 
-              <div style={{
-                fontFamily: 'Orbitron, sans-serif',
-                fontSize: '0.875rem',
-                color: 'var(--retro-text-muted)',
-                marginBottom: '1.5rem',
-                textAlign: 'center',
-              }}>
-                Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.
-              </div>
+            <AuthLinks />
+        </AuthLayout>
+    );
+}
 
-              <Link to="/login" className="retro-button w-full block text-center">
-                [ RETURN TO LOGIN ]
-              </Link>
+/* -------------------- LAYOUT -------------------- */
+function AuthLayout({
+    title,
+    children
+}: {
+    title: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="container">
+            <div className="box">
+                <div className="header">{title}</div>
+                <div className="content">{children}</div>
             </div>
-          )}
         </div>
+    );
+}
 
-        <div className="text-center mt-6" style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.4)' }}>
-          <div>© 2026 ScalpCentral - Your investment, Your platform!</div>
-          <div style={{ marginTop: '0.5rem' }}>
-            Secure Pokemon card trading • Authenticity guaranteed
-          </div>
-        </div>
-      </div>
+/* -------------------- Input -------------------- */
+export function Input({
+  field,
+  label,
+  value,
+  type = "text",
+  error,
+  onChange
+}: any) {
+  return (
+    <div>
+      <label className="label">{label}</label>
+
+      <input
+        name={field}
+        value={value}
+        type={type}
+        onChange={onChange}
+        className="input"
+      />
+
+      {error && <div className="error">{error}</div>}
     </div>
   );
+}
+
+/* -------------------- LINKS -------------------- */
+function AuthLinks() {
+    return (
+        <div className="links">
+            <Link to="/login">← Back to login</Link>
+            <Link to="/">← Back to home</Link>
+        </div>
+    );
 }

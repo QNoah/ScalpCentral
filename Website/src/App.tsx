@@ -11,6 +11,7 @@ import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
 import CheckoutPage from './Components/Pages/CheckoutPage';
 import Footer from './Components/PageParts/Footer';
+import { ResetPasswordPage } from './Components/Pages/ResetPasswordPage';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -64,6 +65,7 @@ function App() {
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
         <Route path='product-list' element={<ProductList/>}/>
+        <Route path='/reset-password' element={<ResetPasswordPage/>}/>
         <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </main>

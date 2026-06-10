@@ -28,7 +28,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
     public UserRepository(IConfiguration config) : base(config) {}
 
 
-	public async Task<List<UserModel>> GetAllAsync()
+	public async Task<List<UserDto>> GetAllAsync()
 	{
 		var sql = $@"
 			SELECT {UserSelectColumns}
@@ -36,7 +36,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 			WHERE soft_delete = false
 			ORDER BY id;";
 
-		var users = await RepoHelpers.TryQuery(async() => await _con.QueryAsync<UserModel>(sql));
+		var users = await RepoHelpers.TryQuery(async() => await _con.QueryAsync<UserDto>(sql));
 		return users.ToList();
 	}
 

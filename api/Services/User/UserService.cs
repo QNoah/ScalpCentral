@@ -16,7 +16,7 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<List<UserModel>> GetAllUsersAsync()
+    public async Task<List<UserDto>> GetAllUsersAsync()
     {
         return await _userRepository.GetAllAsync();
     }

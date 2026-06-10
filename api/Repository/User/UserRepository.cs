@@ -89,7 +89,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 		SELECT {UserSelectColumns}
 		FROM {Table()}
-		WHERE soft_deleted = FALSE and email = @email";
+		WHERE soft_delete = FALSE and email = @email";
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {email = email}));
 	}
 

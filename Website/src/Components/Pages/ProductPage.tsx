@@ -16,7 +16,7 @@ export function ProductPage() {
         if (productId) {
             const fetchProduct = async () => {
                 try {
-                    const response = await fetch(`/api/products/${productId}`);
+                    const response = await fetch(`http://localhost:5231/api/products/${productId}`);
 
                     if (!response.ok) {
                         setError("Product not found");
@@ -47,7 +47,7 @@ export function ProductPage() {
     {
         const cartId = getCartId();
 
-        await fetch("/api/cart/add", {
+        await fetch("http://localhost:5231/api/cart/add", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

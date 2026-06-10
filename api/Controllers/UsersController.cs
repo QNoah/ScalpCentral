@@ -39,7 +39,7 @@ public class UsersController : ControllerBase
     {
         int? id = await _userService.CreateAccount(userinfo);
 
-        if (id is not int validId || validId == 0)
+        if (id is null || id == 0)
             return BadRequest();
 
         var user = await _userService.GetById(validId);
@@ -48,6 +48,7 @@ public class UsersController : ControllerBase
             user.Token = CreateToken(user);
             AppendAuthCookie(user.Token);
         }
+        var user = await _userService.GetById(id.Value);
 
         return Ok(user);
     }

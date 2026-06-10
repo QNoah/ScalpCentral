@@ -256,10 +256,10 @@ export function SearchResults() {
                             <div className="flex justify-between text-xs">
                                 <div>
                                   {/* NIET VERGETEN REVIEWS ECHT TE LADEN HIERO */}
-                                  {Array.from({ length: 5 }).map((_, index) => (
-                                      <StarIcons
+                                  {Array.from({ length: 3 }).map((_, index) => (
+                                      <StarIcon
                                           key={index}
-                                          sx={{ color: "var(--pokeYellow)" }}
+                                          sx={{ color: "var(--darkPokeYellow)" }}
                                           fontSize="small"
                                       />
                                   ))}

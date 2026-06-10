@@ -6,7 +6,9 @@ import type { IUser } from "../../Types/UserDto";
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'Id', flex: 0.3},
-  { field: 'firstName', headerName: 'Name', flex: 3 },
+  { field: 'firstName', headerName: 'F_Name', flex: 1 },
+  { field: 'lastName', headerName: 'L_Name', flex: 1 },
+  { field: 'email', headerName: 'Email', flex: 3 },
 ];
 
 export default function UserList() {

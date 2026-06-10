@@ -44,7 +44,7 @@ export function SearchResults() {
 
     useEffect (() => {
         async function fetchFilters() {
-            const response = await fetch(`/api/products/filters?name=${searchName}`);
+            const response = await fetch(`http://localhost:5231/api/products/filters?name=${searchName}`);
                 const data = await response.json();
                 setTypes(data.types);
                 setSets(data.sets);
@@ -55,7 +55,7 @@ export function SearchResults() {
 
     useEffect(() => {
         async function fetchSearchResults() {
-            const response = await fetch(`/api/products/paged?${searchParams.toString()}`, {
+            const response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
                 method: "GET",
                 headers: {
                     "limit": PAGE_SIZE.toString()
@@ -224,7 +224,7 @@ export function SearchResults() {
     {
         const cartId = getCartId();
 
-        await fetch("/api/cart/add", {
+        await fetch("http://localhost:5231/api/cart/add", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

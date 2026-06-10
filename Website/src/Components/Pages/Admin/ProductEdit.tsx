@@ -10,7 +10,7 @@ type LocationState = { product?: Product };
 export default function ProductEdit(){
   const { id } = useParams<{ id: string }>();
   const productId = id ? Number(id) : NaN;
-  const invalid = !id || Number.isNaN(productId);
+  const invalid = !id || Number.isNaN(productId)
 
   const location = useLocation();
   const state = location.state as LocationState | null;

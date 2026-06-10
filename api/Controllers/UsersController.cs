@@ -26,8 +26,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] LoginRequest userinfo)
+    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] RegisterRequest userinfo)
     {
+
         int? id = await _userService.CreateAccount(userinfo);
 
         if (id is null || id == 0)
@@ -45,6 +46,13 @@ public class UsersController : ControllerBase
         if(user == null)
             return Unauthorized();
         return Ok(user);
+    }
+
+    [HttpPut("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+    {
+        await _userService.ResetPassword(dto.Email, dto.Password);
+        return Ok();
     }
 
     [HttpGet]

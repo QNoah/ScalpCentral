@@ -35,7 +35,7 @@ export default function CheckoutPage() {
     async function loadCart() {
       const cartId = getCartId();
 
-      const response = await fetch(`/api/cart/${cartId}`, {
+      const response = await fetch(`http://localhost:5231/api/cart/${cartId}`, {
         credentials: "include"
       });
 
@@ -85,7 +85,7 @@ export default function CheckoutPage() {
     const cartId = getCartId();
     const orderNumber = `ORD-${Date.now()}`;
 
-    const response = await fetch("/api/order", {
+    const response = await fetch("http://localhost:5231/api/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

@@ -16,7 +16,7 @@ export function CartPage() {
             const cartId = getCartId();
 
             const response = await fetch(
-                `/api/cart/${cartId}`
+                `http://localhost:5231/api/cart/${cartId}`
             );
 
             if (!response.ok) {
@@ -47,7 +47,7 @@ export function CartPage() {
 
         const cartId = getCartId();
 
-        await fetch(`/api/cart`, {
+        await fetch(`http://localhost:5231/api/cart`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -71,7 +71,7 @@ export function CartPage() {
     async function removeFromCart(productId: number) {
         const cartId = getCartId();
 
-        await fetch(`/api/cart/remove`, {
+        await fetch(`http://localhost:5231/api/cart/remove`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"

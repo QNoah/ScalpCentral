@@ -9,6 +9,7 @@ import { getCookie } from "./Components/Functionalities/CookieUtils";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
 import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
+import CheckoutPage from './Components/Pages/CheckoutPage';
 import Footer from './Components/PageParts/Footer';
 import { ResetPasswordPage } from './Components/Pages/ResetPasswordPage';
 
@@ -59,6 +60,7 @@ function App() {
         <Route path="/Login" element={<LoginPage />}/>
         <Route path="/Register" element={<RegisterPage />}/>
         <Route path="/Cart" element={<CartPage />}/>
+        <Route path="/checkout" element={<CheckoutPage />}/>
         <Route path="/search" element={<SearchResults />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>

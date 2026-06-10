@@ -60,7 +60,7 @@ export function LoginPage() {
     if (!validate()) return;
 
     const response = await fetch(
-      "http://localhost:5231/api/users/login",
+      "/api/users/login",
       {
         method: "POST",
         headers: {
@@ -147,7 +147,7 @@ export function RegisterPage() {
     if (!validate()) return;
 
     const response = await fetch(
-      "http://localhost:5231/api/users/register",
+      "/api/users/register",
       {
         method: "POST",
         headers: {

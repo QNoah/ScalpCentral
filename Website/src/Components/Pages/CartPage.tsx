@@ -98,7 +98,7 @@ export function CartPage() {
                         <h1>Shoppingcart</h1>
                     </div>
                     <div className="cart-actions" style={{ marginBottom: "1rem" }}>
-                        <button onClick={goToCheckout} disabled={products.length === 0}>
+                        <button onClick={goToCheckout} disabled={products.length <= 0}>
                             Go to checkout
                         </button>
                     </div>

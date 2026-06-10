@@ -11,6 +11,7 @@ import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
 import CheckoutPage from './Components/Pages/CheckoutPage';
 import Footer from './Components/PageParts/Footer';
+import ProductEdit from './Components/Pages/Admin/ProductEdit';
 import { ResetPasswordPage } from './Components/Pages/ResetPasswordPage';
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />}/>
         <Route path="/search" element={<SearchResults />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/product/edit/:id" element={<ProductEdit />} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
         <Route path='product-list' element={<ProductList/>}/>
         <Route path='/reset-password' element={<ResetPasswordPage/>}/>

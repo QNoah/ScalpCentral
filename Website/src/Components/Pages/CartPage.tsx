@@ -16,7 +16,7 @@ export function CartPage() {
             const cartId = getCartId();
 
             const response = await fetch(
-                `http://localhost:5231/api/cart/${cartId}`
+                `/api/cart/${cartId}`
             );
 
             if (!response.ok) {
@@ -37,16 +37,23 @@ export function CartPage() {
         navigate(`/product/${id}`);
     }
 
+    function goToCheckout() {
+        navigate("/checkout");
+    }
+
 
     async function updateQuantity(productId: number, newQuantity: number) {
         if (newQuantity < 1) return;
 
-        await fetch(`http://localhost:5231/api/cart`, {
+        const cartId = getCartId();
+
+        await fetch(`/api/cart`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                cartId,
                 productId,
                 quantity: newQuantity
             })
@@ -61,6 +68,25 @@ export function CartPage() {
         );
     }
 
+    async function removeFromCart(productId: number) {
+        const cartId = getCartId();
+
+        await fetch(`/api/cart/remove`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                cartId,
+                productId
+            })
+        });
+
+        setProducts(prev =>
+            prev.filter(item => item.product.id !== productId)
+        );
+    }
+
     return (
         <div className="retro-container-search">
             <Navbar />
@@ -70,6 +96,12 @@ export function CartPage() {
                 <div className="results-content">
                     <div className="carts-header">
                         <h1>Shoppingcart</h1>
+                    </div>
+                    <div className="cart-actions" style={{ marginBottom: "1rem" }}>
+                        {products.length != 0 && (<button className="rounded-lg bg-blue-500 text-white p-1 m-1 mt-3" onClick={goToCheckout}  >
+                            Go to checkout
+                        </button>)
+                        }
                     </div>
                     <div className="cart-content">
                         {products.map(item => (
@@ -93,6 +125,9 @@ export function CartPage() {
                                 <span>{item.quantity}</span>
                                 <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)}>
                                     +
+                                </button>
+                                <button className="delete-button" onClick={() => removeFromCart(item.product.id)}>
+                                Delete
                                 </button>
                             </div>
                         </div>

@@ -44,6 +44,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISetService, SetService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 // App repositories
 builder.Services.AddScoped<ICardRepository, CardRepository>();
@@ -52,6 +53,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISetRepository, SetRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 //redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ => {
@@ -78,8 +80,9 @@ builder.Services.AddCors(options =>
     string allowed_origins = builder.Configuration["Cors:AllowedOrigins"] ?? 
     throw new InvalidOperationException("Cors string not configured");
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins(
-                "http://localhost:3000")
+    policy.WithOrigins(
+        "http://localhost:3000",
+        "http://localhost:3001")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());

@@ -18,15 +18,18 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize]
     [HttpGet]
-    public async Task<ActionResult<List<OrderModel>>> GetAllOrders()
+    public async Task<ActionResult<List<OrderModel>>> GetOrders()
     {
-        var orders = await _orderService.GetAllOrdersAsync();
+        var orders = User.IsInRole("Admin")
+            ? await _orderService.GetAllOrdersAsync()
+            : await _orderService.GetOrdersByUserIdAsync(GetCurrentUserId());
+
         return Ok(orders);
     }
 
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize]
     [HttpGet("{id:long}")]
     public async Task<ActionResult<OrderModel>> GetOrderById(long id)
     {
@@ -36,10 +39,13 @@ public class OrderController : ControllerBase
             return NotFound();
         }
 
+        if (!CanAccessOrder(order))
+            return Forbid();
+
         return Ok(order);
     }
 
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize]
     [HttpGet("{id:long}/details")]
     public async Task<ActionResult<OrderInfoModel>> GetOrderDetailsById(long id)
     {
@@ -49,29 +55,10 @@ public class OrderController : ControllerBase
             return NotFound();
         }
 
+        if (!CanAccessOrder(orderInfo.Order))
+            return Forbid();
+
         return Ok(orderInfo);
-    }
-
-    [Authorize]
-    [HttpGet("user/{userId:long}")]
-    public async Task<ActionResult<List<OrderModel>>> GetOrdersByUserId(long userId)
-    {
-        if (!CanAccessUserData(userId))
-            return Forbid();
-
-        var orders = await _orderService.GetOrdersByUserIdAsync(userId);
-        return Ok(orders);
-    }
-
-    [Authorize]
-    [HttpGet("user/{userId:long}/details")]
-    public async Task<ActionResult<List<OrderInfoModel>>> GetOrderDetailsByUserId(long userId)
-    {
-        if (!CanAccessUserData(userId))
-            return Forbid();
-
-        var orders = await _orderService.GetOrderInfoByUserIdAsync(userId);
-        return Ok(orders);
     }
 
     [Authorize]
@@ -155,5 +142,10 @@ public class OrderController : ControllerBase
             return true;
 
         return GetCurrentUserId() == userId;
+    }
+
+    private bool CanAccessOrder(OrderModel order)
+    {
+        return CanAccessUserData(order.UserId);
     }
 }

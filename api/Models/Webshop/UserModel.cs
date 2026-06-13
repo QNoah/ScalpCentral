@@ -18,4 +18,5 @@ public class UserModel
     public required int PositiveSellerCount {get; set;}
     public required string Role {get; set;} = "User";
     public required DateTime CreatedAt {get; set;}
+    public bool SoftDelete { get; set; }
 }

@@ -4,7 +4,7 @@ namespace ScalpCentral.Api.Repository;
 
 public interface IUserRepository
 {
-    Task<List<UserModel>> GetAllAsync();
+    Task<List<UserDto>> GetAllAsync();
     public Task<bool> EmailExists(string email);
     public Task<int?> CreateAccount(RegisterRequest userinfo);
     public Task<UserModel?> Login(LoginRequest userinfo);

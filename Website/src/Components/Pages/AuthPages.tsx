@@ -66,6 +66,7 @@ export function LoginPage() {
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({
           email: form.email,
           password: form.password
@@ -83,7 +84,6 @@ export function LoginPage() {
 
     const user = await response.json();
     setUser(user);
-    setCookie("token", user.token, 7);
     navigate("/");
   }
 
@@ -153,6 +153,7 @@ export function RegisterPage() {
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({
           FName: form.fName,
           LName: form.lName,
@@ -172,7 +173,6 @@ export function RegisterPage() {
 
     const user = await response.json();
     setUser(user);
-    setCookie("token", user.token, 7);
 
     navigate("/");
   }

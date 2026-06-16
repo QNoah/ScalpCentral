@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
@@ -81,6 +82,7 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("create")]
     public async Task<ActionResult<long>> Create([FromBody] CreateProductDto product)
     {
@@ -98,6 +100,7 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("update")]
     public async Task<ActionResult<long>> Update([FromBody] ProductModel product)
     {
@@ -115,6 +118,7 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("delete/{id}")]
     public async Task<ActionResult<long>> SoftDelete([FromRoute] long id)
     {
@@ -132,6 +136,7 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("delete")]
     public async Task<ActionResult> HardDelete()
     {

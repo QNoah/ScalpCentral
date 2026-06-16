@@ -4,7 +4,7 @@ import { RegisterPage, LoginPage } from "./Components/Pages/AuthPages";
 import { SearchResults } from './Components/Pages/SearchResults';
 import { ProductPage } from './Components/Pages/ProductPage';
 import { HomePage } from "./Components/Pages/MainPage"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import OrderConfirmation from './Components/Pages/OrderConfirmation';
 import ProductList from './Components/Pages/Admin/ProductList';
 import { CartPage } from './Components/Pages/CartPage';
@@ -23,12 +23,6 @@ import SalesOverview from './Components/Pages/Admin/SalesOverview';
 import { MarketplacePage } from './Components/Pages/MarketplacePage';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
-
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       console.log(event.key, event.shiftKey, event.altKey);
@@ -50,8 +44,6 @@ function App() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="app-shell flex flex-col min-h-screen">

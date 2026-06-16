@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ScalpCentral.Api.Controllers;
@@ -13,7 +15,7 @@ public class OrderControllerTests
     {
         var service = new Mock<IOrderService>();
         service.Setup(s => s.GetOrderByIdAsync(99)).ReturnsAsync((OrderModel?)null);
-        var controller = new OrderController(service.Object);
+        var controller = CreateController(service.Object, userId: 7);
 
         var result = await controller.GetOrderById(99);
 
@@ -26,7 +28,7 @@ public class OrderControllerTests
         var order = TestData.Order();
         var service = new Mock<IOrderService>();
         service.Setup(s => s.GetOrderByIdAsync(1)).ReturnsAsync(order);
-        var controller = new OrderController(service.Object);
+        var controller = CreateController(service.Object, userId: 7);
 
         var result = await controller.GetOrderById(1);
 
@@ -40,7 +42,7 @@ public class OrderControllerTests
         var order = TestData.Order(15);
         var service = new Mock<IOrderService>();
         service.Setup(s => s.CreateOrderAsync(order)).ReturnsAsync(order);
-        var controller = new OrderController(service.Object);
+        var controller = CreateController(service.Object, userId: 7);
 
         var result = await controller.CreateOrder(order);
 
@@ -55,7 +57,7 @@ public class OrderControllerTests
     {
         var order = TestData.Order(2);
         var service = new Mock<IOrderService>();
-        var controller = new OrderController(service.Object);
+        var controller = CreateController(service.Object, userId: 7, role: "Admin");
 
         var result = await controller.UpdateOrder(1, order);
 
@@ -70,7 +72,7 @@ public class OrderControllerTests
         var updated = TestData.Order(5);
         var service = new Mock<IOrderService>();
         service.Setup(s => s.UpdateOrderAsync(5, It.Is<OrderModel>(o => o.Id == 5))).ReturnsAsync(updated);
-        var controller = new OrderController(service.Object);
+        var controller = CreateController(service.Object, userId: 7, role: "Admin");
 
         var result = await controller.UpdateOrder(5, order);
 
@@ -83,7 +85,7 @@ public class OrderControllerTests
     {
         var service = new Mock<IOrderService>();
         service.Setup(s => s.DeleteOrderAsync(4)).ReturnsAsync(true);
-        var controller = new OrderController(service.Object);
+        var controller = CreateController(service.Object, userId: 7, role: "Admin");
 
         var result = await controller.DeleteOrder(4);
 
@@ -95,10 +97,34 @@ public class OrderControllerTests
     {
         var service = new Mock<IOrderService>();
         service.Setup(s => s.DeleteOrderAsync(4)).ReturnsAsync(false);
-        var controller = new OrderController(service.Object);
+        var controller = CreateController(service.Object, userId: 7, role: "Admin");
 
         var result = await controller.DeleteOrder(4);
 
         Assert.IsType<NotFoundResult>(result);
+    }
+
+    private static OrderController CreateController(IOrderService service, int userId, string role = "User")
+    {
+        var controller = new OrderController(service)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
+
+        controller.ControllerContext.HttpContext.User = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                    new Claim(ClaimTypes.Role, role)
+                },
+                "TestAuth"
+            )
+        );
+
+        return controller;
     }
 }

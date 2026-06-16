@@ -8,6 +8,14 @@ type ChangePasswordForm = {
     confirmPassword: string;
 };
 
+type AuthInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "name" | "value" | "onChange"> & {
+  field: string;
+  label: string;
+  value: string;
+  error?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
 const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
 const passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d).{8,128}$";
 
@@ -170,7 +178,7 @@ export function Input({
   error,
   onChange,
   ...inputProps
-}: any) {
+}: AuthInputProps) {
   return (
     <div>
       <label className="label">{label}</label>

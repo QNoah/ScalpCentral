@@ -59,6 +59,19 @@ export default function Navbar() {
           <NavLink to="/contact" className="navbar-link">
             CONTACT
           </NavLink>
+          {user?.role === "Admin" && (
+            <>
+              <NavLink to="/product-list" className="navbar-link">
+                PRODUCTS
+              </NavLink>
+              <NavLink to="/users-list" className="navbar-link">
+                USERS
+              </NavLink>
+              <NavLink to="/sales-overview" className="navbar-link">
+                SALES
+              </NavLink>
+            </>
+          )}
            {user ? (
               <>
                 <button

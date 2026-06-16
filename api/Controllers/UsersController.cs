@@ -37,6 +37,7 @@ public class UsersController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] RegisterRequest userinfo)
     {
+        userinfo.Role = "User";
 
         int? id = await _userService.CreateAccount(userinfo);
 
@@ -50,6 +51,21 @@ public class UsersController : ControllerBase
             AppendAuthCookie(user.Token);
         }
 
+        return Ok(user);
+    }
+
+    [Authorize(Policy = "AdminOnly")]
+    [HttpPost("admin")]
+    public async Task<ActionResult<UserModel?>> CreateAdminAccount([FromBody] RegisterRequest userinfo)
+    {
+        userinfo.Role = "Admin";
+
+        int? id = await _userService.CreateAccount(userinfo);
+
+        if (id is null || id == 0)
+            return BadRequest();
+
+        var user = await _userService.GetById(id.Value);
         return Ok(user);
     }
 

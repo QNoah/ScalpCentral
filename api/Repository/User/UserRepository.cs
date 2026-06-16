@@ -54,6 +54,10 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 
 	public async Task<int?> CreateAccount(RegisterRequest userinfo)
 	{
+		var role = string.Equals(userinfo.Role, "Admin", StringComparison.OrdinalIgnoreCase)
+			? "Admin"
+			: "User";
+
 		var sql = $@"
 		INSERT INTO {Table()}
 		(first_name, last_name, email, password, role, created_at)
@@ -62,7 +66,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync<int>(sql, new {
 			FName = userinfo.FName, LName = userinfo.LName, 
 			Email = userinfo.Email, Password = userinfo.Password,
-			createdAt = DateTime.Now, Role = "User"
+			createdAt = DateTime.Now, Role = role
 			}));
 	}
 

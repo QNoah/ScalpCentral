@@ -71,6 +71,22 @@ public class ReviewController : ControllerBase
     {
         try
         {
+            if (review.UserId is null || review.ProductId is null)
+            {
+                return BadRequest("UserId and ProductId are required.");
+            }
+
+            List<ReviewModel> existingReviews = await _reviewService.GetFiltered(new ReviewFilter
+            {
+                UserId = (int)review.UserId.Value,
+                ProductId = (int)review.ProductId.Value
+            });
+
+            if (existingReviews.Count > 0)
+            {
+                return Conflict("User has already reviewed this product.");
+            }
+
             long id = await _reviewService.Create(review);
             return new ActionResult<long>(id);
         }

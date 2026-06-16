@@ -2,7 +2,7 @@ import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
-import { Grid, Pagination, Card, CardMedia, CardContent, CardActions, List, ListItemButton, Button, CardActionArea, Collapse, Checkbox } from '@mui/material';
+import { Grid, Pagination, Card, CardMedia, CardContent, CardActions, List, ListItemButton, Button, CardActionArea, Collapse, Checkbox, Slider, Box } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
@@ -47,6 +47,7 @@ export function SearchResults() {
     const [sortOption, setSortOption] = useState<string>("default");
 
     const [bookmarks, setBookmarks] = useState<number[]>([])
+    const priceRange = [minPrice ?? 0, maxPrice ?? 1000];
 
     useEffect (() => {
         async function fetchFilters() {
@@ -251,9 +252,19 @@ export function SearchResults() {
         setMinPrice(null);
         setMaxPrice(null);
         setInStock(false);
+        setOnSale(false);
         const params = new URLSearchParams();
         params.append("name", searchParams.get("name") || "");
         setSearchParams(params);
+    }
+
+    function handlePriceRangeChange(_: Event, value: number | number[]) {
+        if (!Array.isArray(value)) {
+            return;
+        }
+
+        setMinPrice(value[0] === 0 ? null : value[0]);
+        setMaxPrice(value[1] === 1000 ? null : value[1]);
     }
 
     async function AddToCart(item: Product)
@@ -383,15 +394,31 @@ export function SearchResults() {
                         {Filter("Sets")}
                         {Filter("Series")}
                         <br></br>
-                        <p className='font-medium'>MIN PRICE</p>
-                        <input type="number" placeholder="0" onChange={
-                            (e) => setMinPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
-                        } />
-                        <br></br>
-                        <p className='font-medium'>MAX PRICE</p>
-                        <input type="number" placeholder="-" onChange={
-                            (e) => setMaxPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
-                        } />
+                        <Box sx={{ px: 1, pb: 1 }}>
+                            <div className="flex justify-between">
+                                <p className='font-medium'>PRICE</p>
+                                <p className="text-sm text-gray-500">€{priceRange[0]} - €{priceRange[1]}</p>
+                            </div>
+                            <Slider
+                                value={priceRange}
+                                min={0}
+                                max={1000}
+                                step={5}
+                                onChange={handlePriceRangeChange}
+                                valueLabelDisplay="auto"
+                                disableSwap
+                                sx={{
+                                    color: "var(--lightPokeBlue)",
+                                    "& .MuiSlider-thumb": {
+                                        backgroundColor: "var(--pokeYellow)",
+                                        border: "2px solid var(--darkPokeBlue)"
+                                    },
+                                    "& .MuiSlider-rail": {
+                                        color: "var(--retro-border)"
+                                    }
+                                }}
+                            />
+                        </Box>
                         <br></br>
                         <div className="flex justify-between p-1">
                             <p className='font-medium'>ON SALE</p>

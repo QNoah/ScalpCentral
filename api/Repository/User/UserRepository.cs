@@ -132,4 +132,30 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		WHERE id = @Id";
 		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, user));
 	}
+
+	public async Task<List<int>> GetBookmarks(int userId)
+	{
+		var sql = @"
+		SELECT product_id
+		FROM bookmarks
+		WHERE user_id = @UserId";
+		var bookmarks = await RepoHelpers.TryQueryAsync(async() => await _con.QueryAsync<int>(sql, new { UserId = userId }));
+		return bookmarks.ToList();
+	}
+
+	public async Task AddBookmark(int userId, int productId)
+	{
+		var sql = @"
+		INSERT INTO bookmarks (user_id, product_id)
+		VALUES (@UserId, @ProductId)";
+		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new { UserId = userId, ProductId = productId }));
+	}
+
+	public async Task RemoveBookmark(int userId, int productId)
+	{
+		var sql = @"
+		DELETE FROM bookmarks
+		WHERE user_id = @UserId AND product_id = @ProductId";
+		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new { UserId = userId, ProductId = productId }));
+	}
 }

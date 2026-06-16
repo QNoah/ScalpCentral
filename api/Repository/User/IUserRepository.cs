@@ -13,4 +13,7 @@ public interface IUserRepository
     public Task SoftDelete(UserModel user);
     public Task HardDelete(UserModel user);
     public Task Update(UserModel user);
+    public Task<List<int>> GetBookmarks(int userId);
+    public Task AddBookmark(int userId, int productId);
+    public Task RemoveBookmark(int userId, int productId);
 }

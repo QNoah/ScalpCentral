@@ -205,7 +205,54 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 			)
 			RETURNING {OrderSelectColumns};";
 
-		return await RepoHelpers.TryQueryAsync(() => _con.QuerySingleAsync<OrderModel>(sql, order));
+		return await RepoHelpers.TryQueryAsync(async () =>
+		{
+			if (_con.State != System.Data.ConnectionState.Open)
+			{
+				await _con.OpenAsync();
+			}
+
+			await using var transaction = await _con.BeginTransactionAsync();
+			try
+			{
+				var createdOrder = await _con.QuerySingleAsync<OrderModel>(sql, order, transaction);
+
+				var items = order.Items
+					.Where(item => item.ProductId > 0 && item.Amount > 0)
+					.Select(item => new
+					{
+						OrderId = createdOrder.Id,
+						item.ProductId,
+						item.Amount
+					})
+					.ToList();
+
+				if (items.Any())
+				{
+					var itemSql = @"
+						INSERT INTO order_contents (
+							order_id,
+							product_id,
+							amount
+						)
+						VALUES (
+							@OrderId,
+							@ProductId,
+							@Amount
+						);";
+
+					await _con.ExecuteAsync(itemSql, items, transaction);
+				}
+
+				await transaction.CommitAsync();
+				return createdOrder;
+			}
+			catch
+			{
+				await transaction.RollbackAsync();
+				throw;
+			}
+		});
 	}
 
 	public async Task<OrderModel?> UpdateAsync(long id, OrderModel order)

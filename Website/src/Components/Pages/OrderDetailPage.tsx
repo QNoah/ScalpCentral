@@ -141,6 +141,10 @@ export default function OrderDetailPage() {
             <article className="order-detail-products">
               <h2>Products</h2>
               <div className="order-detail-product-list">
+                {orderInfo.items.length === 0 && (
+                  <p className="order-history-message">No product lines were saved for this order.</p>
+                )}
+
                 {orderInfo.items.map(item => (
                   <Link className="order-detail-product-row" to={`/product/${item.productId}`} key={item.productId}>
                     <div>

@@ -146,7 +146,11 @@ export default function CheckoutPage() {
         city: form.city,
         postcode: form.postcode,
         streetName: form.streetName,
-        streetNumber: form.streetNumber
+        streetNumber: form.streetNumber,
+        items: products.map(item => ({
+          productId: item.product.id,
+          amount: item.quantity
+        }))
       })
     });
 

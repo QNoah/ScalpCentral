@@ -37,7 +37,9 @@ export function ProductPage() {
         if (productId) {
             const fetchProduct = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5231/api/products/${productId}`);
+                    const response = await fetch(`http://localhost:5231/api/products/${productId}`, {
+                      credentials: "include"
+                    });
 
                     if (!response.ok) {
                         setError("Product not found");
@@ -88,6 +90,7 @@ export function ProductPage() {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 cartId,
                 productId: item.id,

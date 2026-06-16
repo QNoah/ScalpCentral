@@ -50,7 +50,9 @@ export function SearchResults() {
 
     useEffect (() => {
         async function fetchFilters() {
-            const response = await fetch(`http://localhost:5231/api/products/filters?name=${searchName}`);
+            const response = await fetch(`http://localhost:5231/api/products/filters?name=${searchName}`, {
+                credentials: "include"
+            });
                 const data = await response.json();
                 setTypes(data.types);
                 setSets(data.sets);
@@ -65,7 +67,8 @@ export function SearchResults() {
                 method: "GET",
                 headers: {
                     "limit": PAGE_SIZE.toString()
-                }
+                },
+                credentials: "include"
             });
             const data = await response.json();
             setSearchResults(data.result);
@@ -250,6 +253,7 @@ export function SearchResults() {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 cartId,
                 productId: item.id,

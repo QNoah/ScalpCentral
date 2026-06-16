@@ -19,4 +19,5 @@ public class UserModel
     public required string Role {get; set;} = "User";
     public string? Token {get; set;}
     public required DateTime CreatedAt {get; set;}
+    public bool SoftDelete { get; set; }
 }

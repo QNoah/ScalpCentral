@@ -1,30 +1,48 @@
 import {Button, Table, TableHead, TableRow, TableCell, TableBody} from "@mui/material";
 import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
 import { getCartId } from '../Utils/Cart.ts';
 
 export function ProductPage() {
     const [product, setProduct] = useState<Product | null>(null);
-    const [reviews, setReviews] = useState<[]>([]); // Replace 'any' with your review type
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
     const productId = useParams().id;
 
     useEffect(() => {
         if (productId) {
             const fetchProduct = async () => {
-                const response = await fetch(`http://localhost:5231/api/products/${productId}`, {
-                    credentials: "include"
-                });
-                const data = await response.json();
-                setProduct(data);
+                try {
+                    const response = await fetch(`http://localhost:5231/api/products/${productId}`, {
+                      credentials: "include"
+                    });
+
+                    if (!response.ok) {
+                        setError("Product not found");
+                        return;
+                    }
+
+                    const data = await response.json();
+                    setProduct(data);
+                } catch {
+                    setError("Failed to load product");
+                } finally {
+                    setLoading(false);
+                }
             };
             fetchProduct();
         }
     }, [productId]);
 
+    if (loading) {
+        return <div>Loading product...</div>;
+    }
+
     if (!product) {
-        return <div>Product not found</div>;
+        return <div>{error || "Product not found"}</div>;
     }
 
     async function AddToCart(item: Product)
@@ -43,6 +61,8 @@ export function ProductPage() {
                 quantity: 1
             })
         });
+
+        navigate("/checkout");
     }
 
     return (

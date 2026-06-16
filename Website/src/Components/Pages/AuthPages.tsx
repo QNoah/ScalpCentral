@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../Functionalities/AuthContext";
+import { setCookie } from "../Functionalities/CookieUtils";
 import "../Styling/Auth.css";
 
 /* -------------------- TYPES -------------------- */
@@ -10,6 +11,8 @@ type LoginForm = {
 };
 
 type RegisterForm = {
+  fName: string;
+  lName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -103,6 +106,8 @@ export function RegisterPage() {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState<RegisterForm>({
+    fName: "",
+    lName: "",
     email: "",
     password: "",
     confirmPassword: ""
@@ -150,8 +155,10 @@ export function RegisterPage() {
         },
         credentials: "include",
         body: JSON.stringify({
-          email: form.email,
-          password: form.password
+          FName: form.fName,
+          LName: form.lName,
+          Email: form.email,
+          Password: form.password
         })
       }
     );
@@ -173,6 +180,8 @@ export function RegisterPage() {
   return (
     <AuthLayout title="// REGISTER">
       <form onSubmit={onSubmit}>
+        <Input name="fName" value={form.fName} onChange={onChange} error={error.fName} />
+        <Input name="lName" value={form.lName} onChange={onChange} error={error.lName} />
         <Input name="email" value={form.email} onChange={onChange} error={error.email} />
         <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} />
         <Input name="confirmPassword" type="password" value={form.confirmPassword} onChange={onChange} error={error.confirmPassword} />
@@ -185,8 +194,27 @@ export function RegisterPage() {
   );
 }
 
-/* -------------------- SHARED UI -------------------- */
-function Input({
+
+/* -------------------- LAYOUT -------------------- */
+function AuthLayout({
+  title,
+  children
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="container">
+      <div className="box">
+        <div className="header">{title}</div>
+        <div className="content">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------- Input -------------------- */
+export function Input({
   name,
   value,
   type = "text",
@@ -206,24 +234,6 @@ function Input({
       />
 
       {error && <div className="error">{error}</div>}
-    </div>
-  );
-}
-
-/* -------------------- LAYOUT -------------------- */
-function AuthLayout({
-  title,
-  children
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="container">
-      <div className="box">
-        <div className="header">{title}</div>
-        <div className="content">{children}</div>
-      </div>
     </div>
   );
 }

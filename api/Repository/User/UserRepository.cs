@@ -28,7 +28,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
     public UserRepository(IConfiguration config) : base(config) {}
 
 
-	public async Task<List<UserModel>> GetAllAsync()
+	public async Task<List<UserDto>> GetAllAsync()
 	{
 		var sql = $@"
 			SELECT {UserSelectColumns}
@@ -36,7 +36,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 			WHERE soft_delete = false
 			ORDER BY id;";
 
-		var users = await RepoHelpers.TryQuery(async() => await _con.QueryAsync<UserModel>(sql));
+		var users = await RepoHelpers.TryQuery(async() => await _con.QueryAsync<UserDto>(sql));
 		return users.ToList();
 	}
 
@@ -52,14 +52,18 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		return value.HasValue;
 	}
 
-	public async Task<int?> CreateAccount(LoginRequest userinfo)
+	public async Task<int?> CreateAccount(RegisterRequest userinfo)
 	{
 		var sql = $@"
 		INSERT INTO {Table()}
-		(email, password)
-		VALUES (@Email, @Password)
+		(first_name, last_name, email, password, role, created_at)
+		VALUES (@FName, @LName, @Email, @Password, @Role, @createdAt)
 		RETURNING id";
-		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync<int?>(sql, new {Email = userinfo.Email, Password = userinfo.Password}));
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync<int>(sql, new {
+			FName = userinfo.FName, LName = userinfo.LName, 
+			Email = userinfo.Email, Password = userinfo.Password,
+			createdAt = DateTime.Now, Role = "User"
+			}));
 	}
 
 	public async Task<UserModel?> Login(LoginRequest userinfo)
@@ -78,6 +82,15 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		FROM {Table()}
 		WHERE soft_delete = FALSE and id = @Id";
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {Id = id}));
+	}
+
+	public async Task<UserModel?> GetByEmail(string email)
+	{
+		var sql = $@"
+		SELECT {UserSelectColumns}
+		FROM {Table()}
+		WHERE soft_delete = FALSE and email = @email";
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {email = email}));
 	}
 
 	public async Task SoftDelete(UserModel user)

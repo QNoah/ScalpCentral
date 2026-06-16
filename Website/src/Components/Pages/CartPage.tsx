@@ -40,6 +40,10 @@ export function CartPage() {
         navigate(`/product/${id}`);
     }
 
+    function goToCheckout() {
+        navigate("/checkout");
+    }
+
 
     async function updateQuantity(productId: number, newQuantity: number) {
         if (newQuantity < 1) return;
@@ -96,6 +100,12 @@ export function CartPage() {
                 <div className="results-content">
                     <div className="carts-header">
                         <h1>Shoppingcart</h1>
+                    </div>
+                    <div className="cart-actions" style={{ marginBottom: "1rem" }}>
+                        {products.length != 0 && (<button className="rounded-lg bg-blue-500 text-white p-1 m-1 mt-3" onClick={goToCheckout}  >
+                            Go to checkout
+                        </button>)
+                        }
                     </div>
                     <div className="cart-content">
                         {products.map(item => (

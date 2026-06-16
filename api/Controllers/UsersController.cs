@@ -28,15 +28,16 @@ public class UsersController : ControllerBase
 
     [Authorize(Policy = "AdminOnly")]
     [HttpGet("users")]
-    public async Task<ActionResult<List<UserModel>>> GetAllUsers()
+    public async Task<ActionResult<List<UserDto>>> GetAllUsers()
     {
         var users = await _userService.GetAllUsersAsync();
         return Ok(users);
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] LoginRequest userinfo)
+    public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] RegisterRequest userinfo)
     {
+
         int? id = await _userService.CreateAccount(userinfo);
 
         if (id is null || id == 0)
@@ -65,6 +66,13 @@ public class UsersController : ControllerBase
     }
 
     [Authorize]
+    [HttpPut("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+    {
+        await _userService.ResetPassword(dto.Email, dto.Password);
+        return Ok();
+    }
+
     [HttpGet]
     public async Task<ActionResult<UserModel?>> GetById(int id)
     {

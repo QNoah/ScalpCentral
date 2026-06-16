@@ -21,6 +21,7 @@ type Order = {
 type OrderItem = {
   productId: number;
   productName: string;
+  imageUrl?: string;
   unitPrice: number;
   amount: number;
 };
@@ -146,16 +147,25 @@ export default function OrderDetailPage() {
                 )}
 
                 {orderInfo.items.map(item => (
-                  <Link className="order-detail-product-row" to={`/product/${item.productId}`} key={item.productId}>
-                    <div>
-                      <strong>{item.productName}</strong>
-                      <span>Quantity: {item.amount}</span>
+                  <div className="order-detail-product-row" key={item.productId}>
+                    <div className="order-detail-product-main">
+                      <div className="order-detail-product-image">
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt={item.productName} />
+                        ) : (
+                          <span>No image</span>
+                        )}
+                      </div>
+                      <div>
+                        <strong>{item.productName}</strong>
+                        <span>Quantity: {item.amount}</span>
+                      </div>
                     </div>
-                    <div>
+                    <div className="order-detail-product-price">
                       <span>{formatPrice(item.unitPrice)} each</span>
                       <strong>{formatPrice(item.unitPrice * item.amount)}</strong>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </article>

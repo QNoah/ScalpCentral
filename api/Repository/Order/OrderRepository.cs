@@ -10,6 +10,7 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 		public long OrderId { get; set; }
 		public long ProductId { get; set; }
 		public required string ProductName { get; set; }
+		public string? ImageUrl { get; set; }
 		public decimal UnitPrice { get; set; }
 		public int Amount { get; set; }
 	}
@@ -109,6 +110,12 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 			SELECT
 				oc.product_id AS ProductId,
 				p.name AS ProductName,
+				(
+					SELECT pi.image_url
+					FROM product_images pi
+					WHERE pi.product_id = p.id
+					LIMIT 1
+				) AS ImageUrl,
 				p.price AS UnitPrice,
 				oc.amount AS Amount
 			FROM order_contents oc
@@ -147,6 +154,12 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 				oc.order_id AS OrderId,
 				oc.product_id AS ProductId,
 				p.name AS ProductName,
+				(
+					SELECT pi.image_url
+					FROM product_images pi
+					WHERE pi.product_id = p.id
+					LIMIT 1
+				) AS ImageUrl,
 				p.price AS UnitPrice,
 				oc.amount AS Amount
 			FROM order_contents oc
@@ -163,6 +176,7 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 				{
 					ProductId = row.ProductId,
 					ProductName = row.ProductName,
+					ImageUrl = row.ImageUrl,
 					UnitPrice = row.UnitPrice,
 					Amount = row.Amount
 				}).ToList()

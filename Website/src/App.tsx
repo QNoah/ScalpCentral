@@ -18,6 +18,8 @@ import { FAQPage } from './Components/Pages/FAQPage';
 import OrderHistoryPage from './Components/Pages/OrderHistoryPage';
 import OrderDetailPage from './Components/Pages/OrderDetailPage';
 import { ContactPage } from './Components/Pages/ContactPage';
+import AdminRoute from './Components/Functionalities/AdminRoute';
+import SalesOverview from './Components/Pages/Admin/SalesOverview';
 import { MarketplacePage } from './Components/Pages/MarketplacePage';
 
 function App() {
@@ -62,10 +64,11 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />}/>
         <Route path="/search" element={<SearchResults />} />
         <Route path="/product/:id" element={<ProductPage />} />
-        <Route path="/product/edit/:id" element={<ProductEdit />} />
+        <Route path="/product/edit/:id" element={<AdminRoute><ProductEdit /></AdminRoute>} />
         <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
-        <Route path='users-list' element={<UserList/>}/>
-        <Route path='product-list' element={<ProductList/>}/>
+        <Route path='users-list' element={<AdminRoute><UserList/></AdminRoute>}/>
+        <Route path='product-list' element={<AdminRoute><ProductList/></AdminRoute>}/>
+        <Route path='sales-overview' element={<AdminRoute><SalesOverview/></AdminRoute>}/>
         <Route path='/reset-password' element={<ResetPasswordPage/>}/>
         <Route path='/profile' element={<ProfilePage/>}/>
         <Route path='/order-history' element={<OrderHistoryPage/>}/>

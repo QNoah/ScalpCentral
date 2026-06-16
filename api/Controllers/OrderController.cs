@@ -61,6 +61,43 @@ public class OrderController : ControllerBase
         return Ok(orderInfo);
     }
 
+    [Authorize(Policy = "AdminOnly")]
+    [HttpGet("sales-overview")]
+    public async Task<ActionResult> GetSalesOverview()
+    {
+        var orders = await _orderService.GetAllOrdersAsync();
+        var orderDetails = await Task.WhenAll(
+            orders.Select(order => _orderService.GetOrderInfoByIdAsync(order.Id))
+        );
+
+        var items = orderDetails
+            .Where(orderInfo => orderInfo is not null)
+            .SelectMany(orderInfo => orderInfo!.Items);
+
+        var totalRevenue = orders.Sum(order => order.Price);
+        var totalOrders = orders.Count;
+        var products = items
+            .GroupBy(item => new { item.ProductId, item.ProductName })
+            .Select(group => new
+            {
+                productId = group.Key.ProductId,
+                productName = group.Key.ProductName,
+                quantitySold = group.Sum(item => item.Amount),
+                revenue = group.Sum(item => item.UnitPrice * item.Amount)
+            })
+            .OrderByDescending(product => product.quantitySold)
+            .ToList();
+
+        return Ok(new
+        {
+            totalOrders,
+            totalRevenue,
+            totalItemsSold = products.Sum(product => product.quantitySold),
+            averageOrderValue = totalOrders == 0 ? 0 : totalRevenue / totalOrders,
+            products
+        });
+    }
+
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<OrderModel>> CreateOrder([FromBody] OrderModel order)

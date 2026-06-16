@@ -3,7 +3,7 @@ import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import Navbar from "../../Utils/Navbar";
 import type { Product } from "../../Types/Product";
 import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'Id', flex: 0.3},
@@ -14,34 +14,45 @@ const columns: GridColDef[] = [
 
 export default function ProductList() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch("http://localhost:5231/api/products/", {
-          credentials: "include"
-        });
-        const data = await response.json();
-        setProducts(data.result ?? data);
-      } catch (err: any) {
-        setError("Error gathering products.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://localhost:5231/api/products/", {
+        credentials: "include"
+      });
 
+      if (!response.ok) {
+        throw new Error(`Products failed with status ${response.status}.`);
+      }
+
+      const data = await response.json();
+      setProducts(data.result ?? data);
+    } catch {
+      setError("Products konden niet worden geladen.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [location.key]);
 
   return (
     <div>
       <Navbar />
-      <div className="flex justify-center mt-20" style={{maxHeight: 750}}>
+      <div className="flex justify-end w-4/5 mx-auto mt-10">
+        <button className="bg-blue-700 text-white px-4 py-2 rounded" onClick={fetchProducts} disabled={loading}>
+          {loading ? "Loading..." : "Reload products"}
+        </button>
+      </div>
+      <div className="flex justify-center mt-6" style={{maxHeight: 750}}>
         <Paper sx={{ width: '80%'}}>
           <DataGrid
             rows={products}

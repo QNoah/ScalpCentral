@@ -52,6 +52,19 @@ export default function Navbar() {
           <NavLink to="/cart" className="navbar-link">
             CART
           </NavLink>
+          {user?.role === "Admin" && (
+            <>
+              <NavLink to="/product-list" className="navbar-link">
+                PRODUCTS
+              </NavLink>
+              <NavLink to="/users-list" className="navbar-link">
+                USERS
+              </NavLink>
+              <NavLink to="/sales-overview" className="navbar-link">
+                SALES
+              </NavLink>
+            </>
+          )}
            {user ? (
               <>
                 <NavLink to="/profile" className="navbar-link navbar-account-link">

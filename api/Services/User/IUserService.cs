@@ -11,6 +11,8 @@ public interface IUserService
     public Task<UserModel?> GetById(int id);
     public Task<UserModel?> UpdateAccount(int id, UserAccountRequest account);
     public Task<UserModel?> UpdateAddress(int id, UserAddressRequest address);
+    public Task<UserModel?> UpdateRole(int id, string role);
+    public Task<bool> DeleteUser(int id);
     public Task<List<int>> GetBookmarks(int userId);
     public Task AddBookmark(int userId, int productId);
     public Task RemoveBookmark(int userId, int productId);

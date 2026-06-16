@@ -1,35 +1,37 @@
 import Navbar from '../Utils/Navbar.tsx';
-import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
-import { Grid, Pagination, Card, CardMedia, CardContent, CardActions, List, ListItemButton, Button, CardActionArea, Collapse, Checkbox } from '@mui/material';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import StarIcon from '@mui/icons-material/Star';
+import { Button, Grid, Pagination } from '@mui/material';
 import { getCartId } from '../Utils/Cart.ts';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import StarHalfIcon from '@mui/icons-material/StarHalf';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
 import { useAuth } from "../Functionalities/AuthContext";
+import { ProductResultCard } from './SearchResultsParts/ProductResultCard.tsx';
+import { SearchFilters } from './SearchResultsParts/SearchFilters.tsx';
+import {
+    API_BASE_URL,
+    fetchJson,
+    isAbortError,
+    PAGE_SIZE,
+    type FiltersResponse,
+    type PagedProductsResponse,
+} from './SearchResultsParts/searchResultsApi.ts';
 
 export function SearchResults() {
-    // Ik realiseer mij nu pas dat ik objects had kunnen gebruiken om al deze shit compacter te maken, geen zin in tho -dabboloosefun
-    // comment omdat git tracking wack is
     const { user } = useAuth();
-
-    const PAGE_SIZE = 24;
-    const [page, setPage] = useState<number>(0);
-    const [totalCount, setTotalCount] = useState<number>(0);
-
-    const [loading, SetLoading] = useState<boolean>(true);
-    const [error, SetError] = useState<boolean>(false);
-
     const [searchParams, setSearchParams] = useSearchParams();
-    const searchName = searchParams.get("name") || "";
-    const [searchResults, setSearchResults] = useState<Product[]>([]);
 
+    const queryString = searchParams.toString();
+    const searchName = searchParams.get("name") || "";
+    const pageParam = Number(searchParams.get("page") || "0");
+    const currentPage = Number.isFinite(pageParam) && pageParam >= 0 ? pageParam : 0;
+    const currentSort = searchParams.get("sort") || "default";
+
+    const [totalCount, setTotalCount] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [reloadKey, setReloadKey] = useState<number>(0);
+
+    const [searchResults, setSearchResults] = useState<Product[]>([]);
     const [types, setTypes] = useState<string[]>([]);
     const [sets, setSets] = useState<string[]>([]);
     const [series, setSeries] = useState<string[]>([]);
@@ -37,204 +39,158 @@ export function SearchResults() {
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [selectedSets, setSelectedSets] = useState<string[]>([]);
     const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
-    const [collapseTypes, setCollapseTypes] = useState<boolean>(true);
-    const [collapseSets, setCollapseSets] = useState<boolean>(true);
-    const [collapseSeries, setCollapseSeries] = useState<boolean>(true);
 
-    const [minPrice, setMinPrice] = useState<number | null>(null);
-    const [maxPrice, setMaxPrice] = useState<number | null>(null);
+    const [minPrice, setMinPrice] = useState<string>("");
+    const [maxPrice, setMaxPrice] = useState<string>("");
     const [inStock, setInStock] = useState<boolean>(false);
     const [onSale, setOnSale] = useState<boolean>(false);
-    const [sortOption, setSortOption] = useState<string>("default");
 
-    const [bookmarks, setBookmarks] = useState<number[]>([])
-
-    useEffect (() => {
-        async function fetchFilters() {
-            const response = await fetch(`http://localhost:5231/api/products/filters?name=${searchName}`, {
-                credentials: "include"
-            });
-                const data = await response.json();
-                setTypes(data.types);
-                setSets(data.sets);
-                setSeries(data.series);
-        }
-        fetchFilters();
-    }, [searchName])
+    const [bookmarks, setBookmarks] = useState<number[]>([]);
+    const [bookmarkError, setBookmarkError] = useState<string | null>(null);
+    const [cartError, setCartError] = useState<string | null>(null);
 
     useEffect(() => {
-        async function fetchSearchResults() {
-            try{
-                SetError(false);
-                const response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
-                    method: "GET",
-                    headers: {
-                        "limit": PAGE_SIZE.toString()
-                    },
-                    credentials: "include"
-                });
-                const data = await response.json();
-                setSearchResults(data.result);
-                setTotalCount(data.totalCount);
-                
-            }
-            catch(error){
-                SetError(true);
-            }
-        };
-        
-        SetLoading(false);
-        fetchSearchResults();
-    }, [searchParams]);
+        const controller = new AbortController();
 
-    useEffect (() => {
-        async function fetchBookmarks() {
-            if (user)
-            {
-                const response = await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks`, {
-                    method: "GET"
-                });
-                const data = await response.json();
-                setBookmarks(data);
+        async function loadSearchPage() {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const productUrl = `${API_BASE_URL}/products/paged?${queryString}`;
+                const filtersUrl = `${API_BASE_URL}/products/filters?name=${encodeURIComponent(searchName)}`;
+
+                const [productsData, filtersData] = await Promise.all([
+                    fetchJson<PagedProductsResponse>(
+                        productUrl,
+                        {
+                            method: "GET",
+                            headers: {
+                                "limit": PAGE_SIZE.toString(),
+                            },
+                        },
+                        controller.signal,
+                        "Products could not be loaded.",
+                    ),
+                    fetchJson<FiltersResponse>(
+                        filtersUrl,
+                        { method: "GET" },
+                        controller.signal,
+                        "Filters could not be loaded.",
+                    ),
+                ]);
+
+                setSearchResults(productsData.result ?? []);
+                setTotalCount(productsData.totalCount ?? 0);
+                setTypes(filtersData.types ?? []);
+                setSets(filtersData.sets ?? []);
+                setSeries(filtersData.series ?? []);
+            } catch (caughtError) {
+                if (isAbortError(caughtError)) return;
+
+                setSearchResults([]);
+                setTotalCount(0);
+                setError(caughtError instanceof Error ? caughtError.message : "Something went wrong while loading products.");
+            } finally {
+                setLoading(false);
             }
         }
 
-        fetchBookmarks();
-    }, [user])
+        loadSearchPage();
 
-    function handlePageChange(e: React.ChangeEvent<unknown>, value: number) {
-        e.preventDefault();
-        setPage(value);
+        return () => controller.abort();
+    }, [queryString, searchName, reloadKey]);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        async function loadBookmarks() {
+            setBookmarkError(null);
+
+            if (!user) {
+                setBookmarks([]);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/${user.id}/bookmarks`, {
+                    method: "GET",
+                    credentials: "include",
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Bookmarks could not be loaded. Status: ${response.status}`);
+                }
+
+                const data = await response.json() as number[];
+                setBookmarks(data);
+            } catch (caughtError) {
+                if (isAbortError(caughtError)) return;
+
+                setBookmarks([]);
+                setBookmarkError(caughtError instanceof Error ? caughtError.message : "Bookmarks could not be loaded.");
+            }
+        }
+
+        loadBookmarks();
+
+        return () => controller.abort();
+    }, [user]);
+
+    function handleReload() {
+        setReloadKey((current) => current + 1);
+    }
+
+    function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
+        event.preventDefault();
 
         const params = new URLSearchParams(searchParams);
-        params.set("page", value.toString());
+        params.set("page", (value - 1).toString());
         setSearchParams(params);
     }
 
-    
-    
-    function handleSortChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        e.preventDefault();
-        const value = e.currentTarget.value;
-
-        setSortOption(value);
-
+    function handleSortChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        const value = event.currentTarget.value;
         const params = new URLSearchParams(searchParams);
+
         if (value !== "default") {
             params.set("sort", value);
         } else {
             params.delete("sort");
         }
-        
+
+        params.set("page", "0");
         setSearchParams(params);
-    }
-
-    function Option (item: string, option: number) {
-        return (
-            <div className="flex justify-between p-1">
-                <h3>{item}</h3>
-                <Checkbox sx={{padding: 0, "&.Mui-checked": {color: "var(--lightPokeBlue)"}}}
-                    size="small" id={`item-${item}`} name="item" value={item} onChange={(e) => {
-                    if (e.currentTarget.checked) {
-                        switch (option) {
-                            case 1:
-                                setSelectedTypes([...selectedTypes, item]);
-                                break;
-                            case 2:
-                                setSelectedSets([...selectedSets, item]);
-                                break;
-                            case 3:
-                                setSelectedSeries([...selectedSeries, item]);
-                                break;
-                        }
-                    } else {
-                        switch (option) {
-                            case 1:
-                                setSelectedTypes(selectedTypes.filter((t) => t !== item));
-                                break;
-                            case 2:
-                                setSelectedSets(selectedSets.filter((t) => t !== item));
-                                break;
-                            case 3:
-                                setSelectedSeries(selectedSeries.filter((t) => t !== item));
-                                break;
-                        }
-                    }
-                }} />
-            </div>
-        );
-    }
-
-    function Filter (title: string) {
-        switch (title) {
-            case "Types":
-                return (
-                    <List className='pb-8'>
-                        <ListItemButton sx={{display: "flex", justifyContent: "space-between", backgroundColor: "var(--lightPokeYellow)", fontWeight: "600"}}
-                        onClick={() => setCollapseTypes(!collapseTypes)}>
-                            TYPE: {types.length}
-                            {collapseTypes ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-                        <Collapse in={collapseTypes}>
-                            {types.map((type: string) => Option(type, 1))}
-                        </Collapse>
-                    </List>
-                );
-            case "Sets":
-                return (
-                    <List className='pb-8'>
-                        <ListItemButton sx={{display: "flex", justifyContent: "space-between", backgroundColor: "var(--lightPokeYellow)", fontWeight: "600"}}
-                        onClick={() => setCollapseSets(!collapseSets)}>
-                            SET: {sets.length}
-                            {collapseSets ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-                        <Collapse in={collapseSets}>
-                            {sets.map((set: string) => Option(set, 2))}
-                        </Collapse>
-                    </List>
-                );
-            case "Series":
-                return (
-                    <List className='pb-8'>
-                        <ListItemButton sx={{display: "flex", justifyContent: "space-between", backgroundColor: "var(--lightPokeYellow)", fontWeight: "600"}}
-                        onClick={() => setCollapseSeries(!collapseSeries)}>
-                            SERIES: {series.length}
-                            {collapseSeries ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-                        <Collapse in={collapseSeries}>
-                            {series.map((serie: string) => Option(serie, 3))}
-                        </Collapse>
-                    </List>
-                );
-        }
     }
 
     function applyFilters() {
         const params = new URLSearchParams();
-        params.append("name", searchParams.get("name") || "");
-        if (searchParams.get("sort")) {
-            params.append("sort", searchParams.get("sort") || "");
+        params.set("name", searchName);
+        params.set("page", "0");
+
+        if (currentSort !== "default") {
+            params.set("sort", currentSort);
         }
-        if (searchParams.get("page")) {
-            params.append("page", searchParams.get("page") || "0");
-        }
+
         selectedTypes.forEach((type) => params.append("types", type));
         selectedSets.forEach((setName) => params.append("setNames", setName));
         selectedSeries.forEach((serie) => params.append("series", serie));
-        if (minPrice !== null) {
-            params.append("minPrice", minPrice.toString());
+
+        if (minPrice) {
+            params.set("minPrice", minPrice);
         }
-        if (maxPrice !== null) {
-            params.append("maxPrice", maxPrice.toString());
+
+        if (maxPrice) {
+            params.set("maxPrice", maxPrice);
         }
+
         if (inStock) {
-            params.append("inStock", "true");
+            params.set("inStock", "true");
         }
+
         if (onSale) {
-            params.append("onSale", "true");
-        }
-        if (sortOption !== "default") {
-            params.append("sort", sortOption);
+            params.set("onSale", "true");
         }
 
         setSearchParams(params);
@@ -244,203 +200,196 @@ export function SearchResults() {
         setSelectedTypes([]);
         setSelectedSets([]);
         setSelectedSeries([]);
-        setMinPrice(null);
-        setMaxPrice(null);
+        setMinPrice("");
+        setMaxPrice("");
         setInStock(false);
+        setOnSale(false);
+
         const params = new URLSearchParams();
-        params.append("name", searchParams.get("name") || "");
+        params.set("name", searchName);
+
+        if (currentSort !== "default") {
+            params.set("sort", currentSort);
+        }
+
+        params.set("page", "0");
         setSearchParams(params);
     }
 
-    async function AddToCart(item: Product)
-    {
+    async function addToCart(item: Product) {
         const cartId = getCartId();
+        setCartError(null);
 
-        await fetch("http://localhost:5231/api/cart/add", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                cartId,
-                productId: item.id,
-                quantity: 1
-            })
-        });
-    }
-
-    async function BookmarkProduct(product: Product)
-    {
-        if (bookmarks.includes(product.id)) {
-            // Remove bookmark
-            setBookmarks(prev => prev.filter(id => id !== product.id))
-
-            await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks/${product.id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-        } else {
-            // Add bookmark
-            setBookmarks(prev => [...prev, product.id])
-
-            await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks`, {
+        try {
+            const response = await fetch(`${API_BASE_URL}/cart/add`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({
-                    ProductId: product.id,
-                    UserId: user?.id
-                })
+                    cartId,
+                    productId: item.id,
+                    quantity: 1,
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error(`Product could not be added to the cart. Status: ${response.status}`);
+            }
+        } catch (caughtError) {
+            setCartError(caughtError instanceof Error ? caughtError.message : "Product could not be added to the cart.");
         }
     }
 
-    function ProductCard({ product }: { product: Product })  {
+    async function bookmarkProduct(product: Product) {
+        if (!user) return;
+
+        setBookmarkError(null);
+        const wasBookmarked = bookmarks.includes(product.id);
+        setBookmarks((current) =>
+            wasBookmarked
+                ? current.filter((id) => id !== product.id)
+                : [...current, product.id],
+        );
+
+        try {
+            const response = await fetch(
+                wasBookmarked
+                    ? `${API_BASE_URL}/users/${user.id}/bookmarks/${product.id}`
+                    : `${API_BASE_URL}/users/${user.id}/bookmarks`,
+                {
+                    method: wasBookmarked ? "DELETE" : "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: wasBookmarked
+                        ? undefined
+                        : JSON.stringify({
+                            ProductId: product.id,
+                            UserId: user.id,
+                        }),
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error(`Bookmark could not be updated. Status: ${response.status}`);
+            }
+        } catch (caughtError) {
+            setBookmarks((current) =>
+                wasBookmarked
+                    ? [...current, product.id]
+                    : current.filter((id) => id !== product.id),
+            );
+            setBookmarkError(caughtError instanceof Error ? caughtError.message : "Bookmark could not be updated.");
+        }
+    }
+
+    if (loading || error) {
         return (
-            <Grid size={4} sx={{height: "530px", padding: "0.25rem"}}>
-                <Card sx={{height: "100%", padding: "0.25rem", position: "relative", display: "flex", flexDirection: "column"}}>
-                    {user ? <Button sx={{alignSelf: "end"}} size='small' onClick={() => BookmarkProduct(product)}>
-                        {
-                            bookmarks.includes(product.id) ?
-                            <FavoriteIcon></FavoriteIcon> :
-                            <FavoriteBorderIcon></FavoriteBorderIcon>
-                        }
-                    </Button> : null}
-                    <CardActionArea component={Link} to={`/product/${product.id}`}>
-                        <CardMedia sx={{height: "300px", backgroundSize: "contain", margin: "0.25rem"}}image={product.images[0]} title={product.name}/>
-                        
-                        <CardContent sx={{padding: "0.25rem", flex: 1, display: "flex", flexDirection: "column"}}>
-                            <h2 className='truncate font-bold text-xl text-lightBlue'> {product.name} </h2>
-                            <div className="flex justify-between text-xs">
-                                <div>
-                                  {/* NIET VERGETEN REVIEWS ECHT TE LADEN HIERO */}
-                                  {Array.from({ length: 3 }).map((_, index) => (
-                                      <StarIcon
-                                          key={index}
-                                          sx={{ color: "var(--darkPokeYellow)" }}
-                                          fontSize="small"
-                                      />
-                                  ))}
-                                  <StarHalfIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
-                                  <StarBorderIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
-                                </div>
-                                <p>623 reviews</p>
-                            </div>
-                            <ul className='flex flex-1 flex-col justify-evenly p-1'>
-                                <li className="flex justify-between">
-                                    <p className="font-bold">Set</p>
-                                    <p>{product.set.name}</p>
-                                </li>
-                                <li className="flex justify-between">
-                                    <p className="font-bold">Series</p>
-                                    <p>{product.set.series}</p>
-                                </li>
-                                <li className="flex justify-between">
-                                    <p className="font-bold">Type</p>
-                                    <p>{product.type}</p>
-                                </li>
-                            </ul>
-                        </CardContent>
-                    </CardActionArea>
-                    <CardActions sx={{justifyContent: "space-between", padding: "0.25rem"}} disableSpacing>
-                        <h2>€{product.price.toString()}</h2>
-                        <Button size="small" onClick={() => AddToCart(product)}>
-                            <AddShoppingCartIcon />
-                        </Button>
-                    </CardActions>
-                </Card>
-            </Grid>
+            <main className="flex flex-col min-h-screen bg-offWhite">
+                <Navbar />
+                <div id="search-page" className="flex min-h-[50vh] w-full max-w-screen-xl self-center items-center justify-center p-4">
+                    {loading && <h1 className="self-center">Loading...</h1>}
+                    {error && (
+                        <div className="flex max-w-xl flex-col items-center gap-4 bg-white p-6 text-center shadow-sm">
+                            <h1 className="text-lightBlue">Could not load products</h1>
+                            <p className="text-slate-700">{error}</p>
+                            <Button
+                                sx={{
+                                    backgroundColor: "#F1F979",
+                                    color: "black",
+                                    fontWeight: 700,
+                                }}
+                                variant="contained"
+                                onClick={handleReload}
+                            >
+                                Load again
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            </main>
         );
     }
 
-
-    
-    return ( loading || error ? 
+    return (
         <main className="flex flex-col min-h-screen bg-offWhite">
-            <Navbar/>
-            <div id="search-page" className="flex self-center max-w-screen-xl p-1 bg-white">
-                {loading && <h1 className='self-center'>Loading...</h1>}
-                {error && 
-                <div>
-                    <h1 className='self-center'>Error has occured, try again.</h1>
-                    <a onClick={() => }>Load again</a>
-                </div>}
-            </div>
-        </main>
-        : 
-        <main className="flex flex-col min-h-screen bg-offWhite">
-            <Navbar/>
+            <Navbar />
 
             <div id="search-page" className="flex self-center max-w-screen-xl p-1 bg-white">
-
-                <section id="sidebar" className="flex flex-col flex-1 max-w-72 p-1">
-                    <h2 className= 'font-bold'>FILTERS</h2>
-                    <div className="flex flex-col p-1">
-                        {Filter("Types")}
-                        {Filter("Sets")}
-                        {Filter("Series")}
-                        <br></br>
-                        <p className='font-medium'>MIN PRICE</p>
-                        <input type="number" placeholder="0" onChange={
-                            (e) => setMinPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
-                        } />
-                        <br></br>
-                        <p className='font-medium'>MAX PRICE</p>
-                        <input type="number" placeholder="-" onChange={
-                            (e) => setMaxPrice(e.currentTarget.value ? parseInt(e.currentTarget.value) : null)
-                        } />
-                        <br></br>
-                        <div className="flex justify-between p-1">
-                            <p className='font-medium'>ON SALE</p>
-                            <input className="filter-onSale" type="checkbox" name="On Sale" onChange={
-                                (e) => setOnSale(e.currentTarget.checked)
-                            } />
-                        </div>
-                        <br></br>
-                        <div className="flex justify-between p-1">
-                            <p className='font-medium'>IN STOCK</p>
-                            <input type="checkbox" name="In Stock" onChange={
-                                (e) => setInStock(e.currentTarget.checked)
-                            } />
-                        </div>
-                        <br></br>
-                        <Button sx={{
-                                backgroundColor: "#F1F979", 
-                                color: "black",
-                                flex: 1
-                                }} variant="contained" onClick={applyFilters}>APPLY FILTERS</Button>
-                        <br></br>
-                        <Button sx={{
-                                backgroundColor: "#F1F979", 
-                                color: "black",
-                                flex: 1
-                                }} variant="contained" onClick={clearFilters}>CLEAR FILTERS</Button>
-                    </div>
-                </section>
+                <SearchFilters
+                    types={types}
+                    sets={sets}
+                    series={series}
+                    selectedTypes={selectedTypes}
+                    selectedSets={selectedSets}
+                    selectedSeries={selectedSeries}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    inStock={inStock}
+                    onSale={onSale}
+                    setSelectedTypes={setSelectedTypes}
+                    setSelectedSets={setSelectedSets}
+                    setSelectedSeries={setSelectedSeries}
+                    setMinPrice={setMinPrice}
+                    setMaxPrice={setMaxPrice}
+                    setInStock={setInStock}
+                    setOnSale={setOnSale}
+                    onApply={applyFilters}
+                    onClear={clearFilters}
+                />
                 <section id="results-content" className="flex flex-col flex-1 p-1">
                     <header className="flex justify-end p-1 gap-4">
                         <h2>{totalCount} RESULTS</h2>
-                        <select className="bg-lightYellow rounded-lg" onChange={handleSortChange}>
+                        <select className="bg-lightYellow rounded-lg" value={currentSort} onChange={handleSortChange}>
                             <option value="default">DEFAULT</option>
                             <option value="priceLowHigh">PRICE: LOW TO HIGH</option>
                             <option value="priceHighLow">PRICE: HIGH TO LOW</option>
                         </select>
                     </header>
-                    <Grid container spacing={2} sx={{paddingBottom: "2rem"}}>
-                        {searchResults.map(result => (
-                            <ProductCard key={result.id} product={result} />
-                        ))}
-                    </Grid>
 
-                    <Pagination sx={{alignSelf: "center", "& .Mui-selected": {backgroundColor: "var(--pokeYellow)", color: "#000"}}} 
-                        count={Math.ceil(totalCount / PAGE_SIZE)} page={page} onChange={handlePageChange} shape="rounded">
-                    </Pagination>
+                    {bookmarkError && (
+                        <p className="mb-3 bg-lightYellow p-3 text-sm font-medium text-slate-900">
+                            {bookmarkError}
+                        </p>
+                    )}
+
+                    {cartError && (
+                        <p className="mb-3 bg-lightYellow p-3 text-sm font-medium text-slate-900">
+                            {cartError}
+                        </p>
+                    )}
+
+                    {searchResults.length === 0 ? (
+                        <div className="flex min-h-64 items-center justify-center">
+                            <h2>No products found</h2>
+                        </div>
+                    ) : (
+                        <Grid container spacing={2} sx={{ paddingBottom: "2rem" }}>
+                            {searchResults.map(result => (
+                                <ProductResultCard
+                                    key={result.id}
+                                    product={result}
+                                    isLoggedIn={Boolean(user)}
+                                    isBookmarked={bookmarks.includes(result.id)}
+                                    onBookmark={bookmarkProduct}
+                                    onAddToCart={addToCart}
+                                />
+                            ))}
+                        </Grid>
+                    )}
+
+                    <Pagination
+                        sx={{ alignSelf: "center", "& .Mui-selected": { backgroundColor: "var(--pokeYellow)", color: "#000" } }}
+                        count={Math.ceil(totalCount / PAGE_SIZE)}
+                        page={currentPage + 1}
+                        onChange={handlePageChange}
+                        shape="rounded"
+                    />
                 </section>
             </div>
         </main>
-    )
+    );
 }

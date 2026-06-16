@@ -10,10 +10,12 @@ import { getCartId } from '../Utils/Cart';
 export function CartPage() {
     const navigate = useNavigate();
     const [products, setProducts] = useState<CartItem[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         async function GetProducts() {
             const cartId = getCartId();
+            setError(null);
 
             const response = await fetch(
                 `http://localhost:5231/api/cart/${cartId}`,
@@ -24,6 +26,7 @@ export function CartPage() {
 
             if (!response.ok) {
                 console.error("Failed to load cart");
+                setError(`Failed to load cart. Status: ${response.status}`);
                 return;
             }
 
@@ -50,7 +53,7 @@ export function CartPage() {
 
         const cartId = getCartId();
 
-        await fetch(`http://localhost:5231/api/cart`, {
+        const response = await fetch(`http://localhost:5231/api/cart`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -62,6 +65,11 @@ export function CartPage() {
                 quantity: newQuantity
             })
         });
+
+        if (!response.ok) {
+            setError(`Failed to update cart. Status: ${response.status}`);
+            return;
+        }
 
         setProducts(prev =>
             prev.map(item =>
@@ -75,16 +83,22 @@ export function CartPage() {
     async function removeFromCart(productId: number) {
         const cartId = getCartId();
 
-        await fetch(`http://localhost:5231/api/cart/remove`, {
+        const response = await fetch(`http://localhost:5231/api/cart/remove`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 cartId,
                 productId
             })
         });
+
+        if (!response.ok) {
+            setError(`Failed to remove product from cart. Status: ${response.status}`);
+            return;
+        }
 
         setProducts(prev =>
             prev.filter(item => item.product.id !== productId)
@@ -101,6 +115,7 @@ export function CartPage() {
                     <div className="carts-header">
                         <h1>Shoppingcart</h1>
                     </div>
+                    {error && <p className="rounded bg-lightYellow p-3 font-medium">{error}</p>}
                     <div className="cart-actions" style={{ marginBottom: "1rem" }}>
                         {products.length != 0 && (<button className="rounded-lg bg-blue-500 text-white p-1 m-1 mt-3" onClick={goToCheckout}  >
                             Go to checkout

@@ -17,6 +17,10 @@ type RegisterForm = {
   confirmPassword: string;
 };
 
+const namePattern = "^[A-Za-zÀ-ž\\s'-]{2,50}$";
+const passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d).{8,128}$";
+const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+
 /* -------------------- LOGIN -------------------- */
 export function LoginPage() {
   const { setUser } = useAuth();
@@ -47,7 +51,9 @@ export function LoginPage() {
     const e: Partial<LoginForm> = {};
 
     if (!form.email) e.email = "Required";
+    else if (!emailPatternRegex().test(form.email)) e.email = "Enter a valid email address";
     if (!form.password) e.password = "Required";
+    else if (form.password.length < 8) e.password = "Password must be at least 8 characters";
 
     setError(e);
     return Object.keys(e).length === 0;
@@ -89,8 +95,8 @@ export function LoginPage() {
   return (
     <AuthLayout title="// LOGIN">
       <form onSubmit={onSubmit}>
-        <Input name="email" value={form.email} onChange={onChange} error={error.email} />
-        <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} />
+        <Input name="email" type="email" value={form.email} onChange={onChange} error={error.email} required minLength={6} maxLength={255} pattern={emailPattern} autoComplete="email" />
+        <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} required minLength={8} maxLength={128} autoComplete="current-password" />
 
         <button className="button">LOGIN</button>
       </form>
@@ -131,8 +137,16 @@ export function RegisterPage() {
   function validate() {
     const e: Partial<RegisterForm> = {};
 
+    if (!form.fName) e.fName = "Required";
+    else if (!new RegExp(namePattern).test(form.fName)) e.fName = "Use 2-50 letters";
+    if (!form.lName) e.lName = "Required";
+    else if (!new RegExp(namePattern).test(form.lName)) e.lName = "Use 2-50 letters";
     if (!form.email) e.email = "Required";
+    else if (!emailPatternRegex().test(form.email)) e.email = "Enter a valid email address";
     if (!form.password) e.password = "Required";
+    else if (!new RegExp(passwordPattern).test(form.password))
+      e.password = "Use at least 8 characters with a letter and a number";
+    if (!form.confirmPassword) e.confirmPassword = "Required";
     if (form.password !== form.confirmPassword)
       e.confirmPassword = "Passwords do not match";
 
@@ -179,11 +193,11 @@ export function RegisterPage() {
   return (
     <AuthLayout title="// REGISTER">
       <form onSubmit={onSubmit}>
-        <Input name="fName" value={form.fName} onChange={onChange} error={error.fName} />
-        <Input name="lName" value={form.lName} onChange={onChange} error={error.lName} />
-        <Input name="email" value={form.email} onChange={onChange} error={error.email} />
-        <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} />
-        <Input name="confirmPassword" type="password" value={form.confirmPassword} onChange={onChange} error={error.confirmPassword} />
+        <Input name="fName" value={form.fName} onChange={onChange} error={error.fName} required minLength={2} maxLength={50} pattern={namePattern} autoComplete="given-name" />
+        <Input name="lName" value={form.lName} onChange={onChange} error={error.lName} required minLength={2} maxLength={50} pattern={namePattern} autoComplete="family-name" />
+        <Input name="email" type="email" value={form.email} onChange={onChange} error={error.email} required minLength={6} maxLength={255} pattern={emailPattern} autoComplete="email" />
+        <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} required minLength={8} maxLength={128} pattern={passwordPattern} autoComplete="new-password" />
+        <Input name="confirmPassword" type="password" value={form.confirmPassword} onChange={onChange} error={error.confirmPassword} required minLength={8} maxLength={128} autoComplete="new-password" />
 
         <button className="button">REGISTER</button>
       </form>
@@ -218,7 +232,8 @@ export function Input({
   value,
   type = "text",
   error,
-  onChange
+  onChange,
+  ...inputProps
 }: any) {
   return (
     <div>
@@ -230,11 +245,16 @@ export function Input({
         type={type}
         onChange={onChange}
         className="input"
+        {...inputProps}
       />
 
       {error && <div className="error">{error}</div>}
     </div>
   );
+}
+
+function emailPatternRegex() {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 }
 
 /* -------------------- LINKS -------------------- */

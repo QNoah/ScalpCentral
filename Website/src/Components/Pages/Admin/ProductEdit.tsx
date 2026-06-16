@@ -59,15 +59,15 @@ export default function ProductEdit(){
             <div className="border shadow rounded-lg w-1/2 mt-10">
             <h1 className="mt-2 text-center">{product.name}</h1>
             <div className="mx-20">
-              <Input label="Name" type="text" value={product.name} required={true} styles="w-full mb-4" onChange={v => handleChange("name", v)}/>
-              <Input label="Type" type="text" value={product.type} required={true} styles="w-full mb-4" onChange={v => handleChange("type", v)}/>
+              <Input label="Name" type="text" value={product.name} required={true} styles="w-full mb-4" minLength={2} maxLength={255} onChange={v => handleChange("name", v)}/>
+              <Input label="Type" type="text" value={product.type} required={true} styles="w-full mb-4" minLength={2} maxLength={255} onChange={v => handleChange("type", v)}/>
               <div className="flex justify-between">
-                <Input label="Price" type="string" value={product.price} required={true} styles="w-full mb-4" onChange={v => handleChange("price", v)}/>
-                <Input label="Stock" type="number" value={product.stock} required={true} styles="w-full mb-4" onChange={v => handleChange("stock", v)}/>
+                <Input label="Price" type="number" value={product.price} required={true} styles="w-full mb-4" minNumber={0.01} step="0.01" onChange={v => handleChange("price", v)}/>
+                <Input label="Stock" type="number" value={product.stock} required={true} styles="w-full mb-4" minNumber={0} step={1} onChange={v => handleChange("stock", v)}/>
               </div>
-                <Input label="Discount (%)" type="number" value={product.salePriceModifier} required={false} styles="w-full mb-4" maxNumber={100} onChange={v => handleChange("salePriceModifier", v)}/>
+                <Input label="Discount (%)" type="number" value={product.salePriceModifier} required={false} styles="w-full mb-4" minNumber={0} maxNumber={100} step="0.01" onChange={v => handleChange("salePriceModifier", v)}/>
                 {/* geen idee hoe we dit gaan doen maar ik denk dat het belangrijk is voor meerdere foto's. */}
-                <Input label="Img url" type="string" value={product.images[0] ?? ""} required={false} styles="w-full mb-4" onChange={handleImageChange}/>
+                <Input label="Img url" type="url" value={product.images[0] ?? ""} required={false} styles="w-full mb-4" maxLength={2048} placeholder="https://example.com/image.png" onChange={handleImageChange}/>
                 <div id="product">
                   <h3 className="mb-4">Product preview</h3>
                   <div className="flex justify-center mb-4">

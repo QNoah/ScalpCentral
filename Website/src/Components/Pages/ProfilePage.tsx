@@ -22,6 +22,13 @@ type AddressForm = {
   streetNumber: string;
 };
 
+const namePattern = "^[A-Za-zÀ-ž\\s'-]{2,50}$";
+const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+const textPattern = "^[A-Za-zÀ-ž\\s'-]{2,255}$";
+const postcodePattern = "^[A-Za-z0-9\\s-]{3,12}$";
+const streetNumberPattern = "^[0-9A-Za-z\\s/-]{1,20}$";
+const phonePattern = "^\\+?[0-9\\s().-]{7,20}$";
+
 function valueOrFallback(value?: string | number | null) {
   if (value === undefined || value === null || value === "") {
     return "Not set";
@@ -218,9 +225,9 @@ export default function ProfilePage() {
             </div>
             {editingAccount ? (
               <form className="profile-form" onSubmit={saveAccount}>
-                <input name="firstName" value={accountForm.firstName} onChange={changeAccount} placeholder="First name" required />
-                <input name="lastName" value={accountForm.lastName} onChange={changeAccount} placeholder="Last name" required />
-                <input name="email" type="email" value={accountForm.email} onChange={changeAccount} placeholder="Email" required />
+                <input name="firstName" value={accountForm.firstName} onChange={changeAccount} placeholder="First name" required minLength={2} maxLength={50} pattern={namePattern} autoComplete="given-name" title="Use 2-50 letters." />
+                <input name="lastName" value={accountForm.lastName} onChange={changeAccount} placeholder="Last name" required minLength={2} maxLength={50} pattern={namePattern} autoComplete="family-name" title="Use 2-50 letters." />
+                <input name="email" type="email" value={accountForm.email} onChange={changeAccount} placeholder="Email" required minLength={6} maxLength={255} pattern={emailPattern} autoComplete="email" title="Enter a valid email address." />
                 <div className="profile-form-actions">
                   <button className="profile-primary-button" type="submit" disabled={savingAccount}>{savingAccount ? "Saving..." : "Save account"}</button>
                   <button className="profile-secondary-button" type="button" onClick={() => setEditingAccount(false)}>Cancel</button>
@@ -259,12 +266,12 @@ export default function ProfilePage() {
             </div>
             {editingAddress ? (
               <form className="profile-form" onSubmit={saveAddress}>
-                <input name="phoneNumber" value={addressForm.phoneNumber} onChange={changeAddress} placeholder="Phone number" />
-                <input name="country" value={addressForm.country} onChange={changeAddress} placeholder="Country" required />
-                <input name="city" value={addressForm.city} onChange={changeAddress} placeholder="City" required />
-                <input name="postcode" value={addressForm.postcode} onChange={changeAddress} placeholder="Postcode" required />
-                <input name="streetName" value={addressForm.streetName} onChange={changeAddress} placeholder="Street name" required />
-                <input name="streetNumber" value={addressForm.streetNumber} onChange={changeAddress} placeholder="Street number" required />
+                <input name="phoneNumber" value={addressForm.phoneNumber} onChange={changeAddress} placeholder="Phone number" minLength={7} maxLength={20} pattern={phonePattern} autoComplete="tel" title="Use a valid phone number, for example +31 612345678." />
+                <input name="country" value={addressForm.country} onChange={changeAddress} placeholder="Country" required minLength={2} maxLength={255} pattern={textPattern} autoComplete="country-name" title="Use at least 2 letters." />
+                <input name="city" value={addressForm.city} onChange={changeAddress} placeholder="City" required minLength={2} maxLength={255} pattern={textPattern} autoComplete="address-level2" title="Use at least 2 letters." />
+                <input name="postcode" value={addressForm.postcode} onChange={changeAddress} placeholder="Postcode" required minLength={3} maxLength={12} pattern={postcodePattern} autoComplete="postal-code" title="Use a valid postcode, for example 1234 AB." />
+                <input name="streetName" value={addressForm.streetName} onChange={changeAddress} placeholder="Street name" required minLength={2} maxLength={255} pattern={textPattern} autoComplete="street-address" title="Use at least 2 letters." />
+                <input name="streetNumber" value={addressForm.streetNumber} onChange={changeAddress} placeholder="Street number" required minLength={1} maxLength={20} pattern={streetNumberPattern} title="Use a valid house number, for example 12A." />
                 <div className="profile-form-actions">
                   <button className="profile-primary-button" type="submit" disabled={savingAddress}>{savingAddress ? "Saving..." : "Save address"}</button>
                   <button className="profile-secondary-button" type="button" onClick={() => setEditingAddress(false)}>Cancel</button>

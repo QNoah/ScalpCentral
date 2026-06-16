@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../Functionalities/AuthContext";
 import "../Styling/Auth.css";
+import logoImage from "../../assets/imgs/NameOnly.png";
 
 /* -------------------- TYPES -------------------- */
 type LoginForm = {
@@ -20,6 +21,11 @@ type RegisterForm = {
 const namePattern = "^[A-Za-zÀ-ž\\s'-]{2,50}$";
 const passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d).{8,128}$";
 const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+const authSuccessDelayMs = 1100;
+
+function wait(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /* -------------------- LOGIN -------------------- */
 export function LoginPage() {
@@ -32,6 +38,7 @@ export function LoginPage() {
   });
 
   const [error, setError] = useState<Partial<LoginForm>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -62,41 +69,48 @@ export function LoginPage() {
 
     if (!validate()) return;
 
-    const response = await fetch(
-      "http://localhost:5231/api/users/login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password
-        })
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5231/api/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password
+          })
+        }
+      );
+
+      if (!response.ok) {
+        setError({
+          password: "Invalid email or password"
+        });
+
+        return;
       }
-    );
 
-    if (!response.ok) {
-      setError({
-        password: "Invalid email or password"
-      });
-
-      return;
+      const user = await response.json();
+      setUser(user);
+      await wait(authSuccessDelayMs);
+      navigate("/");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const user = await response.json();
-    setUser(user);
-    navigate("/");
   }
 
   return (
-    <AuthLayout title="// LOGIN">
+    <AuthLayout title="Trainer Login" subtitle="Ready to enter the marketplace?" isLoading={isSubmitting} loadingText="Checking trainer pass...">
       <form onSubmit={onSubmit}>
         <Input name="email" value={form.email} onChange={onChange} error={error.email} required autoComplete="email" />
         <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} required autoComplete="current-password" />
 
-        <button className="button">LOGIN</button>
+        <button className="button" disabled={isSubmitting}>{isSubmitting ? "LOGGING IN..." : "LOGIN"}</button>
       </form>
 
       <AuthLinks mode="login" />
@@ -117,6 +131,7 @@ export function RegisterPage() {
   });
 
   const [error, setError] = useState<Partial<RegisterForm>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -157,39 +172,46 @@ export function RegisterPage() {
 
     if (!validate()) return;
 
-    const response = await fetch(
-      "http://localhost:5231/api/users/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          FName: form.fName,
-          LName: form.lName,
-          Email: form.email,
-          Password: form.password
-        })
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5231/api/users/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            FName: form.fName,
+            LName: form.lName,
+            Email: form.email,
+            Password: form.password
+          })
+        }
+      );
+
+      if (!response.ok) {
+        setError({
+          email: "Could not create account"
+        });
+
+        return;
       }
-    );
 
-    if (!response.ok) {
-      setError({
-        email: "Could not create account"
-      });
+      const user = await response.json();
+      setUser(user);
 
-      return;
+      await wait(authSuccessDelayMs);
+      navigate("/");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const user = await response.json();
-    setUser(user);
-
-    navigate("/");
   }
 
   return (
-    <AuthLayout title="// REGISTER">
+    <AuthLayout title="Start Your Journey" subtitle="Create a trainer profile and join ScalpCentral." isLoading={isSubmitting} loadingText="Creating trainer card...">
       <div className="requirements">
         <strong>Requirements</strong>
         <span>First and last name: 2-50 letters.</span>
@@ -204,7 +226,7 @@ export function RegisterPage() {
         <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} required minLength={8} maxLength={128} pattern={passwordPattern} autoComplete="new-password" />
         <Input name="confirmPassword" type="password" value={form.confirmPassword} onChange={onChange} error={error.confirmPassword} required minLength={8} maxLength={128} autoComplete="new-password" />
 
-        <button className="button">REGISTER</button>
+        <button className="button" disabled={isSubmitting}>{isSubmitting ? "CREATING..." : "REGISTER"}</button>
       </form>
 
       <AuthLinks mode="register" />
@@ -216,16 +238,37 @@ export function RegisterPage() {
 /* -------------------- LAYOUT -------------------- */
 function AuthLayout({
   title,
+  subtitle,
+  isLoading,
+  loadingText,
   children
 }: {
   title: string;
+  subtitle: string;
+  isLoading: boolean;
+  loadingText: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="container">
+      {isLoading && <AuthLoading text={loadingText} />}
       <div className="box">
-        <div className="header">{title}</div>
+        <div className="header">
+          <span>{title}</span>
+          <small>{subtitle}</small>
+        </div>
         <div className="content">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function AuthLoading({ text }: { text: string }) {
+  return (
+    <div className="auth-loading" role="status" aria-live="polite">
+      <div className="auth-loading-card">
+        <div className="pokeball pokeball-large" />
+        <p>{text}</p>
       </div>
     </div>
   );

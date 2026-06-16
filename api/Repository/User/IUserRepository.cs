@@ -10,6 +10,8 @@ public interface IUserRepository
     public Task<UserModel?> Login(LoginRequest userinfo);
     public Task<UserModel?> GetById(int id);
     public Task<UserModel?> GetByEmail(string email);
+    public Task<UserModel?> UpdateAccount(int id, UserAccountRequest account);
+    public Task<UserModel?> UpdateAddress(int id, UserAddressRequest address);
     public Task SoftDelete(UserModel user);
     public Task HardDelete(UserModel user);
     public Task Update(UserModel user);

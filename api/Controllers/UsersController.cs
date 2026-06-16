@@ -44,6 +44,11 @@ public class UsersController : ControllerBase
             return BadRequest();
 
         var user = await _userService.GetById(id.Value);
+        if (user is not null)
+        {
+            user.Token = CreateToken(user);
+            AppendAuthCookie(user.Token);
+        }
 
         return Ok(user);
     }
@@ -76,6 +81,36 @@ public class UsersController : ControllerBase
         UserModel? user = await _userService.GetById(id);
         if(user == null)
             return Unauthorized();
+        return Ok(user);
+    }
+
+    [Authorize]
+    [HttpPut("{id:int}/account")]
+    public async Task<ActionResult<UserModel?>> UpdateAccount(int id, [FromBody] UserAccountRequest account)
+    {
+        if (!CanAccessUserData(id))
+            return Forbid();
+
+        var user = await _userService.UpdateAccount(id, account);
+        if (user is null)
+            return NotFound();
+
+        user.Token = CreateToken(user);
+        AppendAuthCookie(user.Token);
+        return Ok(user);
+    }
+
+    [Authorize]
+    [HttpPut("{id:int}/address")]
+    public async Task<ActionResult<UserModel?>> UpdateAddress(int id, [FromBody] UserAddressRequest address)
+    {
+        if (!CanAccessUserData(id))
+            return Forbid();
+
+        var user = await _userService.UpdateAddress(id, address);
+        if (user is null)
+            return NotFound();
+
         return Ok(user);
     }
 

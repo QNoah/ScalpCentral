@@ -83,9 +83,14 @@ export function ProductPage() {
 
     async function AddToCart(item: Product)
     {
+        if (!user) {
+            navigate("/login");
+            return;
+        }
+
         const cartId = getCartId();
 
-        await fetch("http://localhost:5231/api/cart/add", {
+        const response = await fetch("http://localhost:5231/api/cart/add", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -98,7 +103,12 @@ export function ProductPage() {
             })
         });
 
-        navigate("/checkout");
+        if (!response.ok) {
+            setError("Could not add product to cart");
+            return;
+        }
+
+        navigate("/cart");
     }
 
     async function handleSubmitReview() {

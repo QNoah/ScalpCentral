@@ -13,7 +13,9 @@ import Footer from './Components/PageParts/Footer';
 import ProductEdit from './Components/Pages/Admin/ProductEdit';
 import { ResetPasswordPage } from './Components/Pages/ResetPasswordPage';
 import UserList from './Components/Pages/Admin/UserList';
+import ProfilePage from './Components/Pages/ProfilePage';
 import { FAQPage } from './Components/Pages/FAQPage';
+import OrderHistoryPage from './Components/Pages/OrderHistoryPage';
 import { ContactPage } from './Components/Pages/ContactPage';
 
 function App() {
@@ -63,6 +65,8 @@ function App() {
         <Route path='users-list' element={<UserList/>}/>
         <Route path='product-list' element={<ProductList/>}/>
         <Route path='/reset-password' element={<ResetPasswordPage/>}/>
+        <Route path='/profile' element={<ProfilePage/>}/>
+        <Route path='/order-history' element={<OrderHistoryPage/>}/>
         <Route path='/faq' element={<FAQPage/>}/>
         <Route path='/contact' element={<ContactPage/>}/>
         <Route path="*" element={<p>Page not found</p>} />

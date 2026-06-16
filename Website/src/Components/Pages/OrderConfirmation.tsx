@@ -18,8 +18,8 @@ export default function OrderConfirmation() {
           </p>
         </div>
         <div className="flex flex-col text-center justify-center items-center gap-3">
-          <Button Message="Continue Shopping" ButtonColor="bg-white"/>
-          <Button Message="View Order History" ButtonColor="bg-primary" TextColor="text-white"/>
+          <Button Message="Continue Shopping" ButtonColor="bg-white" LinkTo="/search"/>
+          <Button Message="View Order History" ButtonColor="bg-primary" TextColor="text-white" LinkTo="/order-history"/>
         </div>
 
       </div>

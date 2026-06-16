@@ -65,4 +65,19 @@ public class UserService : IUserService
             return null;
         return user;
     }
+
+    public async Task<List<int>> GetBookmarks(int userId)
+    {
+        return await _userRepository.GetBookmarks(userId);
+    }
+
+    public async Task AddBookmark(int userId, int productId)
+    {
+        await _userRepository.AddBookmark(userId, productId);
+    }
+
+    public async Task RemoveBookmark(int userId, int productId)
+    {
+        await _userRepository.RemoveBookmark(userId, productId);
+    }
 }

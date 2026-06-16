@@ -63,4 +63,25 @@ public class UsersController : ControllerBase
             return Unauthorized();
         return Ok(user);
     }
+
+    [HttpGet("{id}/bookmarks")]
+    public async Task<ActionResult<List<int>>> GetBookmarks(int id)
+    {
+        var bookmarks = await _userService.GetBookmarks(id);
+        return Ok(bookmarks);
+    }
+
+    [HttpPost("{id}/bookmarks")]
+    public async Task<IActionResult> AddBookmark(int id, [FromBody] BookmarkRequest request)
+    {
+        await _userService.AddBookmark(request.UserId, request.ProductId);
+        return Ok();
+    }
+
+    [HttpDelete("{id}/bookmarks/{productId}")]
+    public async Task<IActionResult> RemoveBookmark(int id, int productId)
+    {
+        await _userService.RemoveBookmark(id, productId);
+        return Ok();
+    }
 }

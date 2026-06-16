@@ -9,4 +9,7 @@ public interface IUserService
     public Task<UserModel?> Login(LoginRequest userinfo);
     public Task ResetPassword(string email, string password);
     public Task<UserModel?> GetById(int id);
+    public Task<List<int>> GetBookmarks(int userId);
+    public Task AddBookmark(int userId, int productId);
+    public Task RemoveBookmark(int userId, int productId);
 }

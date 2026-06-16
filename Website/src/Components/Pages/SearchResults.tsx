@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
 import { Grid, Pagination, Card, CardMedia, CardContent, CardActions, List, ListItemButton, Button, CardActionArea, Collapse, Checkbox } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import StarIcon from '@mui/icons-material/Star';
 import { getCartId } from '../Utils/Cart.ts';
@@ -11,10 +12,13 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { useAuth } from "../Functionalities/AuthContext";
 
 export function SearchResults() {
     // Ik realiseer mij nu pas dat ik objects had kunnen gebruiken om al deze shit compacter te maken, geen zin in tho -dabboloosefun
     // comment omdat git tracking wack is
+    const { user } = useAuth();
+
     const PAGE_SIZE = 24;
     const [page, setPage] = useState<number>(0);
     const [totalCount, setTotalCount] = useState<number>(0);
@@ -41,6 +45,8 @@ export function SearchResults() {
     const [inStock, setInStock] = useState<boolean>(false);
     const [onSale, setOnSale] = useState<boolean>(false);
     const [sortOption, setSortOption] = useState<string>("default");
+
+    const [bookmarks, setBookmarks] = useState<number[]>([])
 
     useEffect (() => {
         async function fetchFilters() {
@@ -69,6 +75,21 @@ export function SearchResults() {
 
         fetchSearchResults();
     }, [searchParams]);
+
+    useEffect (() => {
+        async function fetchBookmarks() {
+            if (user)
+            {
+                const response = await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks`, {
+                    method: "GET"
+                });
+                const data = await response.json();
+                setBookmarks(data);
+            }
+        }
+
+        fetchBookmarks();
+    }, [user])
 
     function handlePageChange(e: React.ChangeEvent<unknown>, value: number) {
         e.preventDefault();
@@ -237,13 +258,46 @@ export function SearchResults() {
         });
     }
 
+    async function BookmarkProduct(product: Product)
+    {
+        if (bookmarks.includes(product.id)) {
+            // Remove bookmark
+            setBookmarks(prev => prev.filter(id => id !== product.id))
+
+            await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks/${product.id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+        } else {
+            // Add bookmark
+            setBookmarks(prev => [...prev, product.id])
+
+            await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ProductId: product.id,
+                    UserId: user?.id
+                })
+            });
+        }
+    }
+
     function ProductCard({ product }: { product: Product })  {
         return (
             <Grid size={4} sx={{height: "530px", padding: "0.25rem"}}>
                 <Card sx={{height: "100%", padding: "0.25rem", position: "relative", display: "flex", flexDirection: "column"}}>
-                    <Button sx={{alignSelf: "end"}} size='small'>
-                        <FavoriteBorderIcon></FavoriteBorderIcon>
-                    </Button>
+                    {user ? <Button sx={{alignSelf: "end"}} size='small' onClick={() => BookmarkProduct(product)}>
+                        {
+                            bookmarks.includes(product.id) ?
+                            <FavoriteIcon></FavoriteIcon> :
+                            <FavoriteBorderIcon></FavoriteBorderIcon>
+                        }
+                    </Button> : null}
                     <CardActionArea component={Link} to={`/product/${product.id}`}>
                         <CardMedia sx={{height: "300px", backgroundSize: "contain", margin: "0.25rem"}}image={product.images[0]} title={product.name}/>
                         

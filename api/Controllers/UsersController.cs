@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Npgsql;
 using ScalpCentral.Api.Models;
 using ScalpCentral.Api.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -37,12 +38,18 @@ public class UsersController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<UserModel?>> CreateAccount([FromBody] RegisterRequest userinfo)
     {
-        userinfo.Role = "User";
-
-        int? id = await _userService.CreateAccount(userinfo);
+        int? id;
+        try
+        {
+            id = await _userService.CreateAccount(userinfo);
+        }
+        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            return Conflict("Email is already in use.");
+        }
 
         if (id is null || id == 0)
-            return BadRequest();
+            return Conflict("Email is already in use.");
 
         var user = await _userService.GetById(id.Value);
         if (user is not null)
@@ -51,21 +58,6 @@ public class UsersController : ControllerBase
             AppendAuthCookie(user.Token);
         }
 
-        return Ok(user);
-    }
-
-    [Authorize(Policy = "AdminOnly")]
-    [HttpPost("admin")]
-    public async Task<ActionResult<UserModel?>> CreateAdminAccount([FromBody] RegisterRequest userinfo)
-    {
-        userinfo.Role = "Admin";
-
-        int? id = await _userService.CreateAccount(userinfo);
-
-        if (id is null || id == 0)
-            return BadRequest();
-
-        var user = await _userService.GetById(id.Value);
         return Ok(user);
     }
 
@@ -78,6 +70,34 @@ public class UsersController : ControllerBase
         user.Token = CreateToken(user);
         AppendAuthCookie(user.Token);
         return Ok(user);
+    }
+
+    [Authorize(Policy = "AdminOnly")]
+    [HttpPut("{id:int}/role")]
+    public async Task<ActionResult<UserModel?>> UpdateRole(int id, [FromBody] UpdateUserRoleRequest request)
+    {
+        if (id == GetCurrentUserId() && !string.Equals(request.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+            return BadRequest("You cannot remove your own admin role.");
+
+        var user = await _userService.UpdateRole(id, request.Role);
+        if (user is null)
+            return NotFound();
+
+        return Ok(user);
+    }
+
+    [Authorize(Policy = "AdminOnly")]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        if (id == GetCurrentUserId())
+            return BadRequest("You cannot delete your own account.");
+
+        var deleted = await _userService.DeleteUser(id);
+        if (!deleted)
+            return NotFound();
+
+        return NoContent();
     }
 
     [Authorize]

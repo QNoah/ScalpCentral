@@ -23,6 +23,7 @@ public class UserService : IUserService
 
     public async Task<int?> CreateAccount(RegisterRequest userinfo)
     {
+        userinfo.Email = userinfo.Email.Trim();
 
         if (await _userRepository.EmailExists(userinfo.Email))
         {
@@ -74,6 +75,32 @@ public class UserService : IUserService
     public async Task<UserModel?> UpdateAddress(int id, UserAddressRequest address)
     {
         return await _userRepository.UpdateAddress(id, address);
+    }
+
+    public async Task<UserModel?> UpdateRole(int id, string role)
+    {
+        var normalizedRole = string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase)
+            ? "Admin"
+            : "User";
+
+        var user = await _userRepository.GetById(id);
+        if (user is null)
+            return null;
+
+        user.Role = normalizedRole;
+        await _userRepository.Update(user);
+
+        return await _userRepository.GetById(id);
+    }
+
+    public async Task<bool> DeleteUser(int id)
+    {
+        var user = await _userRepository.GetById(id);
+        if (user is null)
+            return false;
+
+        await _userRepository.SoftDelete(user);
+        return true;
     }
 
     public async Task<List<int>> GetBookmarks(int userId)

@@ -45,7 +45,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		var sql = $@"
 		SELECT 1
 		FROM {Table()}
-		WHERE email = @Email and soft_delete = FALSE";
+		WHERE email = @Email";
 
 		var result = RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<int?>(sql, new { Email = email }));
 		int? value = await result;
@@ -54,10 +54,6 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 
 	public async Task<int?> CreateAccount(RegisterRequest userinfo)
 	{
-		var role = string.Equals(userinfo.Role, "Admin", StringComparison.OrdinalIgnoreCase)
-			? "Admin"
-			: "User";
-
 		var sql = $@"
 		INSERT INTO {Table()}
 		(first_name, last_name, email, password, role, created_at)
@@ -66,7 +62,7 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QuerySingleAsync<int>(sql, new {
 			FName = userinfo.FName, LName = userinfo.LName, 
 			Email = userinfo.Email, Password = userinfo.Password,
-			createdAt = DateTime.Now, Role = role
+			createdAt = DateTime.Now, Role = "User"
 			}));
 	}
 
@@ -149,7 +145,8 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 	{
 		var sql = $@"
 		UPDATE {Table()}
-		SET soft_delete = NOT soft_delete AND deleted_at = @Date
+		SET soft_delete = TRUE,
+			deleted_at = @Date
 		WHERE id = @Id";
 		await RepoHelpers.TryExecuteAsync(async() => await _con.ExecuteAsync(sql, new {Id = user.Id, Date = DateTime.Now}));
 	}

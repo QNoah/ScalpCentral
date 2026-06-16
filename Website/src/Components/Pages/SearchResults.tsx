@@ -2,7 +2,7 @@ import Navbar from '../Utils/Navbar.tsx';
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { Product } from '../Types/Product.ts';
-import { Grid, Pagination, Card, CardMedia, CardContent, CardActions, List, ListItemButton, Button, CardActionArea, Collapse, Checkbox, Slider, Box } from '@mui/material';
+import { Grid, Pagination, Card, CardMedia, CardContent, CardActions, List, ListItemButton, Button, CardActionArea, Collapse, Checkbox, Slider, Box, Snackbar, Alert, CircularProgress } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
@@ -13,6 +13,16 @@ import StarHalfIcon from '@mui/icons-material/StarHalf';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { useAuth } from "../Functionalities/AuthContext";
+
+type Review = {
+    id: number;
+    stars: number;
+};
+
+type ProductReviewSummary = {
+    average: number;
+    count: number;
+};
 
 export function SearchResults() {
     // Ik realiseer mij nu pas dat ik objects had kunnen gebruiken om al deze shit compacter te maken, geen zin in tho -dabboloosefun
@@ -47,6 +57,9 @@ export function SearchResults() {
     const [sortOption, setSortOption] = useState<string>("default");
 
     const [bookmarks, setBookmarks] = useState<number[]>([])
+    const [reviewsByProduct, setReviewsByProduct] = useState<Record<number, ProductReviewSummary>>({});
+    const [addingProductIds, setAddingProductIds] = useState<number[]>([]);
+    const [cartMessage, setCartMessage] = useState<{ text: string; severity: "success" | "error" | "info" } | null>(null);
     const priceRange = [minPrice ?? 0, maxPrice ?? 10000];
 
     useEffect (() => {
@@ -94,6 +107,42 @@ export function SearchResults() {
 
         fetchBookmarks();
     }, [user])
+
+    useEffect(() => {
+        async function fetchReviewSummaries() {
+            if (searchResults.length === 0) {
+                setReviewsByProduct({});
+                return;
+            }
+
+            const summaries = await Promise.all(
+                searchResults.map(async (product) => {
+                    try {
+                        const response = await fetch(`http://localhost:5231/api/review?productId=${product.id}`);
+
+                        if (!response.ok) {
+                            return [product.id, { average: 0, count: 0 }] as const;
+                        }
+
+                        const reviews = await response.json() as Review[];
+                        const safeReviews = Array.isArray(reviews) ? reviews : [];
+                        const count = safeReviews.length;
+                        const average = count === 0
+                            ? 0
+                            : safeReviews.reduce((sum, review) => sum + review.stars, 0) / count;
+
+                        return [product.id, { average, count }] as const;
+                    } catch {
+                        return [product.id, { average: 0, count: 0 }] as const;
+                    }
+                })
+            );
+
+            setReviewsByProduct(Object.fromEntries(summaries));
+        }
+
+        fetchReviewSummaries();
+    }, [searchResults]);
 
     function handlePageChange(e: React.ChangeEvent<unknown>, value: number) {
         e.preventDefault();
@@ -269,20 +318,41 @@ export function SearchResults() {
 
     async function AddToCart(item: Product)
     {
-        const cartId = getCartId();
+        if (addingProductIds.includes(item.id)) {
+            return;
+        }
 
-        await fetch("http://localhost:5231/api/cart/add", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                cartId,
-                productId: item.id,
-                quantity: 1
-            })
-        });
+        const cartId = getCartId();
+        setAddingProductIds(prev => [...prev, item.id]);
+
+        try {
+            const response = await fetch("http://localhost:5231/api/cart/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    cartId,
+                    productId: item.id,
+                    quantity: 1
+                })
+            });
+
+            if (!response.ok) {
+                setCartMessage({
+                    text: response.status === 401 ? "Log in om producten toe te voegen." : "Kon product niet toevoegen.",
+                    severity: response.status === 401 ? "info" : "error"
+                });
+                return;
+            }
+
+            setCartMessage({ text: `${item.name} toegevoegd aan je cart.`, severity: "success" });
+        } catch {
+            setCartMessage({ text: "Kon product niet toevoegen.", severity: "error" });
+        } finally {
+            setAddingProductIds(prev => prev.filter(id => id !== item.id));
+        }
     }
 
     async function BookmarkProduct(product: Product)
@@ -315,6 +385,9 @@ export function SearchResults() {
     }
 
     function ProductCard({ product }: { product: Product })  {
+        const reviewSummary = reviewsByProduct[product.id] ?? { average: 0, count: 0 };
+        const isAddingToCart = addingProductIds.includes(product.id);
+
         return (
             <Grid size={4} sx={{height: "530px", padding: "0.25rem"}}>
                 <Card sx={{height: "100%", padding: "0.25rem", position: "relative", display: "flex", flexDirection: "column"}}>
@@ -330,20 +403,11 @@ export function SearchResults() {
                         
                         <CardContent sx={{padding: "0.25rem", flex: 1, display: "flex", flexDirection: "column"}}>
                             <h2 className='truncate font-bold text-xl text-lightBlue'> {product.name} </h2>
-                            <div className="flex justify-between text-xs">
-                                <div>
-                                  {/* NIET VERGETEN REVIEWS ECHT TE LADEN HIERO */}
-                                  {Array.from({ length: 3 }).map((_, index) => (
-                                      <StarIcon
-                                          key={index}
-                                          sx={{ color: "var(--darkPokeYellow)" }}
-                                          fontSize="small"
-                                      />
-                                  ))}
-                                  <StarHalfIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
-                                  <StarBorderIcon sx={{color: "var(--darkPokeYellow)"}} fontSize='small'/>
+                            <div className="flex justify-between items-center gap-2 text-xs">
+                                <div className="flex items-center min-w-0" aria-label={`${reviewSummary.average.toFixed(1)} van 5 sterren`}>
+                                  {renderStars(reviewSummary.average)}
                                 </div>
-                                <p>623 reviews</p>
+                                <p className="whitespace-nowrap text-gray-600">{reviewSummary.count} {reviewSummary.count === 1 ? "review" : "reviews"}</p>
                             </div>
                             <ul className='flex flex-1 flex-col justify-evenly p-1'>
                                 <li className="flex justify-between">
@@ -363,13 +427,29 @@ export function SearchResults() {
                     </CardActionArea>
                     <CardActions sx={{justifyContent: "space-between", padding: "0.25rem"}} disableSpacing>
                         <h2>€{product.price.toString()}</h2>
-                        <Button size="small" onClick={() => AddToCart(product)}>
-                            <AddShoppingCartIcon />
+                        <Button size="small" onClick={() => AddToCart(product)} disabled={isAddingToCart} aria-label={`Add ${product.name} to cart`}>
+                            {isAddingToCart ? <CircularProgress size={20} /> : <AddShoppingCartIcon />}
                         </Button>
                     </CardActions>
                 </Card>
             </Grid>
         );
+    }
+
+    function renderStars(stars: number) {
+        return Array.from({ length: 5 }).map((_, index) => {
+            const starValue = index + 1;
+
+            if (stars >= starValue) {
+                return <StarIcon key={index} sx={{ color: "var(--darkPokeYellow)", fontSize: { xs: 16, sm: 18, md: 20 } }} />;
+            }
+
+            if (stars >= starValue - 0.5) {
+                return <StarHalfIcon key={index} sx={{ color: "var(--darkPokeYellow)", fontSize: { xs: 16, sm: 18, md: 20 } }} />;
+            }
+
+            return <StarBorderIcon key={index} sx={{ color: "var(--darkPokeYellow)", fontSize: { xs: 16, sm: 18, md: 20 } }} />;
+        });
     }
 
 
@@ -384,6 +464,16 @@ export function SearchResults() {
         : 
         <main className="flex flex-col min-h-screen bg-offWhite">
             <Navbar/>
+            <Snackbar
+                open={Boolean(cartMessage)}
+                autoHideDuration={2600}
+                onClose={() => setCartMessage(null)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity={cartMessage?.severity ?? "success"} variant="filled" onClose={() => setCartMessage(null)}>
+                    {cartMessage?.text}
+                </Alert>
+            </Snackbar>
 
             <div id="search-page" className="flex self-center max-w-screen-xl p-1 bg-white">
 

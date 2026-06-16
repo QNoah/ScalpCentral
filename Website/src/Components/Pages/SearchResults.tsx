@@ -24,6 +24,7 @@ export function SearchResults() {
     const [totalCount, setTotalCount] = useState<number>(0);
 
     const [loading, SetLoading] = useState<boolean>(true);
+    const [error, SetError] = useState<boolean>(false);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const searchName = searchParams.get("name") || "";
@@ -63,19 +64,26 @@ export function SearchResults() {
 
     useEffect(() => {
         async function fetchSearchResults() {
-            const response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
-                method: "GET",
-                headers: {
-                    "limit": PAGE_SIZE.toString()
-                },
-                credentials: "include"
-            });
-            const data = await response.json();
-            setSearchResults(data.result);
-            setTotalCount(data.totalCount);
-            SetLoading(false);
+            try{
+                SetError(false);
+                const response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
+                    method: "GET",
+                    headers: {
+                        "limit": PAGE_SIZE.toString()
+                    },
+                    credentials: "include"
+                });
+                const data = await response.json();
+                setSearchResults(data.result);
+                setTotalCount(data.totalCount);
+                
+            }
+            catch(error){
+                SetError(true);
+            }
         };
-
+        
+        SetLoading(false);
         fetchSearchResults();
     }, [searchParams]);
 
@@ -351,11 +359,16 @@ export function SearchResults() {
 
 
     
-    return ( loading ? 
+    return ( loading || error ? 
         <main className="flex flex-col min-h-screen bg-offWhite">
             <Navbar/>
             <div id="search-page" className="flex self-center max-w-screen-xl p-1 bg-white">
-                <h1 className='self-center'>Loading...</h1>
+                {loading && <h1 className='self-center'>Loading...</h1>}
+                {error && 
+                <div>
+                    <h1 className='self-center'>Error has occured, try again.</h1>
+                    <a onClick={() => }>Load again</a>
+                </div>}
             </div>
         </main>
         : 

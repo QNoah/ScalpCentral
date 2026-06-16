@@ -51,9 +51,7 @@ export function LoginPage() {
     const e: Partial<LoginForm> = {};
 
     if (!form.email) e.email = "Required";
-    else if (!emailPatternRegex().test(form.email)) e.email = "Enter a valid email address";
     if (!form.password) e.password = "Required";
-    else if (form.password.length < 8) e.password = "Password must be at least 8 characters";
 
     setError(e);
     return Object.keys(e).length === 0;
@@ -95,8 +93,8 @@ export function LoginPage() {
   return (
     <AuthLayout title="// LOGIN">
       <form onSubmit={onSubmit}>
-        <Input name="email" type="email" value={form.email} onChange={onChange} error={error.email} required minLength={6} maxLength={255} pattern={emailPattern} autoComplete="email" />
-        <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} required minLength={8} maxLength={128} autoComplete="current-password" />
+        <Input name="email" value={form.email} onChange={onChange} error={error.email} required autoComplete="email" />
+        <Input name="password" type="password" value={form.password} onChange={onChange} error={error.password} required autoComplete="current-password" />
 
         <button className="button">LOGIN</button>
       </form>
@@ -192,6 +190,13 @@ export function RegisterPage() {
 
   return (
     <AuthLayout title="// REGISTER">
+      <div className="requirements">
+        <strong>Requirements</strong>
+        <span>First and last name: 2-50 letters.</span>
+        <span>Email: valid email address.</span>
+        <span>Password: at least 8 characters, with a letter and a number.</span>
+      </div>
+
       <form onSubmit={onSubmit}>
         <Input name="fName" value={form.fName} onChange={onChange} error={error.fName} required minLength={2} maxLength={50} pattern={namePattern} autoComplete="given-name" />
         <Input name="lName" value={form.lName} onChange={onChange} error={error.lName} required minLength={2} maxLength={50} pattern={namePattern} autoComplete="family-name" />

@@ -53,6 +53,21 @@
   margin-bottom: 0.5rem;
 }
 
+.requirements {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 6px;
+  background: white;
+  font-size: 0.75rem;
+}
+
+.requirements strong {
+  color: var(--retro-accent);
+}
+
 .button {
   width: 100%;
   padding: 0.9rem;

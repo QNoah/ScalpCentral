@@ -112,7 +112,7 @@ export default function OrderHistoryPage() {
         {!loading && !error && orders.length > 0 && (
           <section className="order-history-list">
             {orders.map(order => (
-              <article className="order-history-card" key={order.id}>
+              <Link className="order-history-card" to={`/order-history/${order.id}`} key={order.id}>
                 <div className="order-history-card-main">
                   <span className="order-history-number">{order.orderNumber}</span>
                   <h2>{formatPrice(order.price)}</h2>
@@ -133,7 +133,7 @@ export default function OrderHistoryPage() {
                     <strong>{order.country}</strong>
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </section>
         )}

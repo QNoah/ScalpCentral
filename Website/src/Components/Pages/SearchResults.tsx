@@ -168,7 +168,11 @@ export function SearchResults() {
                             {collapseTypes ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={collapseTypes}>
-                            {types.map((type: string) => Option(type, 1))}
+                            {types.map((type: string) => (
+                                <div key={`type-${type}`}>
+                                    {Option(type, 1)}
+                                </div>
+                            ))}
                         </Collapse>
                     </List>
                 );
@@ -181,7 +185,11 @@ export function SearchResults() {
                             {collapseSets ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={collapseSets}>
-                            {sets.map((set: string) => Option(set, 2))}
+                            {sets.map((set: string) => (
+                                <div key={`set-${set}`}>
+                                    {Option(set, 2)}
+                                </div>
+                            ))}
                         </Collapse>
                     </List>
                 );
@@ -194,7 +202,11 @@ export function SearchResults() {
                             {collapseSeries ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={collapseSeries}>
-                            {series.map((serie: string) => Option(serie, 3))}
+                            {series.map((serie: string) => (
+                                <div key={`series-${serie}`}>
+                                    {Option(serie, 3)}
+                                </div>
+                            ))}
                         </Collapse>
                     </List>
                 );

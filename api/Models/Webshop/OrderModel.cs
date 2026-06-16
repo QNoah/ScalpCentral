@@ -16,4 +16,11 @@ public class OrderModel
     public DateTime CreatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
     public bool SoftDelete { get; set; }
+    public List<OrderContentModel> Items { get; set; } = new();
+}
+
+public class OrderContentModel
+{
+    public long ProductId { get; set; }
+    public int Amount { get; set; }
 }

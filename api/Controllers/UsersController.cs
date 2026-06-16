@@ -43,12 +43,6 @@ public class UsersController : ControllerBase
         if (id is null || id == 0)
             return BadRequest();
 
-        var user = await _userService.GetById(validId);
-        if (user is not null)
-        {
-            user.Token = CreateToken(user);
-            AppendAuthCookie(user.Token);
-        }
         var user = await _userService.GetById(id.Value);
 
         return Ok(user);

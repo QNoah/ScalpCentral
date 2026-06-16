@@ -20,27 +20,6 @@ CREATE TABLE IF NOT EXISTS sets (
             soft_delete BOOLEAN NOT NULL DEFAULT FALSE
         );
 
-CREATE TABLE IF NOT EXISTS users (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    iban VARCHAR(255) NOT NULL,
-    postcode VARCHAR(255) NOT NULL,
-    country VARCHAR(255) NOT NULL,
-    city VARCHAR(255) NOT NULL,
-    street_name VARCHAR(255) NOT NULL,
-    street_number VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(255) NOT NULL,
-    negative_seller_count INT NOT NULL DEFAULT 0,
-    positive_seller_count INT NOT NULL DEFAULT 0,
-    role VARCHAR(100) NOT NULL DEFAULT 'User',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    deleted_at TIMESTAMPTZ,
-    soft_deleted BOOLEAN NOT NULL DEFAULT FALSE
-);
-
 CREATE TABLE IF NOT EXISTS attacks(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -294,8 +273,8 @@ def run(connection):
     json_load_sets(connection)
     connection.commit()
     
-    json_load_cards(connection)
-    connection.commit()
+    # json_load_cards(connection)
+    # connection.commit()
     print(f"set_and_cards.py ran succesfully.")
     return
 

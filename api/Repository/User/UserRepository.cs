@@ -93,6 +93,54 @@ public class UserRepository : RepositoryAccessBase, IUserRepository
 		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new {email = email}));
 	}
 
+	public async Task<UserModel?> UpdateAccount(int id, UserAccountRequest account)
+	{
+		var sql = $@"
+		UPDATE {Table()}
+		SET
+			first_name = @FirstName,
+			last_name = @LastName,
+			email = @Email
+		WHERE id = @Id
+			AND soft_delete = FALSE
+		RETURNING {UserSelectColumns}";
+
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new
+		{
+			Id = id,
+			account.FirstName,
+			account.LastName,
+			account.Email
+		}));
+	}
+
+	public async Task<UserModel?> UpdateAddress(int id, UserAddressRequest address)
+	{
+		var sql = $@"
+		UPDATE {Table()}
+		SET
+			phone_number = @PhoneNumber,
+			country = @Country,
+			city = @City,
+			postcode = @Postcode,
+			street_name = @StreetName,
+			street_number = @StreetNumber
+		WHERE id = @Id
+			AND soft_delete = FALSE
+		RETURNING {UserSelectColumns}";
+
+		return await RepoHelpers.TryQueryAsync(async() => await _con.QueryFirstOrDefaultAsync<UserModel>(sql, new
+		{
+			Id = id,
+			address.PhoneNumber,
+			address.Country,
+			address.City,
+			address.Postcode,
+			address.StreetName,
+			address.StreetNumber
+		}));
+	}
+
 	public async Task SoftDelete(UserModel user)
 	{
 		var sql = $@"

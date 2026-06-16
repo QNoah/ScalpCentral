@@ -66,6 +66,16 @@ public class UserService : IUserService
         return user;
     }
 
+    public async Task<UserModel?> UpdateAccount(int id, UserAccountRequest account)
+    {
+        return await _userRepository.UpdateAccount(id, account);
+    }
+
+    public async Task<UserModel?> UpdateAddress(int id, UserAddressRequest address)
+    {
+        return await _userRepository.UpdateAddress(id, address);
+    }
+
     public async Task<List<int>> GetBookmarks(int userId)
     {
         return await _userRepository.GetBookmarks(userId);

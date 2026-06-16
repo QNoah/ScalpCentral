@@ -1,0 +1,161 @@
+@import './Colors.css';
+
+.order-history-page {
+  min-height: 100vh;
+  background: var(--retro-bg);
+  color: var(--retro-text);
+}
+
+.order-history-shell {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+}
+
+.order-history-header,
+.order-history-card,
+.order-history-empty-card,
+.order-history-empty-state {
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 25, 89, 0.08);
+}
+
+.order-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.order-history-eyebrow {
+  margin-bottom: 0.25rem;
+  color: var(--midPokeBlue);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.order-history-header h1,
+.order-history-empty-card h1,
+.order-history-empty-state h2,
+.order-history-card h2 {
+  color: var(--darkPokeBlue);
+}
+
+.order-history-header p:not(.order-history-eyebrow),
+.order-history-empty-card p,
+.order-history-empty-state p,
+.order-history-card-main p,
+.order-history-card-details span {
+  color: var(--retro-text-muted);
+}
+
+.order-history-secondary-button,
+.order-history-primary-button {
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.order-history-secondary-button {
+  padding: 0.65rem 0.9rem;
+  background: var(--retro-surface);
+  color: var(--darkPokeBlue);
+}
+
+.order-history-primary-button {
+  display: inline-flex;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  background: var(--midPokeBlue);
+  color: var(--pokeWhite);
+}
+
+.order-history-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.order-history-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 2fr);
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.order-history-number {
+  display: inline-flex;
+  margin-bottom: 0.5rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  background: var(--lightPokeYellow);
+  color: var(--darkPokeBlue);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.order-history-card-details {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.order-history-card-details div {
+  display: grid;
+  gap: 0.2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.order-history-card-details strong {
+  color: var(--retro-text);
+}
+
+.order-history-message,
+.order-history-error {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+}
+
+.order-history-error {
+  color: #c9302c;
+}
+
+.order-history-empty,
+.order-history-empty-state {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.order-history-empty {
+  min-height: calc(100vh - 4rem);
+  padding: 2rem;
+}
+
+.order-history-empty-card,
+.order-history-empty-state {
+  width: min(480px, 100%);
+  padding: 1.5rem;
+}
+
+.order-history-empty-state {
+  margin: 1rem auto 0;
+}
+
+@media (max-width: 760px) {
+  .order-history-header,
+  .order-history-card {
+    grid-template-columns: 1fr;
+  }
+
+  .order-history-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -193,11 +193,44 @@
 
 .profile-primary-button {
   display: inline-flex;
-  margin-top: 1rem;
   padding: 0.8rem 1rem;
   background: var(--midPokeBlue);
   color: var(--pokeWhite);
   text-decoration: none;
+}
+
+.profile-message {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--lightPokeBlue);
+  border-radius: 8px;
+  background: #eff6ff;
+  color: var(--darkPokeBlue);
+  font-weight: 600;
+}
+
+.profile-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  outline: none;
+}
+
+.profile-form input:focus {
+  border-color: var(--lightPokeBlue);
+}
+
+.profile-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
 }
 
 .profile-action-disabled {

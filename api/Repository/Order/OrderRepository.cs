@@ -50,7 +50,7 @@ public class OrderRepository : RepositoryAccessBase, IOrderRepository
 		role AS Role,
 		created_at AS CreatedAt,
 		deleted_at AS DeletedAt,
-		soft_deleted AS SoftDeleted";
+		soft_delete AS SoftDelete";
 	
 	public OrderRepository(IConfiguration config) : base(config) {}
 

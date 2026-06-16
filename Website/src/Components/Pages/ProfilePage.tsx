@@ -142,6 +142,12 @@ export default function ProfilePage() {
     setAddressForm(prev => ({ ...prev, [name]: value }));
   }
 
+  function logout() {
+    localStorage.removeItem("token");
+    setUser(null);
+    window.location.href = "/";
+  }
+
   async function saveAccount(e: React.FormEvent) {
     e.preventDefault();
     setSavingAccount(true);
@@ -293,6 +299,10 @@ export default function ProfilePage() {
               </Link>
             </div>
           </article>
+        </section>
+
+        <section className="profile-logout-section">
+          <button className="profile-logout-button" type="button" onClick={logout}>Logout</button>
         </section>
       </main>
     </div>

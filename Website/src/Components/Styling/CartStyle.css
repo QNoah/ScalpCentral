@@ -227,7 +227,20 @@
 }
 
 .cart-empty-inline {
+    width: 100%;
+    max-width: 420px;
     margin: 1rem auto 0;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid var(--retro-border);
+    border-radius: 8px;
+    background: var(--retro-surface);
+    box-shadow: none;
+}
+
+.cart-empty-inline .cart-primary-button {
+    margin-top: 0.75rem;
+    padding: 0.65rem 0.85rem;
 }
 
 @media (max-width: 900px) {

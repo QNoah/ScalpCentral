@@ -4,6 +4,15 @@ namespace api.Tests;
 
 internal static class TestData
 {
+    public static UserDto UserDto(int id = 1) => new()
+    {
+        Id = id,
+        FirstName = "Ash",
+        LastName = "Ketchum",
+        Email = "ash@example.com",
+        Role = "User"
+    };
+
     public static UserModel User(int id = 1, string password = "hashed-password") => new()
     {
         Id = id,
@@ -64,6 +73,14 @@ internal static class TestData
 
     public static LoginRequest Login(string password = "secret") => new()
     {
+        Email = "ash@example.com",
+        Password = password
+    };
+
+    public static RegisterRequest Register(string password = "secret") => new()
+    {
+        FName = "Ash",
+        LName = "Ketchum",
         Email = "ash@example.com",
         Password = password
     };

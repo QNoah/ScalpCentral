@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Utils/Navbar";
 import { getCartId } from "../Utils/Cart";
@@ -28,6 +28,25 @@ const postcodePattern = "^[A-Za-z0-9\\s-]{3,12}$";
 const streetNumberPattern = "^[0-9A-Za-z\\s/-]{1,20}$";
 const phonePattern = "^\\+?[0-9\\s().-]{7,20}$";
 
+function getAddressFromUser(user: ReturnType<typeof useAuth>["user"]): CheckoutForm {
+  if (!user) {
+    return emptyAddress;
+  }
+
+  return {
+    phoneNumber: user.phoneNumber ?? "",
+    country: user.country ?? "",
+    city: user.city ?? "",
+    postcode: user.postcode ?? "",
+    streetName: user.streetName ?? "",
+    streetNumber: user.streetNumber ?? ""
+  };
+}
+
+function hasAddress(user: ReturnType<typeof useAuth>["user"]) {
+  return Boolean(user?.country && user.city && user.postcode && user.streetName && user.streetNumber);
+}
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
@@ -35,8 +54,9 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [addressSelected, setAddressSelected] = useState(false);
-  const [form, setForm] = useState<CheckoutForm>(emptyAddress);
+  const [addressSelected, setAddressSelected] = useState(() => hasAddress(user));
+  const [form, setForm] = useState<CheckoutForm>(() => getAddressFromUser(user));
+  const savedAddressAvailable = hasAddress(user);
 
   useEffect(() => {
     async function loadCart() {
@@ -60,29 +80,10 @@ export default function CheckoutPage() {
     loadCart();
   }, []);
 
-  useEffect(() => {
-    if (hasSavedAddress()) {
-      useSavedAddress();
-    }
-  }, [user]);
-
-  function hasSavedAddress() {
-    return Boolean(user?.country && user.city && user.postcode && user.streetName && user.streetNumber);
-  }
-
-  function useSavedAddress() {
-    if (!user) return;
-
-    setForm({
-      phoneNumber: user.phoneNumber ?? "",
-      country: user.country ?? "",
-      city: user.city ?? "",
-      postcode: user.postcode ?? "",
-      streetName: user.streetName ?? "",
-      streetNumber: user.streetNumber ?? ""
-    });
+  const applySavedAddress = useCallback(() => {
+    setForm(getAddressFromUser(user));
     setAddressSelected(true);
-  }
+  }, [user]);
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -193,11 +194,11 @@ export default function CheckoutPage() {
 
           {error && <p className="mb-4 text-red-600 font-medium">{error}</p>}
 
-          {hasSavedAddress() && (
+          {savedAddressAvailable && (
             <button
               className={`mb-5 w-full rounded-lg border p-4 text-left transition ${addressSelected ? "border-midBlue bg-blue-50" : "border-slate-300 bg-offWhite hover:border-midBlue"}`}
               type="button"
-              onClick={useSavedAddress}
+              onClick={applySavedAddress}
             >
               <span className="block font-semibold text-darkBlue">Use saved address</span>
               <span className="block text-sm text-slate-600">

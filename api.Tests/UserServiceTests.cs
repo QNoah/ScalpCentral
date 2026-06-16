@@ -14,25 +14,25 @@ public class UserServiceTests
         repository.Setup(r => r.EmailExists("ash@example.com")).ReturnsAsync(true);
         var service = new UserService(repository.Object);
 
-        var result = await service.CreateAccount(TestData.Login());
+        var result = await service.CreateAccount(TestData.Register());
 
         Assert.Equal(0, result);
-        repository.Verify(r => r.CreateAccount(It.IsAny<LoginRequest>()), Times.Never);
+        repository.Verify(r => r.CreateAccount(It.IsAny<RegisterRequest>()), Times.Never);
     }
 
     [Fact]
     public async Task CreateAccount_HashesPassword_BeforeSaving()
     {
         var repository = new Mock<IUserRepository>();
-        LoginRequest? savedRequest = null;
+        RegisterRequest? savedRequest = null;
         repository.Setup(r => r.EmailExists("ash@example.com")).ReturnsAsync(false);
         repository
-            .Setup(r => r.CreateAccount(It.IsAny<LoginRequest>()))
-            .Callback<LoginRequest>(request => savedRequest = request)
+            .Setup(r => r.CreateAccount(It.IsAny<RegisterRequest>()))
+            .Callback<RegisterRequest>(request => savedRequest = request)
             .ReturnsAsync(42);
         var service = new UserService(repository.Object);
 
-        var result = await service.CreateAccount(TestData.Login("plain-password"));
+        var result = await service.CreateAccount(TestData.Register("plain-password"));
 
         Assert.Equal(42, result);
         Assert.NotNull(savedRequest);
@@ -45,13 +45,13 @@ public class UserServiceTests
     {
         var repository = new Mock<IUserRepository>();
         var service = new UserService(repository.Object);
-        var registerRequest = TestData.Login("correct-password");
+        var registerRequest = TestData.Register("correct-password");
 
-        LoginRequest? savedRequest = null;
+        RegisterRequest? savedRequest = null;
         repository.Setup(r => r.EmailExists(registerRequest.Email)).ReturnsAsync(false);
         repository
-            .Setup(r => r.CreateAccount(It.IsAny<LoginRequest>()))
-            .Callback<LoginRequest>(request => savedRequest = request)
+            .Setup(r => r.CreateAccount(It.IsAny<RegisterRequest>()))
+            .Callback<RegisterRequest>(request => savedRequest = request)
             .ReturnsAsync(1);
         await service.CreateAccount(registerRequest);
 

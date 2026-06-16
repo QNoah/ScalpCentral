@@ -18,6 +18,13 @@ type RegisterForm = {
   confirmPassword: string;
 };
 
+type AuthInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "name" | "value" | "onChange"> & {
+  name: string;
+  value: string;
+  error?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
 const namePattern = "^[A-Za-zÀ-ž\\s'-]{2,50}$";
 const passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d).{8,128}$";
 const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
@@ -282,7 +289,7 @@ export function Input({
   error,
   onChange,
   ...inputProps
-}: any) {
+}: AuthInputProps) {
   return (
     <div>
       <label className="label">{name.toUpperCase()}</label>

@@ -37,7 +37,7 @@ function formatDate(value?: string) {
     return "Not set";
   }
 
-  return date.toLocaleDateString();
+  return date.toLocaleDateString("en-UK").replace(/\//g, '-');
 }
 
 function getDisplayName(user: ProfileUser) {

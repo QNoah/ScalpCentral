@@ -15,6 +15,7 @@ import { ResetPasswordPage } from './Components/Pages/ResetPasswordPage';
 import UserList from './Components/Pages/Admin/UserList';
 import ProfilePage from './Components/Pages/ProfilePage';
 import { FAQPage } from './Components/Pages/FAQPage';
+import { ContactPage } from './Components/Pages/ContactPage';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -65,6 +66,7 @@ function App() {
         <Route path='/reset-password' element={<ResetPasswordPage/>}/>
         <Route path='/profile' element={<ProfilePage/>}/>
         <Route path='/faq' element={<FAQPage/>}/>
+        <Route path='/contact' element={<ContactPage/>}/>
         <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </main>

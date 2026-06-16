@@ -153,10 +153,10 @@ export default function ProfilePage() {
                 <strong>Browse products</strong>
                 <span>Find new Pokemon cards.</span>
               </Link>
-              <button className="profile-action-card profile-action-disabled" type="button" disabled>
+              <Link to="/order-history" className="profile-action-card">
                 <strong>Order history</strong>
-                <span>Coming later.</span>
-              </button>
+                <span>View your previous orders.</span>
+              </Link>
             </div>
           </article>
         </section>

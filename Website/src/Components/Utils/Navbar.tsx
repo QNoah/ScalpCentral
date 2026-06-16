@@ -22,10 +22,6 @@ export default function Navbar() {
     window.location.href = path;
   }
 
-  function logout() {
-  setUser(null);
-}
-
   return (
     <main className="flex h-16 w-screen sticky justify-center" style={{background: "linear-gradient(to top, #00478A, #6F97FF)"}}>
       <div className="flex flex-1 justify-evenly max-w-screen-2xl">

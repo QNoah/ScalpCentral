@@ -21,6 +21,10 @@ export default function ProductEdit(){
     setProduct(prev => prev ? { ...prev, [field]: value} : prev);
   }
 
+  function handleImageChange(value: string) {
+    setProduct(prev => prev ? { ...prev, images: [value, ...prev.images.slice(1)] } : prev);
+  }
+
    useEffect(() => {
     if (!invalid && !product) {
       (async () => {
@@ -63,7 +67,7 @@ export default function ProductEdit(){
               </div>
                 <Input label="Discount (%)" type="number" value={product.salePriceModifier} required={false} styles="w-full mb-4" maxNumber={100} onChange={v => handleChange("salePriceModifier", v)}/>
                 {/* geen idee hoe we dit gaan doen maar ik denk dat het belangrijk is voor meerdere foto's. */}
-                <Input label="Img url" type="string" value={product.images} required={false} styles="w-full mb-4" onChange={v => handleChange("salePriceModifier", v)}/>
+                <Input label="Img url" type="string" value={product.images[0] ?? ""} required={false} styles="w-full mb-4" onChange={handleImageChange}/>
                 <div id="product">
                   <h3 className="mb-4">Product preview</h3>
                   <div className="flex justify-center mb-4">

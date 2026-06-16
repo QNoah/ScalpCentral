@@ -36,9 +36,9 @@ export function SearchResults() {
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [selectedSets, setSelectedSets] = useState<string[]>([]);
     const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
-    const [collapseTypes, setCollapseTypes] = useState<boolean>(true);
-    const [collapseSets, setCollapseSets] = useState<boolean>(true);
-    const [collapseSeries, setCollapseSeries] = useState<boolean>(true);
+    const [collapseTypes, setCollapseTypes] = useState<boolean>(false);
+    const [collapseSets, setCollapseSets] = useState<boolean>(false);
+    const [collapseSeries, setCollapseSeries] = useState<boolean>(false);
 
     const [minPrice, setMinPrice] = useState<number | null>(null);
     const [maxPrice, setMaxPrice] = useState<number | null>(null);

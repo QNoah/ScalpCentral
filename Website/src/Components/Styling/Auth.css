@@ -22,8 +22,8 @@
 .box {
   width: 100%;
   max-width: 940px;
-  display: grid;
-  grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1fr);
+  /* display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1fr); */
   overflow: hidden;
   background: rgba(255, 255, 255, 0.92);
   border: 3px solid var(--darkPokeBlue);
@@ -52,8 +52,10 @@
 .partner-card {
   position: relative;
   min-height: 360px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 72px;
 }
 
 .partner-mon {
@@ -66,7 +68,20 @@
   box-shadow:
     inset 0 -12px 0 rgba(196, 204, 26, 0.32),
     0 18px 0 rgba(0, 25, 89, 0.18);
-  animation: trainer-bob 2.4s ease-in-out infinite;
+  z-index: 2;
+}
+
+.partner-mon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -34px;
+  width: 150px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(0, 25, 89, 0.22);
+  transform: translateX(-50%);
+  z-index: -1;
 }
 
 .partner-ear {
@@ -149,13 +164,13 @@
 }
 
 .partner-spark-one {
-  top: 52px;
-  right: 58px;
+  top: 86px;
+  right: 66px;
 }
 
 .partner-spark-two {
-  left: 42px;
-  bottom: 92px;
+  left: 58px;
+  bottom: 148px;
   animation-delay: 0.6s;
 }
 
@@ -315,10 +330,12 @@
   display: grid;
   justify-items: center;
   gap: 1rem;
-  padding: 1.5rem;
+  padding: 1.75rem;
   border: 3px solid var(--darkPokeBlue);
   border-radius: 8px;
-  background: #ffffff;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(241, 249, 121, 0.32), transparent 8rem),
+    #ffffff;
   box-shadow: 0 22px 42px rgba(0, 0, 0, 0.22);
 }
 
@@ -334,21 +351,11 @@
   bottom: auto;
   width: 88px;
   height: 88px;
-  animation: pokeball-roll 1s ease-in-out infinite;
-}
-
-@keyframes trainer-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
+  animation: pokeball-catch 1.05s ease-in-out infinite;
 }
 
 @keyframes spark-pop {
+
   0%,
   100% {
     opacity: 0.45;
@@ -361,14 +368,15 @@
   }
 }
 
-@keyframes pokeball-roll {
+@keyframes pokeball-catch {
+
   0%,
   100% {
-    transform: rotate(-12deg) translateY(0);
+    transform: rotate(-10deg) scale(1);
   }
 
   50% {
-    transform: rotate(12deg) translateY(-4px);
+    transform: rotate(10deg) scale(1.04);
   }
 }
 
@@ -393,11 +401,18 @@
     right: 1rem;
     bottom: 0.5rem;
     width: 160px;
+    padding-bottom: 34px;
   }
 
   .partner-mon {
     width: 112px;
     height: 102px;
+  }
+
+  .partner-mon::before {
+    bottom: -22px;
+    width: 92px;
+    height: 14px;
   }
 
   .partner-ear {

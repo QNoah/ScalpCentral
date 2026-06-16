@@ -21,6 +21,11 @@ type RegisterForm = {
 const namePattern = "^[A-Za-zÀ-ž\\s'-]{2,50}$";
 const passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d).{8,128}$";
 const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+const authSuccessDelayMs = 1100;
+
+function wait(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /* -------------------- LOGIN -------------------- */
 export function LoginPage() {
@@ -92,6 +97,7 @@ export function LoginPage() {
 
       const user = await response.json();
       setUser(user);
+      await wait(authSuccessDelayMs);
       navigate("/");
     } finally {
       setIsSubmitting(false);
@@ -197,6 +203,7 @@ export function RegisterPage() {
       const user = await response.json();
       setUser(user);
 
+      await wait(authSuccessDelayMs);
       navigate("/");
     } finally {
       setIsSubmitting(false);
@@ -246,22 +253,6 @@ function AuthLayout({
     <div className="container">
       {isLoading && <AuthLoading text={loadingText} />}
       <div className="box">
-        <div className="auth-visual">
-          <img src={logoImage} alt="ScalpCentral" className="auth-logo" />
-          <div className="partner-card" aria-hidden="true">
-            <div className="partner-spark partner-spark-one" />
-            <div className="partner-spark partner-spark-two" />
-            <div className="partner-mon">
-              <span className="partner-ear partner-ear-left" />
-              <span className="partner-ear partner-ear-right" />
-              <span className="partner-eye partner-eye-left" />
-              <span className="partner-eye partner-eye-right" />
-              <span className="partner-cheek partner-cheek-left" />
-              <span className="partner-cheek partner-cheek-right" />
-            </div>
-            <div className="pokeball" />
-          </div>
-        </div>
         <div className="header">
           <span>{title}</span>
           <small>{subtitle}</small>

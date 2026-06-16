@@ -98,6 +98,7 @@ public class UsersController : ControllerBase
     {
         await _userService.RemoveBookmark(id, productId);
         return Ok();
+    }
         
     private string CreateToken(UserModel user)
     {

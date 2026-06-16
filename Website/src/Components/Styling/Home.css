@@ -1,0 +1,233 @@
+@import './Colors.css';
+
+.home-page {
+  min-height: 100vh;
+  background: #f8fbff;
+  color: var(--retro-text);
+}
+
+.home-hero {
+  background: linear-gradient(135deg, var(--darkPokeBlue), var(--midPokeBlue) 58%, var(--lightPokeBlue));
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.home-hero-content,
+.home-section {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.home-hero-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+  align-items: center;
+  gap: 2rem;
+  padding: 3rem 0;
+}
+
+.home-hero h1 {
+  max-width: 620px;
+  color: var(--pokeWhite);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.1;
+}
+
+.home-hero p:not(.home-eyebrow) {
+  max-width: 560px;
+  color: #e9eef8;
+  font-size: 1rem;
+}
+
+.home-hero-copy {
+  display: grid;
+  gap: 1rem;
+}
+
+.home-hero-cards {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.home-hero-cards div {
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+}
+
+.home-hero-cards strong,
+.home-hero-cards span {
+  display: block;
+}
+
+.home-hero-cards strong {
+  color: var(--pokeWhite);
+  margin-bottom: 0.25rem;
+}
+
+.home-hero-cards span {
+  color: #e9eef8;
+}
+
+.home-eyebrow {
+  color: var(--pokeYellow);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.home-section .home-eyebrow {
+  color: var(--midPokeBlue);
+}
+
+.home-search {
+  width: min(640px, 100%);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.home-search input {
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: white;
+  color: var(--retro-text);
+  outline: none;
+}
+
+.home-search input::placeholder {
+  color: var(--retro-text-muted);
+}
+
+.home-search input:focus {
+  border-color: var(--lightPokeBlue);
+}
+
+.home-search button {
+  padding: 0.9rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--midPokeBlue);
+  color: var(--pokeWhite);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.home-section {
+  padding: 2rem 0;
+}
+
+.home-product-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: white;
+  color: var(--retro-text);
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 25, 89, 0.08);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.home-product-card:hover {
+  border-color: var(--lightPokeBlue);
+  transform: translateY(-2px);
+}
+
+.home-section-header h2,
+.home-product-info strong {
+  color: var(--darkPokeBlue);
+}
+
+.home-product-info span {
+  color: var(--retro-text-muted);
+}
+
+.home-section-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.home-section-header a {
+  color: var(--midPokeBlue);
+  font-weight: 700;
+}
+
+.home-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.home-product-card {
+  overflow: hidden;
+}
+
+.home-product-image {
+  height: 230px;
+  flex: 0 0 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: white;
+  border-bottom: 1px solid var(--retro-border);
+  overflow: hidden;
+}
+
+.home-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.home-product-info {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: white;
+  position: static;
+}
+
+.home-product-info p {
+  color: var(--midPokeBlue);
+  font-weight: 800;
+}
+
+.home-message {
+  padding: 1rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: white;
+}
+
+@media (max-width: 900px) {
+  .home-hero-content,
+  .home-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .home-hero {
+    background: linear-gradient(135deg, var(--darkPokeBlue), var(--midPokeBlue));
+  }
+
+  .home-search,
+  .home-hero-content,
+  .home-product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero-cards {
+    gap: 0.65rem;
+  }
+}

@@ -23,6 +23,11 @@ const emptyAddress: CheckoutForm = {
   streetNumber: ""
 };
 
+const textPattern = "^[A-Za-zÀ-ž\\s'-]{2,255}$";
+const postcodePattern = "^[A-Za-z0-9\\s-]{3,12}$";
+const streetNumberPattern = "^[0-9A-Za-z\\s/-]{1,20}$";
+const phonePattern = "^\\+?[0-9\\s().-]{7,20}$";
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
@@ -146,7 +151,11 @@ export default function CheckoutPage() {
         city: form.city,
         postcode: form.postcode,
         streetName: form.streetName,
-        streetNumber: form.streetNumber
+        streetNumber: form.streetNumber,
+        items: products.map(item => ({
+          productId: item.product.id,
+          amount: item.quantity
+        }))
       })
     });
 
@@ -198,12 +207,12 @@ export default function CheckoutPage() {
           )}
 
           <form onSubmit={placeOrder} className="grid gap-4 md:grid-cols-2">
-            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="phoneNumber" value={form.phoneNumber} onChange={onChange} placeholder="Phone number" />
-            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="country" value={form.country} onChange={onChange} placeholder="Country" required />
-            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="city" value={form.city} onChange={onChange} placeholder="City" required />
-            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="postcode" value={form.postcode} onChange={onChange} placeholder="Postcode" required />
-            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="streetName" value={form.streetName} onChange={onChange} placeholder="Street name" required />
-            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="streetNumber" value={form.streetNumber} onChange={onChange} placeholder="Street number" required />
+            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="phoneNumber" value={form.phoneNumber} onChange={onChange} placeholder="Phone number" minLength={7} maxLength={20} pattern={phonePattern} autoComplete="tel" title="Use a valid phone number, for example +31 612345678." />
+            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="country" value={form.country} onChange={onChange} placeholder="Country" required minLength={2} maxLength={255} pattern={textPattern} autoComplete="country-name" title="Use at least 2 letters." />
+            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="city" value={form.city} onChange={onChange} placeholder="City" required minLength={2} maxLength={255} pattern={textPattern} autoComplete="address-level2" title="Use at least 2 letters." />
+            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="postcode" value={form.postcode} onChange={onChange} placeholder="Postcode" required minLength={3} maxLength={12} pattern={postcodePattern} autoComplete="postal-code" title="Use a valid postcode, for example 1234 AB." />
+            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="streetName" value={form.streetName} onChange={onChange} placeholder="Street name" required minLength={2} maxLength={255} pattern={textPattern} autoComplete="street-address" title="Use at least 2 letters." />
+            <input className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-midBlue" name="streetNumber" value={form.streetNumber} onChange={onChange} placeholder="Street number" required minLength={1} maxLength={20} pattern={streetNumberPattern} title="Use a valid house number, for example 12A." />
 
             <div className="md:col-span-2 rounded-lg bg-offWhite border border-lightYellow p-4 flex flex-col gap-1">
               <p className="font-semibold text-darkBlue">Order summary</p>

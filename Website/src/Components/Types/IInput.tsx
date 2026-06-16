@@ -5,6 +5,13 @@ export interface IInput{
     required?: boolean;
     styles?: string;
     maxNumber?: number;
+    minNumber?: number;
+    minLength?: number;
+    maxLength?: number;
+    step?: number | string;
+    pattern?: string;
+    placeholder?: string;
+    title?: string;
     onChange?: (value: string) => void;
     onBlur?: () => void;
 }

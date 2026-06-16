@@ -8,6 +8,9 @@ type ChangePasswordForm = {
     confirmPassword: string;
 };
 
+const emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+const passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d).{8,128}$";
+
 export function ResetPasswordPage() {
     const navigate = useNavigate();
 
@@ -37,8 +40,15 @@ export function ResetPasswordPage() {
         const e: Partial<ChangePasswordForm> = {};
 
         if (!form.email) e.email = "Required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email address";
         if (!form.password) e.password = "Required";
+        else if (!new RegExp(passwordPattern).test(form.password)) {
+            e.password = "Use at least 8 characters with a letter and a number";
+        }
 
+        if (!form.confirmPassword) {
+            e.confirmPassword = "Required";
+        }
         if (form.password !== form.confirmPassword) {
             e.confirmPassword = "Passwords do not match";
         }
@@ -88,6 +98,12 @@ export function ResetPasswordPage() {
                 value={form.email}
                 onChange={onChange}
                 error={error.email}
+                type="email"
+                required
+                minLength={6}
+                maxLength={255}
+                pattern={emailPattern}
+                autoComplete="email"
                 />
 
                 <Input
@@ -97,6 +113,11 @@ export function ResetPasswordPage() {
                 value={form.password}
                 onChange={onChange}
                 error={error.password}
+                required
+                minLength={8}
+                maxLength={128}
+                pattern={passwordPattern}
+                autoComplete="new-password"
                 />
 
                 <Input
@@ -106,6 +127,10 @@ export function ResetPasswordPage() {
                 value={form.confirmPassword}
                 onChange={onChange}
                 error={error.confirmPassword}
+                required
+                minLength={8}
+                maxLength={128}
+                autoComplete="new-password"
                 />
 
                 <button className="button">
@@ -143,7 +168,8 @@ export function Input({
   value,
   type = "text",
   error,
-  onChange
+  onChange,
+  ...inputProps
 }: any) {
   return (
     <div>
@@ -155,6 +181,7 @@ export function Input({
         type={type}
         onChange={onChange}
         className="input"
+        {...inputProps}
       />
 
       {error && <div className="error">{error}</div>}

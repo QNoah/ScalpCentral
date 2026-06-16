@@ -11,6 +11,7 @@ public class OrderItemModel
 {
     public long ProductId { get; set; }
     public required string ProductName { get; set; }
+    public string? ImageUrl { get; set; }
     public decimal UnitPrice { get; set; }
     public int Amount { get; set; }
 }

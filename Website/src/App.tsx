@@ -16,9 +16,11 @@ import UserList from './Components/Pages/Admin/UserList';
 import ProfilePage from './Components/Pages/ProfilePage';
 import { FAQPage } from './Components/Pages/FAQPage';
 import OrderHistoryPage from './Components/Pages/OrderHistoryPage';
+import OrderDetailPage from './Components/Pages/OrderDetailPage';
 import { ContactPage } from './Components/Pages/ContactPage';
 import AdminRoute from './Components/Functionalities/AdminRoute';
 import SalesOverview from './Components/Pages/Admin/SalesOverview';
+import { MarketplacePage } from './Components/Pages/MarketplacePage';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -70,8 +72,10 @@ function App() {
         <Route path='/reset-password' element={<ResetPasswordPage/>}/>
         <Route path='/profile' element={<ProfilePage/>}/>
         <Route path='/order-history' element={<OrderHistoryPage/>}/>
+        <Route path='/order-history/:id' element={<OrderDetailPage/>}/>
         <Route path='/faq' element={<FAQPage/>}/>
         <Route path='/contact' element={<ContactPage/>}/>
+        <Route path='/marketplace' element={<MarketplacePage/>}/>
         <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </main>

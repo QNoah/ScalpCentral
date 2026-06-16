@@ -155,7 +155,7 @@ export function CartPage() {
                     {error && <p className="cart-error">{error}</p>}
 
                     {!loading && products.length === 0 && (
-                        <section className="cart-empty-state cart-empty-inline">
+                        <section className="cart-empty-inline">
                             <h2>Your cart is empty</h2>
                             <p>Browse products and add cards before checkout.</p>
                             <Link className="cart-primary-button" to="/search">Browse products</Link>

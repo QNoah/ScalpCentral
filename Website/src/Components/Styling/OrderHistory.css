@@ -85,6 +85,14 @@
   grid-template-columns: minmax(180px, 0.7fr) minmax(0, 2fr);
   gap: 1rem;
   padding: 1.25rem;
+  color: var(--retro-text);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.order-history-card:hover {
+  border-color: var(--lightPokeBlue);
+  transform: translateY(-2px);
 }
 
 .order-history-number {
@@ -148,10 +156,105 @@
   margin: 1rem auto 0;
 }
 
+.order-detail-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.order-detail-card:hover {
+  transform: none;
+}
+
+.order-detail-products {
+  padding: 1.25rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 25, 89, 0.08);
+}
+
+.order-detail-products h2 {
+  margin-bottom: 1rem;
+  color: var(--darkPokeBlue);
+}
+
+.order-detail-product-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.order-detail-product-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: var(--retro-surface);
+  color: var(--retro-text);
+}
+
+.order-detail-product-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.order-detail-product-main div:last-child,
+.order-detail-product-price {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.order-detail-product-image {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: white;
+  overflow: hidden;
+}
+
+.order-detail-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.order-detail-product-image span {
+  padding: 0.4rem;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.order-detail-product-price {
+  text-align: right;
+}
+
+.order-detail-product-row span {
+  color: var(--retro-text-muted);
+}
+
 @media (max-width: 760px) {
   .order-history-header,
-  .order-history-card {
+  .order-history-card,
+  .order-detail-product-row {
     grid-template-columns: 1fr;
+  }
+
+  .order-detail-product-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-detail-product-price {
+    text-align: left;
   }
 
   .order-history-header {

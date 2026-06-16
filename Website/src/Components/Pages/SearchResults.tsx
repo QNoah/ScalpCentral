@@ -47,7 +47,7 @@ export function SearchResults() {
     const [sortOption, setSortOption] = useState<string>("default");
 
     const [bookmarks, setBookmarks] = useState<number[]>([])
-    const priceRange = [minPrice ?? 0, maxPrice ?? 1000];
+    const priceRange = [minPrice ?? 0, maxPrice ?? 10000];
 
     useEffect (() => {
         async function fetchFilters() {
@@ -264,7 +264,7 @@ export function SearchResults() {
         }
 
         setMinPrice(value[0] === 0 ? null : value[0]);
-        setMaxPrice(value[1] === 1000 ? null : value[1]);
+        setMaxPrice(value[1] === 10000 ? null : value[1]);
     }
 
     async function AddToCart(item: Product)
@@ -402,7 +402,7 @@ export function SearchResults() {
                             <Slider
                                 value={priceRange}
                                 min={0}
-                                max={1000}
+                                max={10000}
                                 step={5}
                                 onChange={handlePriceRangeChange}
                                 valueLabelDisplay="auto"

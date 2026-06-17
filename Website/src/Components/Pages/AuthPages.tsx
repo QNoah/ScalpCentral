@@ -256,7 +256,7 @@ function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="container">
+    <div className="page-container">
       {isLoading && <AuthLoading text={loadingText} />}
       <div className="box">
         <div className="header">

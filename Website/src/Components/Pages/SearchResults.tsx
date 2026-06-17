@@ -30,13 +30,13 @@ export function SearchResults() {
     const { user } = useAuth();
 
     const PAGE_SIZE = 24;
-    const [page, setPage] = useState<number>(0);
     const [totalCount, setTotalCount] = useState<number>(0);
 
     const [loading, SetLoading] = useState<boolean>(true);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const searchName = searchParams.get("name") || "";
+    const page = Math.max(Number(searchParams.get("page") ?? 0) + 1, 1);
     const [searchResults, setSearchResults] = useState<Product[]>([]);
 
     const [types, setTypes] = useState<string[]>([]);
@@ -146,10 +146,9 @@ export function SearchResults() {
 
     function handlePageChange(e: React.ChangeEvent<unknown>, value: number) {
         e.preventDefault();
-        setPage(value);
 
         const params = new URLSearchParams(searchParams);
-        params.set("page", value.toString());
+        params.set("page", (value - 1).toString());
         setSearchParams(params);
     }
 

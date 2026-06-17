@@ -42,7 +42,7 @@ export default function ProductEdit(){
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5231/api/products/update", {
+      const response = await fetch("/api/products/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -67,7 +67,7 @@ export default function ProductEdit(){
     if (!invalid && !product) {
       (async () => {
         try {
-          const res = await fetch(`http://localhost:5231/api/products/${productId}`);
+          const res = await fetch(`/api/products/${productId}`);
           if (!res.ok) {
             throw new Error();
           }

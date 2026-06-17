@@ -71,7 +71,7 @@ export function ResetPasswordPage() {
         if (!validate()) return;
 
         const response = await fetch(
-            "http://localhost:5231/api/users/reset-password",
+            "/api/users/reset-password",
             {
                 method: "PUT",
                 headers: {

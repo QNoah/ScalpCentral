@@ -62,7 +62,7 @@ export default function CheckoutPage() {
     async function loadCart() {
       const cartId = getCartId();
 
-      const response = await fetch(`http://localhost:5231/api/cart/${cartId}`, {
+      const response = await fetch(`/api/cart/${cartId}`, {
         credentials: "include"
       });
 
@@ -102,7 +102,7 @@ export default function CheckoutPage() {
   async function saveAddress() {
     if (!user) return;
 
-    const response = await fetch(`http://localhost:5231/api/users/${user.id}/address`, {
+    const response = await fetch(`/api/users/${user.id}/address`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -136,7 +136,7 @@ export default function CheckoutPage() {
     const cartId = getCartId();
     const orderNumber = `ORD-${Date.now()}`;
 
-    const orderResponse = await fetch("http://localhost:5231/api/order", {
+    const orderResponse = await fetch("/api/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -168,7 +168,7 @@ export default function CheckoutPage() {
 
     await saveAddress();
 
-    await fetch(`http://localhost:5231/api/cart?cartId=${cartId}`, {
+    await fetch(`/api/cart?cartId=${cartId}`, {
       method: "DELETE",
       credentials: "include"
     });

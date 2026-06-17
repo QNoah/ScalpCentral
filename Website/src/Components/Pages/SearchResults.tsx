@@ -30,13 +30,13 @@ export function SearchResults() {
     const { user } = useAuth();
 
     const PAGE_SIZE = 24;
-    const [page, setPage] = useState<number>(0);
     const [totalCount, setTotalCount] = useState<number>(0);
 
     const [loading, SetLoading] = useState<boolean>(true);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const searchName = searchParams.get("name") || "";
+    const page = Math.max(Number(searchParams.get("page") ?? 0) + 1, 1);
     const [searchResults, setSearchResults] = useState<Product[]>([]);
 
     const [types, setTypes] = useState<string[]>([]);
@@ -64,7 +64,7 @@ export function SearchResults() {
 
     useEffect (() => {
         async function fetchFilters() {
-            const response = await fetch(`http://localhost:5231/api/products/filters?name=${searchName}`, {
+            const response = await fetch(`/api/products/filters?name=${searchName}`, {
                 credentials: "include"
             });
                 const data = await response.json();
@@ -77,7 +77,7 @@ export function SearchResults() {
 
     useEffect(() => {
         async function fetchSearchResults() {
-            const response = await fetch(`http://localhost:5231/api/products/paged?${searchParams.toString()}`, {
+            const response = await fetch(`/api/products/paged?${searchParams.toString()}`, {
                 method: "GET",
                 headers: {
                     "limit": PAGE_SIZE.toString()
@@ -97,7 +97,7 @@ export function SearchResults() {
         async function fetchBookmarks() {
             if (user)
             {
-                const response = await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks`, {
+                const response = await fetch(`/api/users/${user?.id}/bookmarks`, {
                     method: "GET"
                 });
                 const data = await response.json();
@@ -118,7 +118,7 @@ export function SearchResults() {
             const summaries = await Promise.all(
                 searchResults.map(async (product) => {
                     try {
-                        const response = await fetch(`http://localhost:5231/api/review?productId=${product.id}`);
+                        const response = await fetch(`/api/review?productId=${product.id}`);
 
                         if (!response.ok) {
                             return [product.id, { average: 0, count: 0 }] as const;
@@ -146,10 +146,9 @@ export function SearchResults() {
 
     function handlePageChange(e: React.ChangeEvent<unknown>, value: number) {
         e.preventDefault();
-        setPage(value);
 
         const params = new URLSearchParams(searchParams);
-        params.set("page", value.toString());
+        params.set("page", (value - 1).toString());
         setSearchParams(params);
     }
 
@@ -326,7 +325,7 @@ export function SearchResults() {
         setAddingProductIds(prev => [...prev, item.id]);
 
         try {
-            const response = await fetch("http://localhost:5231/api/cart/add", {
+            const response = await fetch("/api/cart/add", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -361,7 +360,7 @@ export function SearchResults() {
             // Remove bookmark
             setBookmarks(prev => prev.filter(id => id !== product.id))
 
-            await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks/${product.id}`, {
+            await fetch(`/api/users/${user?.id}/bookmarks/${product.id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
@@ -371,7 +370,7 @@ export function SearchResults() {
             // Add bookmark
             setBookmarks(prev => [...prev, product.id])
 
-            await fetch(`http://localhost:5231/api/users/${user?.id}/bookmarks`, {
+            await fetch(`/api/users/${user?.id}/bookmarks`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

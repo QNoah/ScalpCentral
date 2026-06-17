@@ -69,7 +69,7 @@ export function ProductPage() {
         }
 
         try {
-            const response = await fetch(`http://localhost:5231/api/review?productId=${productId}`);
+            const response = await fetch(`/api/review?productId=${productId}`);
 
             if (!response.ok) {
                 setError("Failed to load reviews");
@@ -90,7 +90,7 @@ export function ProductPage() {
         }
 
         try {
-            const response = await fetch(`http://localhost:5231/api/review?productId=${productId}&userId=${user.id}`);
+            const response = await fetch(`/api/review?productId=${productId}&userId=${user.id}`);
 
             if (!response.ok) {
                 setHasReviewedProduct(false);
@@ -108,7 +108,7 @@ export function ProductPage() {
         if (productId) {
             const fetchProduct = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5231/api/products/${productId}`, {
+                    const response = await fetch(`/api/products/${productId}`, {
                       credentials: "include"
                     });
 
@@ -149,7 +149,7 @@ export function ProductPage() {
 
         const cartId = getCartId();
 
-        const response = await fetch("http://localhost:5231/api/cart/add", {
+        const response = await fetch("/api/cart/add", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -191,7 +191,7 @@ export function ProductPage() {
             return;
         }
 
-        const response = await fetch(`http://localhost:5231/api/review`, {
+        const response = await fetch(`/api/review`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

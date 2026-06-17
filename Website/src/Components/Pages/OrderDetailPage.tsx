@@ -62,7 +62,7 @@ export default function OrderDetailPage() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5231/api/order/${id}/details`, {
+        const response = await fetch(`/api/order/${id}/details`, {
           credentials: "include"
         });
 

@@ -160,7 +160,7 @@ export default function ProfilePage() {
     setSavingAccount(true);
     setMessage("");
 
-    const response = await fetch(`http://localhost:5231/api/users/${currentUser.id}/account`, {
+    const response = await fetch(`/api/users/${currentUser.id}/account`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -183,7 +183,7 @@ export default function ProfilePage() {
     setSavingAddress(true);
     setMessage("");
 
-    const response = await fetch(`http://localhost:5231/api/users/${currentUser.id}/address`, {
+    const response = await fetch(`/api/users/${currentUser.id}/address`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

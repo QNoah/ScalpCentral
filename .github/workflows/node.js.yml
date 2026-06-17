@@ -94,8 +94,11 @@ jobs:
       with:
         dotnet-version: 9.0.x
 
-    - name: Restore API tests
-      run: dotnet restore api.Tests/api.Tests.csproj
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
 
     - name: Run API tests
       run: dotnet test api.Tests/api.Tests.csproj --configuration Release --no-restore

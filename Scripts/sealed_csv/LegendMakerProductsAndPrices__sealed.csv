@@ -1,0 +1,3 @@
+productId,name,cleanName,imageUrl,categoryId,groupId,url,modifiedOn,imageCount,extNumber,extRarity,extCardType,extHP,extStage,extCardText,extAttack1,extAttack2,extWeakness,extResistance,extRetreatCost,lowPrice,midPrice,highPrice,marketPrice,directLowPrice,subTypeName,extAttack3
+98556,Legend Maker Booster Box,Legend Maker Booster Box,https://tcgplayer-cdn.tcgplayer.com/product/98556_200w.jpg,3,1378,https://cpt.tcgcsv.com/8rP,2015-05-06T14:20:09.25,1,,,,,,,,,,,,,,,,,,
+98557,Legend Maker Booster Pack,Legend Maker Booster Pack,https://tcgplayer-cdn.tcgplayer.com/product/98557_200w.jpg,3,1378,https://cpt.tcgcsv.com/9rP,2017-07-22T17:00:09.81,1,,,,,,,,,,,,999.99,1250.0,1500.0,464.0,,Normal,

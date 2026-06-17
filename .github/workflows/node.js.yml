@@ -1,0 +1,104 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      WORKING_DIR: Website
+    strategy:
+      fail-fast: true
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Detect Node project
+      id: detect_node
+      shell: bash
+      run: |
+        if [ -f package.json ]; then
+          echo "has_node=true" >> "$GITHUB_OUTPUT"
+          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+            echo "has_lockfile=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_lockfile=false" >> "$GITHUB_OUTPUT"
+          fi
+        else
+          echo "has_node=false" >> "$GITHUB_OUTPUT"
+          echo "has_lockfile=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install dependencies
+      if: steps.detect_node.outputs.has_node == 'true' && steps.detect_node.outputs.has_lockfile == 'true'
+      run: npm ci --prefer-offline --no-audit
+      working-directory: ${{ env.WORKING_DIR }}
+
+    - name: Install dependencies (no lockfile)
+      if: steps.detect_node.outputs.has_node == 'true' && steps.detect_node.outputs.has_lockfile != 'true'
+      run: npm install --no-audit
+      working-directory: ${{ env.WORKING_DIR }}
+
+    - name: Build
+      if: steps.detect_node.outputs.has_node == 'true'
+      run: npm run build --if-present
+      working-directory: ${{ env.WORKING_DIR }}
+
+    - name: Lint code
+      if: steps.detect_node.outputs.has_node == 'true'
+      run: npm run lint
+      working-directory: ${{ env.WORKING_DIR }}
+
+    - name: Run tests
+      if: steps.detect_node.outputs.has_node == 'true'
+      run: npm test
+      working-directory: ${{ env.WORKING_DIR }}
+
+    - name: Skip message
+      if: steps.detect_node.outputs.has_node != 'true'
+      run: echo "No package.json found at repo root. Skipping Node.js CI steps."
+
+    - name: Upload test logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-node-${{ matrix.node-version }}
+        path: test-results/
+        if-no-files-found: ignore
+
+  api-tests:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run API tests
+      run: dotnet test api.Tests/api.Tests.csproj --configuration Release --no-restore

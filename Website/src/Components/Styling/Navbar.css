@@ -1,0 +1,102 @@
+@import './Colors.css';
+
+.navbar-shell {
+    width: 100%;
+    min-height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(to top, var(--midPokeBlue), #6F97FF);
+}
+
+.navbar-inner {
+    width: min(1440px, 100%);
+    display: grid;
+    grid-template-columns: auto minmax(180px, 320px) 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.25rem;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-search {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-search input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: var(--pokeWhite);
+    color: var(--retro-text);
+    outline: none;
+}
+
+.navbar-search input:focus {
+    border-color: var(--pokeYellow);
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25rem;
+}
+
+.navbar-link {
+    color: var(--pokeWhite);
+    transition: all 0.2s ease;
+    padding: 0.45rem 0.6rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.navbar-account-link {
+    margin-left: 0.75rem;
+}
+
+.navbar-link:hover {
+    color: var(--pokeYellow);
+    border-color: var(--pokeYellow);
+}
+
+.navbar-link.active {
+    background: linear-gradient(to top, var(--lightPokeYellow), var(--pokeYellow));
+    color: var(--lightPokeBlue);
+}
+
+@media (max-width: 900px) {
+    .navbar-inner {
+        grid-template-columns: auto 1fr;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-search {
+        display: none;
+    }
+
+    .navbar-links {
+        gap: 0.15rem;
+        overflow-x: auto;
+    }
+
+    .navbar-link {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .navbar-account-link {
+        margin-left: 0.25rem;
+    }
+}

@@ -1,0 +1,44 @@
+using StackExchange.Redis;
+
+public class CartRepository : ICartRepository
+{
+    private readonly IDatabase _db;
+
+    public CartRepository(IConnectionMultiplexer redis)
+    {
+        _db = redis.GetDatabase();
+    }
+
+    public async Task AddItemAsync(string cartId, int productId, int quantity)
+    {
+        var key = $"cart:{cartId}";
+        await _db.HashIncrementAsync(key, productId, quantity);
+    }
+
+    public async Task<HashEntry[]> GetCartAsync(string cartId)
+    {
+        return await _db.HashGetAllAsync($"cart:{cartId}");
+    }
+
+    public async Task SetExpiryAsync(string cartId)
+    {
+        var key = $"cart:{cartId}";
+        await _db.KeyExpireAsync(key, TimeSpan.FromDays(7));
+    }
+
+    public async Task RemoveCartAsync(string cartId)
+    {
+        var key = $"cart:{cartId}";
+        await _db.KeyDeleteAsync(key);
+    }
+
+    public async Task UpdateQuantity(string cartId, int productId, int quantity)
+    {
+        await _db.HashSetAsync($"cart:{cartId}", productId, quantity);
+    }
+
+    public async Task RemoveItem(string cartId, int productId)
+    {
+        await _db.HashDeleteAsync($"cart:{cartId}", productId);
+    }
+}

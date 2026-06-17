@@ -1,0 +1,21 @@
+using ScalpCentral.Api.Models;
+
+namespace ScalpCentral.Api.Repository;
+
+public interface IUserRepository
+{
+    Task<List<UserDto>> GetAllAsync();
+    public Task<bool> EmailExists(string email);
+    public Task<int?> CreateAccount(RegisterRequest userinfo);
+    public Task<UserModel?> Login(LoginRequest userinfo);
+    public Task<UserModel?> GetById(int id);
+    public Task<UserModel?> GetByEmail(string email);
+    public Task<UserModel?> UpdateAccount(int id, UserAccountRequest account);
+    public Task<UserModel?> UpdateAddress(int id, UserAddressRequest address);
+    public Task SoftDelete(UserModel user);
+    public Task HardDelete(UserModel user);
+    public Task Update(UserModel user);
+    public Task<List<int>> GetBookmarks(int userId);
+    public Task AddBookmark(int userId, int productId);
+    public Task RemoveBookmark(int userId, int productId);
+}

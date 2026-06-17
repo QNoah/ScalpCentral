@@ -1,0 +1,50 @@
+@import './Colors.css';
+
+.marketplace-page {
+  min-height: 100vh;
+  background: #f8fbff;
+}
+
+.marketplace-shell {
+  min-height: calc(100vh - 64px);
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.marketplace-panel {
+  width: min(560px, 100%);
+  padding: 2rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 25, 89, 0.08);
+}
+
+.marketplace-eyebrow {
+  color: var(--midPokeBlue);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.marketplace-panel h1 {
+  margin: 0.4rem 0 0.75rem;
+  color: var(--darkPokeBlue);
+}
+
+.marketplace-panel p:not(.marketplace-eyebrow) {
+  color: var(--retro-text-muted);
+  line-height: 1.6;
+}
+
+.marketplace-button {
+  display: inline-flex;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  background: var(--midPokeBlue);
+  color: var(--pokeWhite);
+  font-weight: 700;
+  text-decoration: none;
+}

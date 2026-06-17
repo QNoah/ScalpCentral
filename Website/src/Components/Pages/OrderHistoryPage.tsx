@@ -47,7 +47,7 @@ export default function OrderHistoryPage() {
       }
 
       try {
-        const response = await fetch("http://localhost:5231/api/order", {
+        const response = await fetch("/api/order", {
           credentials: "include"
         });
 

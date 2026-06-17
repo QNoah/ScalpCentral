@@ -20,7 +20,7 @@ export function HomePage() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const response = await fetch("http://localhost:5231/api/products/paged?page=0", {
+        const response = await fetch("/api/products/paged?page=0", {
           headers: {
             limit: "8"
           },

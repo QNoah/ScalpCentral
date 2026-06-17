@@ -19,7 +19,7 @@ cd Scripts
 py main.py
 ```
 
-**Access:** Website http://localhost:3000 | API http://localhost:5231
+**Access:** Website http://localhost | API http://localhost/api
 
 ## Docker Commands
 

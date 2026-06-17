@@ -45,7 +45,7 @@ export default function SalesOverview() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5231/api/order/sales-overview", {
+      const response = await fetch("/api/order/sales-overview", {
         credentials: "include"
       });
 

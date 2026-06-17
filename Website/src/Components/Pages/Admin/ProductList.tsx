@@ -23,7 +23,7 @@ export default function ProductList() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5231/api/products/", {
+      const response = await fetch("/api/products/", {
         credentials: "include"
       });
 

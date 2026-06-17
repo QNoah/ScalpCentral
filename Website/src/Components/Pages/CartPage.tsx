@@ -31,7 +31,7 @@ export function CartPage() {
             const cartId = getCartId();
 
             try {
-                const response = await fetch(`http://localhost:5231/api/cart/${cartId}`, {
+                const response = await fetch(`/api/cart/${cartId}`, {
                     credentials: "include"
                 });
 
@@ -67,7 +67,7 @@ export function CartPage() {
         setUpdatingProductId(productId);
         setError("");
 
-        const response = await fetch("http://localhost:5231/api/cart", {
+        const response = await fetch("/api/cart", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -100,7 +100,7 @@ export function CartPage() {
         setUpdatingProductId(productId);
         setError("");
 
-        const response = await fetch("http://localhost:5231/api/cart/remove", {
+        const response = await fetch("/api/cart/remove", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"

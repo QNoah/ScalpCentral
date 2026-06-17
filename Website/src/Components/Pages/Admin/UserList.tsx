@@ -16,7 +16,7 @@ export default function UserList() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5231/api/users/users", {
+      const response = await fetch("/api/users/users", {
         credentials: "include"
       });
 
@@ -38,7 +38,7 @@ export default function UserList() {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:5231/api/users/${id}/role`, {
+      const response = await fetch(`/api/users/${id}/role`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -68,7 +68,7 @@ export default function UserList() {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:5231/api/users/${id}`, {
+      const response = await fetch(`/api/users/${id}`, {
         method: "DELETE",
         credentials: "include"
       });

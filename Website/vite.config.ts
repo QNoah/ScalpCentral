@@ -8,9 +8,12 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5231',
+        target: 'http://api:5231',
         changeOrigin: true
       }
-    }
+    },
+    allowedHosts: [
+      "website"
+    ]
   }
 })
